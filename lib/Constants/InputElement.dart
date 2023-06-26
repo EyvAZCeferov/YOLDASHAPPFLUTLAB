@@ -47,12 +47,19 @@ class _InputElementState extends State<InputElement> {
         decoration: InputDecoration(
           hintText: widget.placeholder,
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.all(5),
+          contentPadding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
           border: outlineInputBorder,
           enabledBorder: OutlineInputBorder(
             borderRadius: widget.cornerradius,
             borderSide: BorderSide(
-              color: widget.textColor,
+              color: widget.accentColor,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: widget.cornerradius,
+            borderSide: BorderSide(
+              color: widget.accentColor,
               width: 1.0,
             ),
           ),

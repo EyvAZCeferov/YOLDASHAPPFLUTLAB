@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yoldash/Theme/Routes.dart';
 import 'package:yoldash/Theme/TranslationAdditionals.dart';
 import 'package:yoldash/Views/Auth/Login.dart';
 import 'package:get/get.dart';
@@ -14,10 +15,16 @@ class Yoldash extends StatelessWidget {
     return GetMaterialApp(
       title: 'Yoldash',
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      getPages: Routes,
+      initialRoute: '/login',
       translations: TranslationAdditionals(),
       locale: Locale('az', 'AZ'),
       fallbackLocale: Locale('az', 'AZ'),
+      enableLog: true,
+      defaultTransition: Transition.cupertino,
+      opaqueRoute: Get.isOpaqueRouteDefault,
+      popGesture: Get.isPopGestureEnable,
+      transitionDuration: Duration(milliseconds: 1000),
     );
   }
 }

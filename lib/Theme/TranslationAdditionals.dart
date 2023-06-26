@@ -9,8 +9,17 @@ class TranslationAdditionals extends Translations {
         'az_AZ': {
           'login': 'Daxil ol',
           'login_with_mobile_number': 'Mobil nömrə ilə daxil ol',
-          'mobile_phone': 'Mobil nömrə',
-          "sendcode": "Kod göndər"
+          'mobile_phone': 'Telefon nömrəsi',
+          "sendcode": "Kod göndər",
+          "doesnothaveaccount": "Hesabınız yoxdur?",
+          "doeshaveaccount": "Hesabınız var?",
+          "register": "Qeydiyyatdan keç",
+          "name_surname": "Ad soyad",
+          "gender": "Cins",
+          "gender_male": "Kişi",
+          "gender_female": "Qadın",
+          "birthday": "Doğum tarixi",
+          "email": "Email",
         }
       };
 }

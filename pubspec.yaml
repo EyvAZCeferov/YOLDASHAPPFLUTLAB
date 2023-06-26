@@ -39,6 +39,7 @@ dependencies:
   flutter_cashfree_pg_sdk: ^2.0.12+15
   flutter_feather_icons: ^2.0.0
   get: ^4.6.5
+  intl: ^0.18.1
   # cloud_firestore: 4.0.3
 
 dev_dependencies:
