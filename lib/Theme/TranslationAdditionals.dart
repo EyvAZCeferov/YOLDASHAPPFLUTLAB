@@ -20,6 +20,12 @@ class TranslationAdditionals extends Translations {
           "gender_female": "Qadın",
           "birthday": "Doğum tarixi",
           "email": "Email",
+          "back": "Geri",
+          "enter_verification_code": "Doğrulama kodunu daxil edin",
+          "sendedcodephone": "@phoneNumber nömrəsinə kod göndərildi",
+          "dontgetcode": "Kod almırsınız?",
+          "resend": "Yenidən göndər",
+          "submit": "Təsdiqlə"
         }
       };
 }

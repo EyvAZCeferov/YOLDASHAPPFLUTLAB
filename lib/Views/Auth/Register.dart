@@ -25,6 +25,7 @@ class _RegisterState extends State<Register> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: bodycolor,
+        resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
           child: Container(
             child: Center(

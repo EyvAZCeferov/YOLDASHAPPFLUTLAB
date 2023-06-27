@@ -24,6 +24,7 @@ class _LoginState extends State<Login> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: bodycolor,
+        resizeToAvoidBottomInset: true,
         body: Container(
           child: Center(
             child: Column(
@@ -70,7 +71,7 @@ class _LoginState extends State<Login> {
                     height: 50,
                     width: width - 100,
                     borderRadius: BorderRadius.circular(45),
-                    onPressed: () => print("A")),
+                    onPressed: () => Get.toNamed('/verificationcode')),
                 Devider(size: 25),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
