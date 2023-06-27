@@ -25,7 +25,22 @@ class TranslationAdditionals extends Translations {
           "sendedcodephone": "@phoneNumber nömrəsinə kod göndərildi",
           "dontgetcode": "Kod almırsınız?",
           "resend": "Yenidən göndər",
-          "submit": "Təsdiqlə"
+          "submit": "Təsdiqlə",
+          "departure": "Gediş",
+          "chat": "Çat",
+          "logistic": "Loqistika",
+          "profile": "Profil",
+          "myaccount": "Hesabım",
+          'gotodriver': "Sürücü profilinə keç",
+          'gotorider': "Müştəri profilinə keç",
+          "other": "Digər",
+          "history": "Tarixçə",
+          "changelanguage": "Dili dəyiş",
+          "logout": "Çıxış",
+          "mywallet": "Pul kisəm",
+          "bank_account_and_cards": "Bank hesabı və kartlarım",
+          "mainaccount": "Əsas hesab",
+          "remove": "Sil",
         }
       };
 }

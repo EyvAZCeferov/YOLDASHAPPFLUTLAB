@@ -40,6 +40,7 @@ class TextButtonElement extends StatelessWidget {
             text: text,
             weight: FontWeight.w400,
             size: fontsize,
+            align: TextAlign.left,
             color: textColor),
       ),
     );

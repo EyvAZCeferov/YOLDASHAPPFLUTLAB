@@ -16,7 +16,7 @@ class Yoldash extends StatelessWidget {
       title: 'Yoldash',
       debugShowCheckedModeBanner: false,
       getPages: Routes,
-      initialRoute: '/homepage',
+      initialRoute: '/mainscreen',
       translations: TranslationAdditionals(),
       locale: Locale('az', 'AZ'),
       fallbackLocale: Locale('az', 'AZ'),
