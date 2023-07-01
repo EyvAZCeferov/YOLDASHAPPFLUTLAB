@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
-import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Constants/TextButton.dart';
@@ -35,7 +34,8 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       brightness: Brightness.light,
       centerTitle: true,
       elevation: 0,
-      leadingWidth: backbutton ? 25 : 0,
+      leadingWidth: backbutton ? 45 : 0,
+      toolbarHeight: 50,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       toolbarOpacity: 1,
       actions: changeprof == true
@@ -52,11 +52,20 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
             ]
           : null,
       leading: backbutton
-          ? IconButtonElement(
-              icon: FeatherIcons.chevronLeft,
-              color: Colors.black,
-              size: buttontextSize,
-              onPressed: () => Get.back())
+          ? Container(
+              width: 40,
+              height: buttontextSize,
+              decoration: BoxDecoration(
+                  color: whitecolor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: iconcolor, width: 1, style: BorderStyle.solid)),
+              child: IconButtonElement(
+                  icon: FeatherIcons.chevronLeft,
+                  color: Colors.black,
+                  size: buttontextSize,
+                  onPressed: () => Get.back()),
+            )
           : null,
       title: titlebg == true
           ? title != null

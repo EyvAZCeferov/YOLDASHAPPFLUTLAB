@@ -83,5 +83,9 @@
 			<key>NSAllowsLocalNetworking</key>
 			<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Resimleri seçmek için erişim izni gerekiyor.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Kamera kullanarak resim çekmek için erişim izni gerekiyor.</string>
 </dict>
 </plist>

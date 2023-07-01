@@ -41,6 +41,15 @@ class TranslationAdditionals extends Translations {
           "bank_account_and_cards": "Bank hesabı və kartlarım",
           "mainaccount": "Əsas hesab",
           "remove": "Sil",
+          "add_bank_account": "Bank hesabı əlavə et",
+          "editprofile": "Profilə düzəliş et",
+          "updateprofile": "Profili yeniləyin",
+          "cardsinformation": "Kart məlumatları",
+          "nohasdata": "Məlumat tapılmadı",
+          "add": "Əlavə et",
+          "add_automobil": "Avtomobil əlavə et",
+          "automobils": "Avtomobillərim",
+          "documents": "Sənədlər"
         }
       };
 }

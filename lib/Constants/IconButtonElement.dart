@@ -7,13 +7,14 @@ class IconButtonElement extends StatelessWidget {
   final Color color;
   final double size;
   final Function onPressed;
+  final Color bgColor;
 
-  const IconButtonElement({
-    required this.icon,
-    this.color = Colors.black,
-    this.size = 24.0,
-    required this.onPressed,
-  });
+  const IconButtonElement(
+      {required this.icon,
+      this.color = Colors.black,
+      this.size = 24.0,
+      required this.onPressed,
+      this.bgColor = whitecolor});
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +22,13 @@ class IconButtonElement extends StatelessWidget {
       iconSize: size,
       padding: EdgeInsets.all(8),
       tooltip: "back".tr,
+      color: bgColor,
       style: ButtonStyle(
         alignment: Alignment.centerLeft,
-        backgroundColor: MaterialStateProperty.all<Color>(whitecolor),
+        backgroundColor: MaterialStateProperty.all<Color>(bgColor),
         elevation: MaterialStateProperty.all<double>(0),
         foregroundColor: MaterialStateProperty.all<Color>(darkcolor),
-        overlayColor: MaterialStateProperty.all<Color>(whitecolor),
+        overlayColor: MaterialStateProperty.all<Color>(bgColor),
         padding:
             MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(8)),
         side: MaterialStateProperty.all<BorderSide>(BorderSide(

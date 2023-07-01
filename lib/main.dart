@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yoldash/Theme/Routes.dart';
 import 'package:yoldash/Theme/TranslationAdditionals.dart';
-import 'package:yoldash/Views/Auth/Login.dart';
 import 'package:get/get.dart';
 
 void main() async {
