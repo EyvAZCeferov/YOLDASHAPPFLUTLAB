@@ -49,7 +49,15 @@ class TranslationAdditionals extends Translations {
           "add": "Əlavə et",
           "add_automobil": "Avtomobil əlavə et",
           "automobils": "Avtomobillərim",
-          "documents": "Sənədlər"
+          "documents": "Sənədlər",
+          "drivinglicence": "Sürücülük vəsiqəsi",
+          "uploadimage": "Şəkili yükləyin",
+          "permissiondenied": "İcazə vermədiniz",
+          "imageuploaded": "Şəkil yükləndi",
+          "idcard": "Şəxsiyyət vəsiqəsi",
+          "autotexpasport": "Avtomobilin texpasportu",
+          "gallery": "Qalereya",
+          "camera": "Kamera",
         }
       };
 }
