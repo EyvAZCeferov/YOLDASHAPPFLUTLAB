@@ -31,7 +31,7 @@ Widget build_menu_items(String authtype) {
                 size: subHeadingSize,
               ),
               "history".tr,
-              () => print("A")),
+              () => Get.toNamed('/history')),
           list_items(
               Icon(
                 FeatherIcons.globe,

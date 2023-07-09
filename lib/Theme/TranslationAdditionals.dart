@@ -64,6 +64,10 @@ class TranslationAdditionals extends Translations {
           "autonumber": "Avtomobilin seriya nömrəsi",
           "cardnumber": "Kart nömrəsi",
           "validtydate": "Bitmə tarixi",
+          "addbalance": "Balansı artır",
+          "monthly_balance": "Aylıq balans",
+          "daily_balance": "Günlük balans",
+          "personal_adding": "Fərdi balans"
         }
       };
 }

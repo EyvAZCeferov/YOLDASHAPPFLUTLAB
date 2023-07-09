@@ -44,8 +44,8 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Center(
                 child: Container(
-                  height: Get.width / 3,
-                  width: Get.width - 40,
+                  height: width / 3,
+                  width: width - 40,
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
@@ -132,80 +132,86 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              width: width / 2 - 30,
-                              alignment: Alignment.center,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                  color: whitecolor,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      blurStyle: BlurStyle.solid,
-                                      color: Colors.black38,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                      spreadRadius: 0,
-                                    )
-                                  ]),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  StaticText(
-                                    color: darkcolor,
-                                    size: buttontextSize,
-                                    weight: FontWeight.w600,
-                                    align: TextAlign.center,
-                                    text: "320 AZN",
-                                  ),
-                                  StaticText(
-                                    color: darkcolor,
-                                    size: smalltextSize,
-                                    weight: FontWeight.w400,
-                                    align: TextAlign.center,
-                                    text: "Aylıq balans",
-                                  ),
-                                ],
+                            GestureDetector(
+                              onTap: () => Get.toNamed('/balance/add'),
+                              child: Container(
+                                width: width / 2 - 30,
+                                alignment: Alignment.center,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    color: whitecolor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        blurStyle: BlurStyle.solid,
+                                        color: Colors.black38,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 4),
+                                        spreadRadius: 0,
+                                      )
+                                    ]),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    StaticText(
+                                      color: darkcolor,
+                                      size: buttontextSize,
+                                      weight: FontWeight.w600,
+                                      align: TextAlign.center,
+                                      text: "320 AZN",
+                                    ),
+                                    StaticText(
+                                      color: darkcolor,
+                                      size: smalltextSize,
+                                      weight: FontWeight.w400,
+                                      align: TextAlign.center,
+                                      text: "Aylıq balans",
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            Container(
-                              width: width / 2 - 30,
-                              alignment: Alignment.center,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                  color: whitecolor,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      blurStyle: BlurStyle.solid,
-                                      color: Colors.black38,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                      spreadRadius: 0,
-                                    )
-                                  ]),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  StaticText(
-                                    color: darkcolor,
-                                    size: buttontextSize,
-                                    weight: FontWeight.w600,
-                                    align: TextAlign.center,
-                                    text: "15 AZN",
-                                  ),
-                                  StaticText(
-                                    color: darkcolor,
-                                    size: smalltextSize,
-                                    weight: FontWeight.w400,
-                                    align: TextAlign.center,
-                                    text: "Bugünki balans",
-                                  ),
-                                ],
+                            GestureDetector(
+                              onTap: () => Get.toNamed('/balance/add'),
+                              child: Container(
+                                width: width / 2 - 30,
+                                alignment: Alignment.center,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    color: whitecolor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        blurStyle: BlurStyle.solid,
+                                        color: Colors.black38,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 4),
+                                        spreadRadius: 0,
+                                      )
+                                    ]),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    StaticText(
+                                      color: darkcolor,
+                                      size: buttontextSize,
+                                      weight: FontWeight.w600,
+                                      align: TextAlign.center,
+                                      text: "15 AZN",
+                                    ),
+                                    StaticText(
+                                      color: darkcolor,
+                                      size: smalltextSize,
+                                      weight: FontWeight.w400,
+                                      align: TextAlign.center,
+                                      text: "Bugünki balans",
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
