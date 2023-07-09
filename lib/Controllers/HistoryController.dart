@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldash/Models/Cards.dart';
 
 class HistoryController extends GetxController {
@@ -13,10 +15,19 @@ class HistoryController extends GetxController {
     Cards(description: "Description", title: "Taytl", value: false)
   ].obs;
 
+  LatLng? currentLocation;
+
   Future<void> refreshData() async {
     await Future.delayed(Duration(seconds: 2));
     data.value = [
       Cards(description: "Description", title: "Taytl", value: false)
     ];
+  }
+
+  Future<void> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    currentLocation = LatLng(position.latitude, position.longitude);
   }
 }

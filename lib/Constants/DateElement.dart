@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
