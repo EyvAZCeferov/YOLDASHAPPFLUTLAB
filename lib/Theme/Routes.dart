@@ -14,6 +14,7 @@ import 'package:yoldash/Views/Tabs/Profile/Balance/BalanceCreate.dart';
 import 'package:yoldash/Views/Tabs/Profile/Cards/CardsAdd.dart';
 import 'package:yoldash/Views/Tabs/Profile/Cards/CardsIndex.dart';
 import 'package:yoldash/Views/Tabs/Profile/History/HistoryIndex.dart';
+import 'package:yoldash/Views/Tabs/Profile/History/HistoryShow.dart';
 import 'package:yoldash/Views/Tabs/Profile/ProfileInformation.dart';
 import 'package:yoldash/Views/Tabs/Profile/ProfilePage.dart';
 
@@ -66,6 +67,13 @@ final List<GetPage> Routes = [
   GetPage(
     name: '/history',
     page: () => HistoryIndex(),
+    binding: BindingsBuilder(() {
+      Get.put(HistoryController());
+    }),
+  ),
+  GetPage(
+    name: '/history/:index',
+    page: () => HistoryShow(),
     binding: BindingsBuilder(() {
       Get.put(HistoryController());
     }),

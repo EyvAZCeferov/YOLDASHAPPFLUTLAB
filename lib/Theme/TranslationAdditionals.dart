@@ -67,7 +67,12 @@ class TranslationAdditionals extends Translations {
           "addbalance": "Balansı artır",
           "monthly_balance": "Aylıq balans",
           "daily_balance": "Günlük balans",
-          "personal_adding": "Fərdi balans"
+          "personal_adding": "Fərdi balans",
+          "succed": "Tamamlandı",
+          "cancelled": "Ləğv edildi",
+          "yer_sayi": "Yer sayı: @counter boş",
+          "baqaj": "Baqaj: @counter boş",
+          "historydetail": "Tarixçə detalları"
         }
       };
 }
