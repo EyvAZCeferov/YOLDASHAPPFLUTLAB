@@ -58,6 +58,12 @@ class TranslationAdditionals extends Translations {
           "autotexpasport": "Avtomobilin texpasportu",
           "gallery": "Qalereya",
           "camera": "Kamera",
+          "automodel": "Avtomobilin modeli",
+          "automarka": "Avtomobilin markası",
+          "autocolor": "Avtomobilin rəngi",
+          "autonumber": "Avtomobilin seriya nömrəsi",
+          "cardnumber": "Kart nömrəsi",
+          "validtydate": "Bitmə tarixi",
         }
       };
 }

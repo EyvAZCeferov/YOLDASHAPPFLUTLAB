@@ -46,6 +46,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_credit_card: ^3.0.7
   fluttertoast: ^8.2.2
+  getwidget: ^3.1.1
   # cloud_firestore: 4.0.3
 
 dev_dependencies:

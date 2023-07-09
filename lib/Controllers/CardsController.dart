@@ -1,8 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Models/Cards.dart';
 
 class CardsController extends GetxController {
   RxList<Cards> cards = <Cards>[].obs;
+  Rx<TextEditingController> cardNumberController =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> validityDateController =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> cvvController =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> holderNameController =
+      Rx<TextEditingController>(TextEditingController());
 
   @override
   void onInit() {

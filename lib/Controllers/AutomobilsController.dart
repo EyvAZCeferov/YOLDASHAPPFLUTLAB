@@ -14,6 +14,8 @@ class AutomobilsController extends GetxController {
   Rx<File?> suruculukvesiqesi = Rx<File?>(null);
   Rx<File?> idcard = Rx<File?>(null);
   Rx<File?> autotexpasport = Rx<File?>(null);
+  Rx<TextEditingController> licensePlateController =
+      Rx<TextEditingController>(TextEditingController());
 
   @override
   void onInit() {

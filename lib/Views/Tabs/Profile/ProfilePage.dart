@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Constants/AddableWidget.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
@@ -8,7 +7,6 @@ import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
-import 'package:yoldash/Constants/TextButton.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Profile/build_menu_items.dart';
 
