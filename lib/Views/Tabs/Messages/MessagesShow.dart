@@ -38,7 +38,8 @@ class MessagesShow extends StatelessWidget {
               SizedBox(
                 width: 50,
                 child: ElevatedButton(
-                  onPressed: () => print("Pressed Call"),
+                  onPressed: () =>
+                      _controller.callpageredirect('call', context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
                     onPrimary: whitecolor,
@@ -54,7 +55,8 @@ class MessagesShow extends StatelessWidget {
               SizedBox(
                 width: 50,
                 child: ElevatedButton(
-                  onPressed: () => print("Pressed Video"),
+                  onPressed: () =>
+                      _controller.callpageredirect('video', context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
                     onPrimary: whitecolor,

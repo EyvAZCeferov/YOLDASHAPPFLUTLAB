@@ -77,7 +77,8 @@ class TranslationAdditionals extends Translations {
           "total_price": "Ümumi məbləğ",
           "choise": "Seç",
           "messageisnothavenull": "İsmarıc boş ola bilməz",
-          "message": "İsmarıc"
+          "message": "İsmarıc",
+          "calling": "Zəng"
         }
       };
 }

@@ -8,6 +8,7 @@ import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Models/MessageGroups.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/Views/Tabs/Messages/CallPage.dart';
 
 class MessagesController extends GetxController {
   var showattachmenu = false.obs;
@@ -16,6 +17,36 @@ class MessagesController extends GetxController {
   LatLng? selectedCoordinate;
   late TextEditingController messagetextcontroller = TextEditingController();
   RxList<MessageGroups> data = <MessageGroups>[
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0),
     MessageGroups(
         title: "Taytl",
         image:
@@ -103,6 +134,31 @@ class MessagesController extends GetxController {
       print(messagetextcontroller.value);
     } else {
       showToastMSG(errorcolor, 'messageisnothavenull'.tr);
+    }
+  }
+
+  void callpageredirect(type, context) async {
+    try {
+      if (type == "video") {
+        _handlecameraandmic(Permission.camera);
+      } else {
+        print("calling");
+      }
+
+      _handlecameraandmic(Permission.microphone);
+
+      Get.toNamed('/callpage/${type}', arguments: {type: type});
+      // await Navigator.push(context,
+      //     MaterialPageRoute(builder: (context) => CallPage(type: type)));
+    } catch (error) {
+      showToastMSG(errorcolor, error);
+    }
+  }
+
+  void _handlecameraandmic(Permission permission) async {
+    final status = await permission.request();
+    if (status.isDenied) {
+      showToastMSG(errorcolor, "permissiondenied".tr);
     }
   }
 }
