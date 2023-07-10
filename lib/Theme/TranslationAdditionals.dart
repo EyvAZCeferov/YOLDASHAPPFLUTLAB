@@ -82,7 +82,15 @@ class TranslationAdditionals extends Translations {
           "wheredoyougo": "Hara gedirik?",
           "from": "Haradan",
           "to": "Haraya",
-          "myhome": "Evim"
+          "myhome": "Evim",
+          "mywork": "İş yerim",
+          "search": "Axtar",
+          "reservation": "Rezerv et",
+          "weight": "Yük çəkiniz",
+          "today": "Bugün",
+          "tomorrow": "Sabah",
+          "close": "Bağla",
+          "choisetime": "Zamanı seç"
         }
       };
 }

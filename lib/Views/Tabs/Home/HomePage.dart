@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
@@ -132,10 +133,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )),
               ])
-            : Container(
-                width: width,
-                height: height,
-                color: whitecolor,
+            : SingleChildScrollView(
+                controller: ScrollController(),
+                physics: ScrollPhysics(),
+                scrollDirection: Axis.vertical,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,12 +167,13 @@ class _HomePageState extends State<HomePage> {
                     Devider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
                           width: 47,
-                          height: 110,
+                          height: 120,
                           child: ImageClass(
+                              boxfit: BoxFit.contain,
                               url: "assets/images/destinationicon.png",
                               type: false),
                         ),
@@ -185,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Center(
                               child: SizedBox(
-                                width: width - 100,
+                                width: width - 110,
                                 child: InputElement(
                                   accentColor: iconcolor,
                                   controller: _controller.fromcontroller,
@@ -200,71 +202,116 @@ class _HomePageState extends State<HomePage> {
                               height: 20,
                             ),
                             Center(
-                              child: SizedBox(
-                                width: width - 100,
-                                child: InputElement(
-                                  accentColor: iconcolor,
-                                  controller: _controller.tocontroller,
-                                  placeholder: "to".tr,
-                                  textColor: iconcolor,
-                                  cornerradius: BorderRadius.circular(40),
-                                  inputType: TextInputType.text,
-                                ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: width - 110,
+                                    child: InputElement(
+                                      accentColor: iconcolor,
+                                      controller: _controller.tocontroller,
+                                      placeholder: "to".tr,
+                                      textColor: iconcolor,
+                                      cornerradius: BorderRadius.circular(40),
+                                      inputType: TextInputType.text,
+                                    ),
+                                  ),
+                                  IconButtonElement(
+                                    icon: _controller.addedsectionshow.value ==
+                                            false
+                                        ? FeatherIcons.plus
+                                        : FeatherIcons.minus,
+                                    onPressed: () => _controller.addsections(),
+                                    bgColor: Colors.transparent,
+                                    color: secondarycolor,
+                                    size: buttontextSize,
+                                  )
+                                ],
                               ),
                             ),
-                            Devider(),
+                            SizedBox(height: 10),
                             Center(
                               child: SizedBox(
                                 width: width - 70,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     GestureDetector(
                                       onTap: () => print("Hi"),
-                                      child: Container(
-                                        width: 40,
-                                        height: 25,
-                                        decoration: BoxDecoration(
-                                          color: whitecolor,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          border: Border.all(
-                                              color: iconcolor,
-                                              style: BorderStyle.solid,
-                                              width: 1),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 4, horizontal: 9),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              FeatherIcons.home,
-                                              color: primarycolor,
-                                              size: normaltextSize,
-                                            ),
-                                            Column(
-                                              children: [
-                                                StaticText(
-                                                    color: darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w500,
-                                                    align: TextAlign.center,
-                                                    text: "myhome".tr),
-                                                StaticText(
-                                                    color: iconcolor,
-                                                    size: smalltextSize,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.center,
-                                                    text: "Xırdalan şəh."),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            FeatherIcons.home,
+                                            color: primarycolor,
+                                            size: subHeadingSize,
+                                          ),
+                                          SizedBox(width: 7),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              StaticText(
+                                                  color: darkcolor,
+                                                  size: normaltextSize,
+                                                  weight: FontWeight.w500,
+                                                  align: TextAlign.center,
+                                                  text: "myhome".tr),
+                                              StaticText(
+                                                  color: iconcolor,
+                                                  size: smalltextSize,
+                                                  weight: FontWeight.w400,
+                                                  align: TextAlign.center,
+                                                  text: "Xırdalan şəh."),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 7),
+                                    GestureDetector(
+                                      onTap: () => print("Hi"),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            FeatherIcons.briefcase,
+                                            color: primarycolor,
+                                            size: subHeadingSize,
+                                          ),
+                                          SizedBox(width: 7),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              StaticText(
+                                                  color: darkcolor,
+                                                  size: normaltextSize,
+                                                  weight: FontWeight.w500,
+                                                  align: TextAlign.center,
+                                                  text: "mywork".tr),
+                                              StaticText(
+                                                  color: iconcolor,
+                                                  size: smalltextSize,
+                                                  weight: FontWeight.w400,
+                                                  align: TextAlign.center,
+                                                  text: "Yasamal ray."),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -275,6 +322,181 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    Devider(),
+                    _controller.addedsectionshow.value == true
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Devider(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 10),
+                                  Icon(
+                                    FeatherIcons.briefcase,
+                                    color: secondarycolor,
+                                    size: subHeadingSize,
+                                  ),
+                                  SizedBox(width: 20),
+                                  SizedBox(
+                                    width: width - 110,
+                                    child: InputElement(
+                                      accentColor: iconcolor,
+                                      controller: _controller.weightcontroller,
+                                      placeholder: "weight".tr,
+                                      textColor: iconcolor,
+                                      cornerradius: BorderRadius.circular(40),
+                                      inputType: TextInputType.number,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Devider(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 10),
+                                  Icon(
+                                    FeatherIcons.clock,
+                                    color: secondarycolor,
+                                    size: subHeadingSize,
+                                  ),
+                                  SizedBox(width: 20),
+                                  Center(
+                                    child: SizedBox(
+                                      width: width - 70,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () =>
+                                                _controller.changeindex(1),
+                                            child: Container(
+                                              width: 90,
+                                              height: 35,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: primarycolor,
+                                                      style: BorderStyle.solid,
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(35),
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              1
+                                                      ? primarycolor
+                                                      : whitecolor),
+                                              child: StaticText(
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              1
+                                                      ? whitecolor
+                                                      : darkcolor,
+                                                  size: normaltextSize,
+                                                  weight: FontWeight.w500,
+                                                  align: TextAlign.center,
+                                                  text: "today".tr),
+                                            ),
+                                          ),
+                                          SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () =>
+                                                _controller.changeindex(2),
+                                            child: Container(
+                                              width: 90,
+                                              height: 35,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: primarycolor,
+                                                      style: BorderStyle.solid,
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(35),
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              2
+                                                      ? primarycolor
+                                                      : whitecolor),
+                                              child: StaticText(
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              2
+                                                      ? whitecolor
+                                                      : darkcolor,
+                                                  size: normaltextSize,
+                                                  weight: FontWeight.w500,
+                                                  align: TextAlign.center,
+                                                  text: "tomorrow".tr),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Devider(),
+                            ],
+                          )
+                        : SizedBox(),
+                    Devider(),
+                    _controller.data.length > 0
+                        ? SizedBox()
+                        : Center(
+                            child: SizedBox(
+                              width: width - 40,
+                              height: width / 1.6,
+                              child: ImageClass(
+                                  type: false,
+                                  boxfit: BoxFit.contain,
+                                  url: "assets/images/findcar.png"),
+                            ),
+                          ),
+                    Devider(),
+                    Center(
+                      child: _controller.data.length > 0
+                          ? SizedBox()
+                          : ButtonElement(
+                              bgColor: primarycolor,
+                              borderRadius: BorderRadius.circular(30),
+                              height: 40,
+                              fontsize: normaltextSize,
+                              textColor: whitecolor,
+                              text: _controller.authtype == 'rider'
+                                  ? "search".tr
+                                  : "reservation".tr,
+                              width: width - 70,
+                              onPressed: () => print("A")),
+                    ),
+                    Devider(),
                   ],
                 ),
               ),

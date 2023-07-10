@@ -41,6 +41,7 @@ dependencies:
   fluttertoast: ^8.2.2
   line_icons: ^2.0.1
   intl: ^0.18.1
+  flutter_time_picker_spinner: ^2.0.0
   # agora_rtc_engine: 
 
 
