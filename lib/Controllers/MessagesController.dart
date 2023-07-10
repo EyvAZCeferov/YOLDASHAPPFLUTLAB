@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -7,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Functions/helpers.dart';
+import 'package:yoldash/Models/MessageGroups.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class MessagesController extends GetxController {
@@ -14,6 +14,25 @@ class MessagesController extends GetxController {
   Rx<File?> imageFile = Rx<File?>(null);
   Rx<GoogleMapController?> googleMapController = Rx<GoogleMapController?>(null);
   LatLng? selectedCoordinate;
+  late TextEditingController messagetextcontroller = TextEditingController();
+  RxList<MessageGroups> data = <MessageGroups>[
+    MessageGroups(
+        title: "Taytl",
+        image:
+            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+        unread: 0)
+  ].obs;
+
+  Future<void> refreshData() async {
+    await Future.delayed(Duration(seconds: 2));
+    data.value = [
+      MessageGroups(
+          title: "Taytl",
+          image:
+              "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
+          unread: 0)
+    ];
+  }
 
   void toggleattachmenu() {
     showattachmenu.value = !showattachmenu.value;
@@ -77,5 +96,13 @@ class MessagesController extends GetxController {
         );
       },
     );
+  }
+
+  void sendmessage() {
+    if (messagetextcontroller.value != null) {
+      print(messagetextcontroller.value);
+    } else {
+      showToastMSG(errorcolor, 'messageisnothavenull'.tr);
+    }
   }
 }

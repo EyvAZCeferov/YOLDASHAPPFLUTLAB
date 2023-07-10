@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void showToastMSG(bgcolor, text) {
-  Fluttertoast.showToast(
+Future<void> showToastMSG(bgcolor, text) {
+  return Fluttertoast.showToast(
     msg: text,
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.BOTTOM,

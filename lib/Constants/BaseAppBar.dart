@@ -13,14 +13,15 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool changeprof;
   final bool titlebg;
   final String? authtype;
+  final Color? bgcolorheader;
 
-  const BaseAppBar({
-    this.backbutton = true,
-    this.title = null,
-    this.changeprof = false,
-    this.titlebg = false,
-    this.authtype,
-  });
+  const BaseAppBar(
+      {this.backbutton = true,
+      this.title = null,
+      this.changeprof = false,
+      this.titlebg = false,
+      this.authtype,
+      this.bgcolorheader = Colors.transparent});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -29,7 +30,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: bgcolorheader,
       bottomOpacity: 0,
       brightness: Brightness.light,
       centerTitle: true,

@@ -75,7 +75,9 @@ class TranslationAdditionals extends Translations {
           "historydetail": "Tarixçə detalları",
           "customers": "Müştərilər",
           "total_price": "Ümumi məbləğ",
-          "choise": "Seç"
+          "choise": "Seç",
+          "messageisnothavenull": "İsmarıc boş ola bilməz",
+          "message": "İsmarıc"
         }
       };
 }

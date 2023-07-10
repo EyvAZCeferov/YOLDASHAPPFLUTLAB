@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Home/HomePage.dart';
+import 'package:yoldash/Views/Tabs/Messages/MessagesIndex.dart';
 import 'package:yoldash/Views/Tabs/Profile/ProfilePage.dart';
 
 class MainScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     ProfilePage(),
-    Container(),
+    MessagesIndex(),
     Container(),
     ProfilePage(),
   ];

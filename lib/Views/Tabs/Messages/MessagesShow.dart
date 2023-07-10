@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/MessagesController.dart';
@@ -231,8 +230,9 @@ class MessagesShow extends StatelessWidget {
                     ),
                     Expanded(
                       child: TextField(
+                        controller: _controller.messagetextcontroller,
                         decoration: InputDecoration.collapsed(
-                          hintText: "Type your message...",
+                          hintText: "message".tr + '...',
                         ),
                         onSubmitted: (value) {
                           print(value);
@@ -244,7 +244,7 @@ class MessagesShow extends StatelessWidget {
                       icon: Icon(FeatherIcons.send,
                           color: iconcolor, size: subHeadingSize),
                       onPressed: () {
-                        print("Attach button pressed");
+                        _controller.sendmessage();
                       },
                     ),
                   ],

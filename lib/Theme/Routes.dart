@@ -9,6 +9,7 @@ import 'package:yoldash/Views/Auth/Register.dart';
 import 'package:yoldash/Views/Auth/VerificationCode.dart';
 import 'package:yoldash/Views/Tabs/Home/HomePage.dart';
 import 'package:yoldash/Views/Tabs/MainScreen.dart';
+import 'package:yoldash/Views/Tabs/Messages/MessagesIndex.dart';
 import 'package:yoldash/Views/Tabs/Messages/MessagesShow.dart';
 import 'package:yoldash/Views/Tabs/Profile/Automobils/AutomobilsCreate.dart';
 import 'package:yoldash/Views/Tabs/Profile/Automobils/AutomobilsIndex.dart';
@@ -78,6 +79,13 @@ final List<GetPage> Routes = [
     page: () => HistoryShow(),
     binding: BindingsBuilder(() {
       Get.put(HistoryController());
+    }),
+  ),
+  GetPage(
+    name: '/messages',
+    page: () => MessagesIndex(),
+    binding: BindingsBuilder(() {
+      Get.put(MessagesController());
     }),
   ),
   GetPage(
