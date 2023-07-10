@@ -78,7 +78,11 @@ class TranslationAdditionals extends Translations {
           "choise": "Seç",
           "messageisnothavenull": "İsmarıc boş ola bilməz",
           "message": "İsmarıc",
-          "calling": "Zəng"
+          "calling": "Zəng",
+          "wheredoyougo": "Hara gedirik?",
+          "from": "Haradan",
+          "to": "Haraya",
+          "myhome": "Evim"
         }
       };
 }
