@@ -21,7 +21,6 @@ class AuthController extends GetxController {
   }
 
   void pickImage() async {
-    // photos camera storage
     final status = await Permission.photos.request();
 
     if (status.isGranted) {

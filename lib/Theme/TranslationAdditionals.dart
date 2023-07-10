@@ -72,7 +72,10 @@ class TranslationAdditionals extends Translations {
           "cancelled": "Ləğv edildi",
           "yer_sayi": "Yer sayı: @counter boş",
           "baqaj": "Baqaj: @counter boş",
-          "historydetail": "Tarixçə detalları"
+          "historydetail": "Tarixçə detalları",
+          "customers": "Müştərilər",
+          "total_price": "Ümumi məbləğ",
+          "choise": "Seç"
         }
       };
 }
