@@ -88,7 +88,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                       textColor: darkcolor,
                       cornerradius: BorderRadius.circular(15),
                       inputType: TextInputType.text,
-                      controller: _controller.namesurnamecontroller,
+                      controller: _controller.namesurnamecontroller.value,
                       margin: EdgeInsets.only(
                         bottom: 10,
                       ),
@@ -103,7 +103,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                       textColor: darkcolor,
                       cornerradius: BorderRadius.circular(15),
                       inputType: TextInputType.emailAddress,
-                      controller: _controller.emailcontroller,
+                      controller: _controller.emailcontroller.value,
                       margin: EdgeInsets.only(
                         bottom: 10,
                       ),
@@ -118,7 +118,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                       textColor: darkcolor,
                       cornerradius: BorderRadius.circular(15),
                       inputType: TextInputType.phone,
-                      controller: _controller.phonecontroller,
+                      controller: _controller.phonecontroller.value,
                       margin: EdgeInsets.only(
                         bottom: 10,
                       ),

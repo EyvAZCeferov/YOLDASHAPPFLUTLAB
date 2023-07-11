@@ -108,7 +108,9 @@ class TranslationAdditionals extends Translations {
           "contact": "Əlaqə",
           "minumumwayofprice": "Minimum gediş məbləği",
           "wayofprice": "Gedişin məbləği",
-          "changedlang": "Dil dəyişdirildi"
+          "changedlang": "Dil dəyişdirildi",
+          "rider": "Sərnişin",
+          "driver": "Sürücü",
         }
       };
 }

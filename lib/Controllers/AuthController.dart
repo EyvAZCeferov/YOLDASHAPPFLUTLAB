@@ -7,17 +7,21 @@ import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class AuthController extends GetxController {
-  late TextEditingController namesurnamecontroller;
-  late TextEditingController emailcontroller;
-  late TextEditingController phonecontroller;
+  Rx<TextEditingController> namesurnamecontroller =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> gendercontroller =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> birthdaycontroller =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> emailcontroller =
+      Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> phonecontroller =
+      Rx<TextEditingController>(TextEditingController());
   Rx<File?> imageFile = Rx<File?>(null);
-  Rx<String> authType = 'driver'.obs;
+  Rx<String> authType = 'rider'.obs;
 
   @override
   void onInit() {
-    namesurnamecontroller = TextEditingController();
-    emailcontroller = TextEditingController();
-    phonecontroller = TextEditingController();
     super.onInit();
   }
 

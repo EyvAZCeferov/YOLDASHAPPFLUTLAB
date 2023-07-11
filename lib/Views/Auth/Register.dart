@@ -8,16 +8,11 @@ import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/InputElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Constants/TextButton.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
-class Register extends StatefulWidget {
-  @override
-  State<Register> createState() => _RegisterState();
-}
-
-class _RegisterState extends State<Register> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _phonenumberController = TextEditingController();
+class Register extends StatelessWidget {
+  final AuthController _controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +29,9 @@ class _RegisterState extends State<Register> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 verticalDirection: VerticalDirection.down,
                 children: [
-                  Devider(size: 60),
+                  Devider(size: 40),
                   Container(
-                      width: width - 100,
+                      width: width - 40,
                       height: 100,
                       child: ImageClass(
                           type: false,
@@ -52,14 +47,57 @@ class _RegisterState extends State<Register> {
                   Devider(
                     size: 30,
                   ),
+                  Center(
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: width - 40,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: whitecolor,
+                          borderRadius: BorderRadius.circular(width - 40 / 2),
+                          border: Border.all(
+                              color: primarycolor,
+                              style: BorderStyle.solid,
+                              width: 2)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: width - 40 / 2,
+                            height: 49,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: _controller.authType.value == "rider"
+                                  ? primarycolor
+                                  : whitecolor,
+                            ),
+                            child: StaticText(
+                              color: _controller.authType.value == "rider"
+                                  ? whitecolor
+                                  : darkcolor,
+                              size: normaltextSize,
+                              weight: FontWeight.w500,
+                              align: TextAlign.center,
+                              text: "rider".tr,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Devider(
+                    size: 30,
+                  ),
                   Container(
                     width: width - 100,
                     child: InputElement(
                         placeholder: "name_surname".tr,
                         accentColor: primarycolor,
                         textColor: bodycolor,
+                        inputType: TextInputType.text,
                         cornerradius: BorderRadius.all(Radius.circular(50)),
-                        controller: _phonenumberController),
+                        controller: _controller.namesurnamecontroller.value),
                   ),
                   Devider(size: 15),
                   Container(
@@ -68,8 +106,9 @@ class _RegisterState extends State<Register> {
                         placeholder: "gender".tr,
                         accentColor: primarycolor,
                         textColor: bodycolor,
+                        inputType: TextInputType.text,
                         cornerradius: BorderRadius.all(Radius.circular(50)),
-                        controller: _phonenumberController),
+                        controller: _controller.gendercontroller.value),
                   ),
                   Devider(size: 15),
                   Container(
@@ -91,8 +130,9 @@ class _RegisterState extends State<Register> {
                         placeholder: "email".tr,
                         accentColor: primarycolor,
                         textColor: bodycolor,
+                        inputType: TextInputType.emailAddress,
                         cornerradius: BorderRadius.all(Radius.circular(50)),
-                        controller: _phonenumberController),
+                        controller: _controller.emailcontroller.value),
                   ),
                   Devider(size: 15),
                   Container(
@@ -101,10 +141,10 @@ class _RegisterState extends State<Register> {
                         placeholder: "mobile_phone".tr,
                         accentColor: primarycolor,
                         textColor: bodycolor,
+                        inputType: TextInputType.text,
                         cornerradius: BorderRadius.all(Radius.circular(50)),
-                        controller: _phonenumberController),
+                        controller: _controller.phonecontroller.value),
                   ),
-                  Devider(size: 15),
                   Devider(size: 25),
                   ButtonElement(
                       text: "register".tr,
@@ -152,7 +192,7 @@ class _RegisterState extends State<Register> {
                     ],
                   ),
                   Devider(
-                    size: 30,
+                    size: 20,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
