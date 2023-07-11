@@ -9,7 +9,6 @@ import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/ImageModal.dart';
 import 'package:yoldash/Constants/StaticText.dart';
-import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class ProfileDriver extends StatefulWidget {
@@ -18,14 +17,12 @@ class ProfileDriver extends StatefulWidget {
 }
 
 class _ProfileDriverState extends State<ProfileDriver> {
-  final AuthController _controller = Get.put(AuthController());
   bool showimagemodal = false;
   String selectedimage = '';
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: bodycolor,

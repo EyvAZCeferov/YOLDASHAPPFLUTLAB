@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 

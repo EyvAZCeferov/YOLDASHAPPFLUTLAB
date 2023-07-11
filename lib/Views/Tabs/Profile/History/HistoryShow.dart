@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
@@ -15,12 +14,10 @@ class HistoryShow extends StatelessWidget {
   final HistoryController _controller = Get.find<HistoryController>();
 
   final index = int.parse(Get.parameters['index'] ?? '');
-  GoogleMapController? _mapController;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,

@@ -15,13 +15,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _phonenumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: bodycolor,
         resizeToAvoidBottomInset: true,

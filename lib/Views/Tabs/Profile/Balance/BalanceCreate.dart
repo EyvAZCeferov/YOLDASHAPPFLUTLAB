@@ -18,7 +18,6 @@ class _BalanceCreateState extends State<BalanceCreate> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: bodycolor,
@@ -144,7 +143,6 @@ class _BalanceCreateState extends State<BalanceCreate> {
 
   Row getDailyOrPersonal(context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     if (_controller.selectedType.value == "gunluk") {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
