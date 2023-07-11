@@ -39,18 +39,18 @@ Widget build_menu_items(String authtype) {
                 size: subHeadingSize,
               ),
               "changelanguage".tr,
-              () => print("A")),
-          if (authtype == "driver")
-            list_items(
-                Icon(
-                  LineIcons.wallet,
-                  color: iconcolor,
-                  size: subHeadingSize,
-                ),
-                "mywallet".tr,
-                () => print("A"))
-          else
-            Container()
+              () => Get.toNamed('/language')),
+          // if (authtype == "driver")
+          //   list_items(
+          //       Icon(
+          //         LineIcons.wallet,
+          //         color: iconcolor,
+          //         size: subHeadingSize,
+          //       ),
+          //       "mywallet".tr,
+          //       () => print("A"))
+          // else
+          //   Container()
         ],
       ),
     ),

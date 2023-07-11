@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Theme/ThemeService.dart';
 
-Future<void> showToastMSG(bgcolor, text) {
-  return Fluttertoast.showToast(
-    msg: text,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 1,
+void showToastMSG(bgcolor, text, context) {
+  print(text);
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     backgroundColor: bgcolor,
-    textColor: Colors.white,
-    fontSize: 16.0,
-    webBgColor: bgcolor,
-    webShowClose: true,
-  );
+    content: StaticText(
+      color: whitecolor,
+      size: smalltextSize,
+      text: text,
+      weight: FontWeight.w500,
+      align: TextAlign.center,
+    ),
+  ));
+}
+
+Future<void> getandsetkey(String key, newval) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (newval == null) {
+    final String? val = prefs.getString(key);
+  } else {
+    await prefs.setInt(key, newval);
+  }
 }
 
 const String appagid = "91e3453e50e543c6b520f7bfe0fa8b96";

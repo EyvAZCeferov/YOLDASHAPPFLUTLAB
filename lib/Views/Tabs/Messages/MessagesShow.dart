@@ -133,7 +133,7 @@ class MessagesShow extends StatelessWidget {
                                   icon: Icon(FeatherIcons.image,
                                       color: iconcolor, size: buttontextSize),
                                   onPressed: () {
-                                    _controller.pickImage();
+                                    _controller.pickImage(context);
                                   },
                                 ),
                               ),
@@ -246,7 +246,7 @@ class MessagesShow extends StatelessWidget {
                       icon: Icon(FeatherIcons.send,
                           color: iconcolor, size: subHeadingSize),
                       onPressed: () {
-                        _controller.sendmessage();
+                        _controller.sendmessage(context);
                       },
                     ),
                   ],

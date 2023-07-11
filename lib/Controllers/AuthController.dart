@@ -11,6 +11,7 @@ class AuthController extends GetxController {
   late TextEditingController emailcontroller;
   late TextEditingController phonecontroller;
   Rx<File?> imageFile = Rx<File?>(null);
+  Rx<String> authType = 'driver'.obs;
 
   @override
   void onInit() {
@@ -20,7 +21,7 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  void pickImage() async {
+  void pickImage(context) async {
     final status = await Permission.photos.request();
 
     if (status.isGranted) {
@@ -32,14 +33,23 @@ class AuthController extends GetxController {
       }
     } else {
       if (status.isDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       } else if (status.isPermanentlyDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       }
     }
   }
 
   void updateprofiledata() {
     print("Update Profile");
+  }
+
+  void changeprofpage() {
+    print(authType.value);
+    if (authType.value == "rider") {
+      Get.toNamed('/verificationcode');
+    } else {
+      authType.value = 'rider';
+    }
   }
 }

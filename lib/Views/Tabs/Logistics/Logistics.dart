@@ -12,12 +12,12 @@ import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/GoingController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
-class HomePage extends StatefulWidget {
+class Logistics extends StatefulWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Logistics> createState() => _LogisticsState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _LogisticsState extends State<Logistics> {
   late GoingController _controller = Get.put(GoingController());
 
   @override
@@ -356,68 +356,6 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               Devider(),
-                              _controller.authtype == "driver"
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(width: 10),
-                                        Icon(
-                                          FontAwesomeIcons.road,
-                                          color: secondarycolor,
-                                          size: subHeadingSize,
-                                        ),
-                                        SizedBox(width: 20),
-                                        SizedBox(
-                                          width: width - 110,
-                                          child: InputElement(
-                                            accentColor: iconcolor,
-                                            controller: _controller
-                                                .minimumpriceofwaycontroller,
-                                            placeholder: "minumumwayofprice".tr,
-                                            textColor: iconcolor,
-                                            cornerradius:
-                                                BorderRadius.circular(40),
-                                            inputType: TextInputType.number,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : SizedBox(),
-                              Devider(),
-                              _controller.authtype == "driver"
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(width: 10),
-                                        Icon(
-                                          FontAwesomeIcons.car,
-                                          color: secondarycolor,
-                                          size: subHeadingSize,
-                                        ),
-                                        SizedBox(width: 20),
-                                        SizedBox(
-                                          width: width - 110,
-                                          child: InputElement(
-                                            accentColor: iconcolor,
-                                            controller: _controller
-                                                .priceofwaycontroller,
-                                            placeholder: "wayofprice".tr,
-                                            textColor: iconcolor,
-                                            cornerradius:
-                                                BorderRadius.circular(40),
-                                            inputType: TextInputType.number,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : SizedBox(),
-                              Devider(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -528,171 +466,85 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               Devider(),
-                              _controller.authtype == "driver"
-                                  ? SizedBox()
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () =>
-                                              _controller.selectplace(1),
-                                          child: Container(
-                                            width: 110,
-                                            height: 35,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: primarycolor,
-                                                    style: BorderStyle.solid,
-                                                    width: 1),
-                                                borderRadius:
-                                                    BorderRadius.circular(35),
-                                                color: _controller.selectedplace
-                                                                .value !=
-                                                            null &&
-                                                        _controller
-                                                                .selectedplace
-                                                                .value ==
-                                                            1
-                                                    ? primarycolor
-                                                    : whitecolor),
-                                            child: StaticText(
-                                                color: _controller.selectedplace
-                                                                .value !=
-                                                            null &&
-                                                        _controller
-                                                                .selectedplace
-                                                                .value ==
-                                                            1
-                                                    ? whitecolor
-                                                    : darkcolor,
-                                                size: normaltextSize,
-                                                weight: FontWeight.w500,
-                                                align: TextAlign.center,
-                                                text: "choiseplace".tr),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () =>
-                                              _controller.selectplace(2),
-                                          child: Container(
-                                            width: 150,
-                                            height: 35,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: primarycolor,
-                                                    style: BorderStyle.solid,
-                                                    width: 1),
-                                                borderRadius:
-                                                    BorderRadius.circular(35),
-                                                color: _controller.selectedplace
-                                                                .value !=
-                                                            null &&
-                                                        _controller
-                                                                .selectedplace
-                                                                .value ==
-                                                            2
-                                                    ? primarycolor
-                                                    : whitecolor),
-                                            child: StaticText(
-                                                color: _controller.selectedplace
-                                                                .value !=
-                                                            null &&
-                                                        _controller
-                                                                .selectedplace
-                                                                .value ==
-                                                            2
-                                                    ? whitecolor
-                                                    : darkcolor,
-                                                size: normaltextSize,
-                                                weight: FontWeight.w500,
-                                                align: TextAlign.center,
-                                                text: "fullreservation".tr),
-                                          ),
-                                        ),
-                                      ],
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _controller.selectplace(1),
+                                    child: Container(
+                                      width: 110,
+                                      height: 35,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: primarycolor,
+                                              style: BorderStyle.solid,
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(35),
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          1
+                                                  ? primarycolor
+                                                  : whitecolor),
+                                      child: StaticText(
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          1
+                                                  ? whitecolor
+                                                  : darkcolor,
+                                          size: normaltextSize,
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.center,
+                                          text: "choiseplace".tr),
                                     ),
-                              Devider(),
-                              _controller.authtype == "driver"
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () =>
-                                              _controller.selectplacing(),
-                                          child: Container(
-                                            width: width / 1.5,
-                                            height: 35,
-                                            alignment: Alignment.center,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: 40,
-                                                  child: ImageClass(
-                                                    type: false,
-                                                    boxfit: BoxFit.contain,
-                                                    url:
-                                                        "/assets/images/yersayi.png",
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                StaticText(
-                                                    color: darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w500,
-                                                    align: TextAlign.center,
-                                                    text:
-                                                        "Yer sayı 3 nəfər boş"),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Devider(),
-                                        GestureDetector(
-                                          onTap: () =>
-                                              _controller.selectplacing(),
-                                          child: Container(
-                                            width: width / 1.5,
-                                            height: 35,
-                                            alignment: Alignment.center,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(FeatherIcons.briefcase,
-                                                    color: primarycolor,
-                                                    size: subHeadingSize),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                StaticText(
-                                                    color: darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w500,
-                                                    align: TextAlign.center,
-                                                    text: "Yük 3/1 boş"),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : SizedBox(),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => _controller.selectplace(2),
+                                    child: Container(
+                                      width: 150,
+                                      height: 35,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: primarycolor,
+                                              style: BorderStyle.solid,
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(35),
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          2
+                                                  ? primarycolor
+                                                  : whitecolor),
+                                      child: StaticText(
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          2
+                                                  ? whitecolor
+                                                  : darkcolor,
+                                          size: normaltextSize,
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.center,
+                                          text: "fullreservation".tr),
+                                    ),
+                                  ),
+                                ],
+                              ),
                               Devider(),
                             ],
                           )

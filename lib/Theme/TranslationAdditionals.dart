@@ -97,7 +97,18 @@ class TranslationAdditionals extends Translations {
               "Zəhmət olmasa istədiyiniz yeri seçmək üçün klik edin.",
           "searchingcar":
               "Zəhmət olmasa gözləyin! Sizin üçün yaxınlıqdakı sürücünü axtarırıq",
-          "stopsearching": "Axtarışı dayandır"
+          "stopsearching": "Axtarışı dayandır",
+          "more": "Ətraflı",
+          "informationforride": "Gediş haqqında məlumat",
+          "reguestnow": "Sorğu göndər",
+          "nagd": "Nağd",
+          "changepaymentmethod": "Ödəniş metodunu dəyiş",
+          "aboutme": "Haqqında",
+          "infoauto": "Avtomobil haqqında",
+          "contact": "Əlaqə",
+          "minumumwayofprice": "Minimum gediş məbləği",
+          "wayofprice": "Gedişin məbləği",
+          "changedlang": "Dil dəyişdirildi"
         }
       };
 }

@@ -14,6 +14,9 @@ class HistoryController extends GetxController {
     Cards(description: "Description", title: "Taytl", value: false),
     Cards(description: "Description", title: "Taytl", value: false)
   ].obs;
+  Rx<String> authtype = "rider".obs;
+  RxBool openmodalval = false.obs;
+  Rx<String> image = "".obs;
 
   LatLng? currentLocation;
 
@@ -29,5 +32,13 @@ class HistoryController extends GetxController {
       desiredAccuracy: LocationAccuracy.high,
     );
     currentLocation = LatLng(position.latitude, position.longitude);
+  }
+
+  void openModal(imageval) {
+    image.value = '';
+    if (imageval != null) {
+      image.value = imageval;
+    }
+    openmodalval.value = !openmodalval.value;
   }
 }

@@ -70,7 +70,7 @@ class _ProfileInformationState extends State<ProfileInformation> {
                                   borderRadius: BorderRadius.circular(40)),
                               child: IconButtonElement(
                                 icon: FeatherIcons.camera,
-                                onPressed: () => _controller.pickImage(),
+                                onPressed: () => _controller.pickImage(context),
                                 color: whitecolor,
                                 size: buttontextSize,
                               ),

@@ -9,7 +9,10 @@ class Devider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return this.type == true
-        ? Container(width: double.infinity, height: this.size)
-        : Container(width: this.size);
+        ? SizedBox(width: double.infinity, height: this.size)
+        : SizedBox(
+            width: this.size,
+            height: 10,
+          );
   }
 }

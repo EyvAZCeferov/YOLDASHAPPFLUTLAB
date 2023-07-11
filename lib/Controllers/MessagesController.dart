@@ -8,7 +8,6 @@ import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Models/MessageGroups.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
-import 'package:yoldash/Views/Tabs/Messages/CallPage.dart';
 
 class MessagesController extends GetxController {
   var showattachmenu = false.obs;
@@ -69,7 +68,7 @@ class MessagesController extends GetxController {
     showattachmenu.value = !showattachmenu.value;
   }
 
-  void pickImage() async {
+  void pickImage(context) async {
     final status = await Permission.photos.request();
 
     if (status.isGranted) {
@@ -81,9 +80,9 @@ class MessagesController extends GetxController {
       }
     } else {
       if (status.isDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       } else if (status.isPermanentlyDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       }
     }
   }
@@ -129,36 +128,34 @@ class MessagesController extends GetxController {
     );
   }
 
-  void sendmessage() {
+  void sendmessage(context) {
     if (messagetextcontroller.value != null) {
       print(messagetextcontroller.value);
     } else {
-      showToastMSG(errorcolor, 'messageisnothavenull'.tr);
+      showToastMSG(errorcolor, 'messageisnothavenull'.tr, context);
     }
   }
 
   void callpageredirect(type, context) async {
     try {
       if (type == "video") {
-        _handlecameraandmic(Permission.camera);
+        _handlecameraandmic(Permission.camera, context);
       } else {
         print("calling");
       }
 
-      _handlecameraandmic(Permission.microphone);
+      _handlecameraandmic(Permission.microphone, context);
 
       Get.toNamed('/callpage/${type}', arguments: {type: type});
-      // await Navigator.push(context,
-      //     MaterialPageRoute(builder: (context) => CallPage(type: type)));
     } catch (error) {
-      showToastMSG(errorcolor, error);
+      showToastMSG(errorcolor, error, context);
     }
   }
 
-  void _handlecameraandmic(Permission permission) async {
+  void _handlecameraandmic(Permission permission, context) async {
     final status = await permission.request();
     if (status.isDenied) {
-      showToastMSG(errorcolor, "permissiondenied".tr);
+      showToastMSG(errorcolor, "permissiondenied".tr, context);
     }
   }
 }

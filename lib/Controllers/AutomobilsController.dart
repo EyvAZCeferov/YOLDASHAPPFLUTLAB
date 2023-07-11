@@ -104,15 +104,15 @@ class AutomobilsController extends GetxController {
           } else if (type == "autotexpasport") {
             autotexpasport.value = file;
           }
-          showToastMSG(primarycolor, 'imageuploaded'.tr);
+          showToastMSG(primarycolor, 'imageuploaded'.tr, context);
         }
       }
     } else {
       if (galleryStatus.isDenied || cameraStatus.isDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       } else if (galleryStatus.isPermanentlyDenied ||
           cameraStatus.isPermanentlyDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr);
+        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
       }
     }
   }
