@@ -90,7 +90,14 @@ class TranslationAdditionals extends Translations {
           "today": "Bugün",
           "tomorrow": "Sabah",
           "close": "Bağla",
-          "choisetime": "Zamanı seç"
+          "choisetime": "Zamanı seç",
+          "choiseplace": "Yer seçin",
+          "fullreservation": "Tam rezerv",
+          "pleaseselectplaceandclick":
+              "Zəhmət olmasa istədiyiniz yeri seçmək üçün klik edin.",
+          "searchingcar":
+              "Zəhmət olmasa gözləyin! Sizin üçün yaxınlıqdakı sürücünü axtarırıq",
+          "stopsearching": "Axtarışı dayandır"
         }
       };
 }

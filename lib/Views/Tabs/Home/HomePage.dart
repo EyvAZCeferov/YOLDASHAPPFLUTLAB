@@ -6,6 +6,7 @@ import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/InputElement.dart';
+import 'package:yoldash/Constants/LineLoaderWidget.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/GoingController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
@@ -464,22 +465,143 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               Devider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _controller.selectplace(1),
+                                    child: Container(
+                                      width: 110,
+                                      height: 35,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: primarycolor,
+                                              style: BorderStyle.solid,
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(35),
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          1
+                                                  ? primarycolor
+                                                  : whitecolor),
+                                      child: StaticText(
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          1
+                                                  ? whitecolor
+                                                  : darkcolor,
+                                          size: normaltextSize,
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.center,
+                                          text: "choiseplace".tr),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => _controller.selectplace(2),
+                                    child: Container(
+                                      width: 150,
+                                      height: 35,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: primarycolor,
+                                              style: BorderStyle.solid,
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(35),
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          2
+                                                  ? primarycolor
+                                                  : whitecolor),
+                                      child: StaticText(
+                                          color:
+                                              _controller.selectedplace.value !=
+                                                          null &&
+                                                      _controller.selectedplace
+                                                              .value ==
+                                                          2
+                                                  ? whitecolor
+                                                  : darkcolor,
+                                          size: normaltextSize,
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.center,
+                                          text: "fullreservation".tr),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Devider(),
                             ],
                           )
                         : SizedBox(),
                     Devider(),
                     _controller.data.length > 0
                         ? SizedBox()
-                        : Center(
-                            child: SizedBox(
-                              width: width - 40,
-                              height: width / 1.6,
-                              child: ImageClass(
-                                  type: false,
-                                  boxfit: BoxFit.contain,
-                                  url: "assets/images/findcar.png"),
-                            ),
-                          ),
+                        : _controller.loading.value == true
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: width - 40,
+                                      height: width / 2,
+                                      child: ImageClass(
+                                        type: false,
+                                        boxfit: BoxFit.contain,
+                                        url: "/assets/images/searchingcar.png",
+                                      ),
+                                    ),
+                                    Devider(),
+                                    Center(
+                                      child: SizedBox(
+                                        width: width - 40,
+                                        child: LineLoaderWidget(
+                                          function: () =>
+                                              _controller.fetchdata(),
+                                          color: primarycolor,
+                                          duration:
+                                              Duration(milliseconds: 2500),
+                                          width: width - 40,
+                                          height: 10,
+                                        ),
+                                      ),
+                                    ),
+                                    Devider(),
+                                    StaticText(
+                                      align: TextAlign.center,
+                                      color: darkcolor,
+                                      weight: FontWeight.w400,
+                                      size: normaltextSize,
+                                      text: "searchingcar".tr,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Center(
+                                child: SizedBox(
+                                  width: width - 40,
+                                  height: width / 1.6,
+                                  child: ImageClass(
+                                      type: false,
+                                      boxfit: BoxFit.contain,
+                                      url: "assets/images/findcar.png"),
+                                ),
+                              ),
                     Devider(),
                     Center(
                       child: _controller.data.length > 0
@@ -490,11 +612,13 @@ class _HomePageState extends State<HomePage> {
                               height: 40,
                               fontsize: normaltextSize,
                               textColor: whitecolor,
-                              text: _controller.authtype == 'rider'
-                                  ? "search".tr
-                                  : "reservation".tr,
+                              text: _controller.loading.value == true
+                                  ? "stopsearching".tr
+                                  : _controller.authtype == 'rider'
+                                      ? "search".tr
+                                      : "reservation".tr,
                               width: width - 70,
-                              onPressed: () => print("A")),
+                              onPressed: () => _controller.search()),
                     ),
                     Devider(),
                   ],
