@@ -18,7 +18,8 @@ class AuthController extends GetxController {
   Rx<TextEditingController> phonecontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<File?> imageFile = Rx<File?>(null);
-  Rx<String> authType = 'rider'.obs;
+  Rx<String> authType = 'driver'.obs;
+  Rx<List<String>> selectedlang = Rx<List<String>>([]);
 
   @override
   void onInit() {
@@ -55,5 +56,16 @@ class AuthController extends GetxController {
     } else {
       authType.value = 'rider';
     }
+  }
+
+  void selectlangknowns(lang) {
+    bool exists = selectedlang.value.contains(lang);
+    if (exists == true) {
+      selectedlang.value.remove(lang);
+    } else {
+      selectedlang.value.add(lang);
+    }
+    print(selectedlang);
+    // Get.updateLocale(lang);
   }
 }

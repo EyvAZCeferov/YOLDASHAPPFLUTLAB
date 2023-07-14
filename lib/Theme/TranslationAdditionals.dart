@@ -111,6 +111,8 @@ class TranslationAdditionals extends Translations {
           "changedlang": "Dil dəyişdirildi",
           "rider": "Sərnişin",
           "driver": "Sürücü",
+          "langinformations": "Dil bilikləri",
+          "writeaboutyou": "Özünüz haqqında yazın"
         }
       };
 }

@@ -9,15 +9,18 @@ class InputElement extends StatefulWidget {
   final BorderRadius cornerradius;
   final TextInputType inputType;
   final TextEditingController controller;
+  final int maxLine;
 
-  const InputElement(
-      {required this.placeholder,
-      required this.accentColor,
-      required this.textColor,
-      this.margin = const EdgeInsets.only(bottom: 5),
-      this.cornerradius = const BorderRadius.all(Radius.circular(10)),
-      this.inputType = TextInputType.text,
-      required this.controller});
+  const InputElement({
+    required this.placeholder,
+    required this.accentColor,
+    required this.textColor,
+    this.margin = const EdgeInsets.only(bottom: 5),
+    this.cornerradius = const BorderRadius.all(Radius.circular(10)),
+    this.inputType = TextInputType.text,
+    required this.controller,
+    this.maxLine = 1,
+  });
   @override
   State<InputElement> createState() => _InputElementState();
 }

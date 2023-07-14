@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     HomePage(),
     MessagesIndex(),
-    Logistics(),
+    // Logistics(),
     ProfilePage(),
   ];
 
@@ -46,10 +46,10 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(FontAwesomeIcons.message),
             label: 'chat'.tr,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.package),
-            label: 'logistic'.tr,
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(FeatherIcons.package),
+          //   label: 'logistic'.tr,
+          // ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.user),
             label: 'profile'.tr,
