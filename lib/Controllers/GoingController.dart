@@ -13,7 +13,7 @@ import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class GoingController extends GetxController {
-  final String authtype = "driver";
+  final String authtype = "rider";
 
   final TextEditingController fromcontroller = TextEditingController();
   final TextEditingController tocontroller = TextEditingController();

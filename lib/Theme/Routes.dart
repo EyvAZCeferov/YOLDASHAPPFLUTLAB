@@ -8,6 +8,7 @@ import 'package:yoldash/Controllers/MessagesController.dart';
 import 'package:yoldash/Views/Auth/Login.dart';
 import 'package:yoldash/Views/Auth/Register.dart';
 import 'package:yoldash/Views/Auth/VerificationCode.dart';
+import 'package:yoldash/Views/Standarts/Splash.dart';
 import 'package:yoldash/Views/Tabs/Home/HomePage.dart';
 import 'package:yoldash/Views/Tabs/MainScreen.dart';
 import 'package:yoldash/Views/Tabs/Messages/CallPage.dart';
@@ -26,6 +27,7 @@ import 'package:yoldash/Views/Tabs/Profile/ProfileInformation.dart';
 import 'package:yoldash/Views/Tabs/Profile/ProfilePage.dart';
 
 final List<GetPage> Routes = [
+  GetPage(name: '/splash', page: () => Splash()),
   GetPage(name: '/login', page: () => Login()),
   GetPage(name: '/register', page: () => Register()),
   GetPage(name: '/verificationcode', page: () => VerificationCode()),
