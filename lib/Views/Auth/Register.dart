@@ -1,6 +1,8 @@
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/DateElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
@@ -113,12 +115,12 @@ class _RegisterState extends State<Register> {
     return Scaffold(
         backgroundColor: bodycolor,
         resizeToAvoidBottomInset: true,
-        body: _controller.refreshpage.value == true
-            ? LoaderScreen()
-            : SingleChildScrollView(
-                child: Container(
-                  child: Obx(
-                    () => Center(
+        body: SingleChildScrollView(
+          child: Container(
+            child: Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,7 +259,7 @@ class _RegisterState extends State<Register> {
                                 text: "gender".tr,
                                 color: iconcolor,
                                 size: normaltextSize,
-                                weight: FontWeight.w500,
+                                weight: FontWeight.w400,
                                 align: TextAlign.left,
                               ),
                             ),
@@ -275,7 +277,8 @@ class _RegisterState extends State<Register> {
                               textColor: Colors.black,
                               cornerradius: BorderRadius.circular(25),
                               onDateSelected: (DateTime selectedDate) {
-                                print('Selected Date: $selectedDate');
+                                _controller.birthdaycontroller.value =
+                                    selectedDate.toString();
                               },
                             ),
                           ),
@@ -299,19 +302,60 @@ class _RegisterState extends State<Register> {
                           Devider(size: 15),
                           Container(
                             width: width - 40,
-                            height: 53,
+                            height: 60,
                             decoration: BoxDecoration(
                                 color: whitecolor,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(50))),
-                            child: InputElement(
-                                placeholder: "mobile_phone".tr,
-                                accentColor: primarycolor,
-                                textColor: bodycolor,
-                                inputType: TextInputType.text,
-                                cornerradius:
-                                    BorderRadius.all(Radius.circular(50)),
-                                controller: _controller.phonecontroller.value),
+                            child: IntlPhoneField(
+                              cursorColor: primarycolor,
+                              searchText: "search".tr,
+                              dropdownIcon: Icon(FeatherIcons.arrowDown,
+                                  color: secondarycolor, size: smalltextSize),
+                              decoration: InputDecoration(
+                                hintText: "mobile_phone".tr,
+                                fillColor: Colors.white,
+                                contentPadding: EdgeInsets.only(
+                                    left: 15, top: 10, bottom: 10),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                  borderSide: BorderSide(
+                                    color: Colors
+                                        .red, // İstediğiniz renge ayarlayabilirsiniz
+                                    width: 1.0,
+                                    style: BorderStyle.solid,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                  borderSide: BorderSide(
+                                    color: primarycolor,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                  borderSide: BorderSide(
+                                    color: primarycolor,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                  borderSide: BorderSide(
+                                    color: Colors.red,
+                                    width: 1.0,
+                                  ),
+                                ),
+                              ),
+                              initialCountryCode: 'AZ',
+                              onChanged: (phone) {
+                                var phonenumb =
+                                    phone.countryCode + phone.number;
+                                _controller.phonecontroller.value.text =
+                                    phonenumb.toString();
+                              },
+                            ),
                           ),
                           Devider(size: 15),
                           _controller.authType.value == "rider"
@@ -632,8 +676,8 @@ class _RegisterState extends State<Register> {
                         ],
                       ),
                     ),
-                  ),
-                ),
-              ));
+            ),
+          ),
+        ));
   }
 }

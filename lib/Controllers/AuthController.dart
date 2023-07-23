@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
@@ -11,8 +12,7 @@ class AuthController extends GetxController {
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> gendercontroller =
       Rx<TextEditingController>(TextEditingController());
-  Rx<TextEditingController> birthdaycontroller =
-      Rx<TextEditingController>(TextEditingController());
+  Rx<String> birthdaycontroller = Rx<String>('');
   Rx<TextEditingController> emailcontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> phonecontroller =
@@ -68,23 +68,51 @@ class AuthController extends GetxController {
     } else {
       selectedlang.value.add(lang);
     }
-    print(selectedlang);
-    // Get.updateLocale(lang);
   }
 
-  void register(context) {
+  void register(context) async {
     if ((namesurnamecontroller.value.text != null &&
             namesurnamecontroller.value.text.length > 0) &&
-        (birthdaycontroller.value.text != null &&
-            birthdaycontroller.value.text.length > 0) &&
+        (birthdaycontroller.value != null &&
+            birthdaycontroller.value.length > 0) &&
         (emailcontroller.value.text != null &&
             emailcontroller.value.text.length > 0) &&
         (phonecontroller.value.text != null &&
             phonecontroller.value.text.length > 0)) {
-      if (authType == "driver") {
+      refreshpage.value = true;
+      var body = {
+        'phone': phonecontroller.value.text,
+        'name_surname': namesurnamecontroller.value.text,
+        'birthday': birthdaycontroller.value,
+        'email': emailcontroller.value.text,
+        'type': authType.value,
+        'description': aboutcontroller.value.text.toString(),
+      };
+      print(body);
+      var response = await GetAndPost.postData("auth/register", body, context);
+      print(response);
+      if (authType.value == "driver") {
       } else {}
+      refreshpage.value = false;
     } else {
+      refreshpage.value = true;
       showToastMSG(errorcolor, "fillthefield".tr, context);
+      refreshpage.value = false;
+    }
+  }
+
+  void login(context) async {
+    if (phonecontroller.value.text != null &&
+        phonecontroller.value.text.length > 0) {
+      refreshpage.value = true;
+      var body = {'phone': phonecontroller.value.text};
+      var response = await GetAndPost.postData("auth/login", body, context);
+      print(response);
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = true;
+      showToastMSG(errorcolor, "fillthefield".tr, context);
+      refreshpage.value = false;
     }
   }
 }

@@ -43,6 +43,7 @@ dependencies:
   flutter_time_picker_spinner: ^2.0.0
   dash_flags:
   carousel_slider: ^4.2.1
+  intl_phone_field: ^3.2.0
   # agora_rtc_engine: 
 
 # dependency_overrides:

@@ -43,8 +43,33 @@ class GetAndPost {
     }
   }
 
-  static Future<void> postData(String url, context) async {
-    try {} catch (e) {
+  static Future<dynamic> postData(String url, dynamic body, context) async {
+    try {
+      var apiUrl = Uri.parse('$baseapiurl/$url');
+      var headers = {'Content-Type': 'application/json'};
+      var jsonBody = jsonEncode(body);
+
+      var bearerToken = await getvaluefromsharedprefences('bearertoken');
+      if (bearerToken != null && bearerToken.length > 0) {
+        headers['Authorization'] = 'Bearer $bearerToken';
+      }
+      print(jsonBody);
+      var response = await http.post(apiUrl, headers: headers, body: jsonBody);
+      print(response);
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        var status = jsonData['status'];
+        var data = jsonData['data'];
+
+        if (status == 'success') {
+          return response;
+        } else if (status == 'error') {
+          showToastMSG(errorcolor, jsonData['message'], context);
+        }
+      } else {
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
+    } catch (e) {
       showToastMSG(errorcolor, e.toString(), context);
     }
   }
