@@ -1,6 +1,4 @@
-
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yoldash/models/settings.dart';
 
@@ -21,7 +19,7 @@ class CacheManager {
       String? jsonString = prefs.getString(key);
       if (jsonString != null) {
         var jsonData = jsonDecode(jsonString);
-        return jsonData != null ? _getModelFromJson<T>(jsonData) : null;
+        return _fromJson<T>(jsonData);
       }
       return null;
     } catch (e) {
@@ -29,11 +27,21 @@ class CacheManager {
     }
   }
 
-  static T _getModelFromJson<T>(Map<String, dynamic> json) {
+  static T _fromJson<T>(dynamic jsonData) {
     if (T == Settings) {
-      return Settings.fromMap(json) as T;
+      return Settings.fromMap(jsonData) as T;
     }
-    // Add other model mappings here
-    throw Exception("Invalid model type");
+    throw ArgumentError('Unknown type');
   }
+}
+
+Future<String?> getvaluefromsharedprefences(key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? data = prefs.getString(key);
+  return data;
+}
+
+Future<bool> setvaluetoprefences(key, value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return await prefs.setString(key, value);
 }

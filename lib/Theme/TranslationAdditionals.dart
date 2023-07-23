@@ -112,7 +112,10 @@ class TranslationAdditionals extends Translations {
           "rider": "Sərnişin",
           "driver": "Sürücü",
           "langinformations": "Dil bilikləri",
-          "writeaboutyou": "Özünüz haqqında yazın"
+          "writeaboutyou": "Özünüz haqqında yazın",
+          "poweredby": "Powered by",
+          "errordatanotfound": "Xəta! Məlumat tapılmadı!",
+          "fillthefield": "Xanaları doldurun"
         }
       };
 }

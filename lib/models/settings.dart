@@ -124,46 +124,46 @@ class Settings {
 
 class Colors {
   const Colors({
-      this.body,
       this.primary,
       this.secondary,
+      this.body,
   });
   
   factory Colors.fromMap(Map<String, dynamic> map) => Colors(
-      body: map["body"],
       primary: map["primary"],
       secondary: map["secondary"],
+      body: map["body"],
   );
   
   factory Colors.fromJson(String str) => Colors.fromMap(json.decode(str));
   
-  final String? body;
   final String? primary;
   final String? secondary;
+  final String? body;
   
   @override
-  int get hashCode => hashValues(body, primary, secondary);
+  int get hashCode => hashValues(primary, secondary, body);
   
   Map<String, dynamic> toMap() => {
-      "body": body,
       "primary": primary,
       "secondary": secondary,
+      "body": body,
   };
   
   String toJson() => json.encode(toMap());
   
   Colors copyWith({
-      String? body,
       String? primary,
       String? secondary,
+      String? body,
   }) => Colors(
-      body: body ?? this.body,
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
+      body: body ?? this.body,
   );
   
   @override
-  String toString() => "Colors(body: $body, primary: $primary, secondary: $secondary)";
+  String toString() => "Colors(primary: $primary, secondary: $secondary, body: $body)";
   
   @override
   bool operator ==(Object other) {
@@ -174,54 +174,54 @@ class Colors {
       return false;
     }
     return other is Colors &&
-        other.body == body &&
         other.primary == primary &&
-        other.secondary == secondary;
+        other.secondary == secondary &&
+        other.body == body;
   }
 }
 
 class Urls {
   const Urls({
+      this.adminUrl,
       this.apiUrl,
       this.siteUrl,
-      this.adminUrl,
   });
   
   factory Urls.fromMap(Map<String, dynamic> map) => Urls(
+      adminUrl: map["admin_url"],
       apiUrl: map["api_url"],
       siteUrl: map["site_url"],
-      adminUrl: map["admin_url"],
   );
   
   factory Urls.fromJson(String str) => Urls.fromMap(json.decode(str));
   
+  final String? adminUrl;
   final String? apiUrl;
   final String? siteUrl;
-  final String? adminUrl;
   
   @override
-  int get hashCode => hashValues(apiUrl, siteUrl, adminUrl);
+  int get hashCode => hashValues(adminUrl, apiUrl, siteUrl);
   
   Map<String, dynamic> toMap() => {
+      "admin_url": adminUrl,
       "api_url": apiUrl,
       "site_url": siteUrl,
-      "admin_url": adminUrl,
   };
   
   String toJson() => json.encode(toMap());
   
   Urls copyWith({
+      String? adminUrl,
       String? apiUrl,
       String? siteUrl,
-      String? adminUrl,
   }) => Urls(
+      adminUrl: adminUrl ?? this.adminUrl,
       apiUrl: apiUrl ?? this.apiUrl,
       siteUrl: siteUrl ?? this.siteUrl,
-      adminUrl: adminUrl ?? this.adminUrl,
   );
   
   @override
-  String toString() => "Urls(apiUrl: $apiUrl, siteUrl: $siteUrl, adminUrl: $adminUrl)";
+  String toString() => "Urls(adminUrl: $adminUrl, apiUrl: $apiUrl, siteUrl: $siteUrl)";
   
   @override
   bool operator ==(Object other) {
@@ -232,90 +232,90 @@ class Urls {
       return false;
     }
     return other is Urls &&
+        other.adminUrl == adminUrl &&
         other.apiUrl == apiUrl &&
-        other.siteUrl == siteUrl &&
-        other.adminUrl == adminUrl;
+        other.siteUrl == siteUrl;
   }
 }
 
 class SocialMedia {
   const SocialMedia({
-      this.email,
-      this.tiktok,
-      this.whatsapp,
-      this.gmapsUrl,
-      this.homePhone,
-      this.youtubeUrl,
       this.facebookUrl,
-      this.mobilePhone,
       this.instagramUrl,
+      this.mobilePhone,
+      this.homePhone,
+      this.whatsapp,
+      this.email,
+      this.gmapsUrl,
+      this.youtubeUrl,
+      this.tiktok,
   });
   
   factory SocialMedia.fromMap(Map<String, dynamic> map) => SocialMedia(
-      email: map["email"],
-      tiktok: map["tiktok"],
-      whatsapp: map["whatsapp"],
-      gmapsUrl: map["gmaps_url"],
-      homePhone: map["home_phone"],
-      youtubeUrl: map["youtube_url"],
       facebookUrl: map["facebook_url"],
-      mobilePhone: map["mobile_phone"],
       instagramUrl: map["instagram_url"],
+      mobilePhone: map["mobile_phone"],
+      homePhone: map["home_phone"],
+      whatsapp: map["whatsapp"],
+      email: map["email"],
+      gmapsUrl: map["gmaps_url"],
+      youtubeUrl: map["youtube_url"],
+      tiktok: map["tiktok"],
   );
   
   factory SocialMedia.fromJson(String str) => SocialMedia.fromMap(json.decode(str));
   
-  final String? email;
-  final String? tiktok;
-  final String? whatsapp;
-  final String? gmapsUrl;
-  final String? homePhone;
-  final String? youtubeUrl;
   final String? facebookUrl;
-  final String? mobilePhone;
   final String? instagramUrl;
+  final String? mobilePhone;
+  final String? homePhone;
+  final String? whatsapp;
+  final String? email;
+  final String? gmapsUrl;
+  final String? youtubeUrl;
+  final String? tiktok;
   
   @override
-  int get hashCode => hashValues(email, tiktok, whatsapp, gmapsUrl, homePhone, youtubeUrl, facebookUrl, mobilePhone, instagramUrl);
+  int get hashCode => hashValues(facebookUrl, instagramUrl, mobilePhone, homePhone, whatsapp, email, gmapsUrl, youtubeUrl, tiktok);
   
   Map<String, dynamic> toMap() => {
-      "email": email,
-      "tiktok": tiktok,
-      "whatsapp": whatsapp,
-      "gmaps_url": gmapsUrl,
-      "home_phone": homePhone,
-      "youtube_url": youtubeUrl,
       "facebook_url": facebookUrl,
-      "mobile_phone": mobilePhone,
       "instagram_url": instagramUrl,
+      "mobile_phone": mobilePhone,
+      "home_phone": homePhone,
+      "whatsapp": whatsapp,
+      "email": email,
+      "gmaps_url": gmapsUrl,
+      "youtube_url": youtubeUrl,
+      "tiktok": tiktok,
   };
   
   String toJson() => json.encode(toMap());
   
   SocialMedia copyWith({
-      String? email,
-      String? tiktok,
-      String? whatsapp,
-      String? gmapsUrl,
-      String? homePhone,
-      String? youtubeUrl,
       String? facebookUrl,
-      String? mobilePhone,
       String? instagramUrl,
+      String? mobilePhone,
+      String? homePhone,
+      String? whatsapp,
+      String? email,
+      String? gmapsUrl,
+      String? youtubeUrl,
+      String? tiktok,
   }) => SocialMedia(
-      email: email ?? this.email,
-      tiktok: tiktok ?? this.tiktok,
-      whatsapp: whatsapp ?? this.whatsapp,
-      gmapsUrl: gmapsUrl ?? this.gmapsUrl,
-      homePhone: homePhone ?? this.homePhone,
-      youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       facebookUrl: facebookUrl ?? this.facebookUrl,
-      mobilePhone: mobilePhone ?? this.mobilePhone,
       instagramUrl: instagramUrl ?? this.instagramUrl,
+      mobilePhone: mobilePhone ?? this.mobilePhone,
+      homePhone: homePhone ?? this.homePhone,
+      whatsapp: whatsapp ?? this.whatsapp,
+      email: email ?? this.email,
+      gmapsUrl: gmapsUrl ?? this.gmapsUrl,
+      youtubeUrl: youtubeUrl ?? this.youtubeUrl,
+      tiktok: tiktok ?? this.tiktok,
   );
   
   @override
-  String toString() => "SocialMedia(email: $email, tiktok: $tiktok, whatsapp: $whatsapp, gmapsUrl: $gmapsUrl, homePhone: $homePhone, youtubeUrl: $youtubeUrl, facebookUrl: $facebookUrl, mobilePhone: $mobilePhone, instagramUrl: $instagramUrl)";
+  String toString() => "SocialMedia(facebookUrl: $facebookUrl, instagramUrl: $instagramUrl, mobilePhone: $mobilePhone, homePhone: $homePhone, whatsapp: $whatsapp, email: $email, gmapsUrl: $gmapsUrl, youtubeUrl: $youtubeUrl, tiktok: $tiktok)";
   
   @override
   bool operator ==(Object other) {
@@ -326,47 +326,47 @@ class SocialMedia {
       return false;
     }
     return other is SocialMedia &&
-        other.email == email &&
-        other.tiktok == tiktok &&
-        other.whatsapp == whatsapp &&
-        other.gmapsUrl == gmapsUrl &&
-        other.homePhone == homePhone &&
-        other.youtubeUrl == youtubeUrl &&
         other.facebookUrl == facebookUrl &&
+        other.instagramUrl == instagramUrl &&
         other.mobilePhone == mobilePhone &&
-        other.instagramUrl == instagramUrl;
+        other.homePhone == homePhone &&
+        other.whatsapp == whatsapp &&
+        other.email == email &&
+        other.gmapsUrl == gmapsUrl &&
+        other.youtubeUrl == youtubeUrl &&
+        other.tiktok == tiktok;
   }
 }
 
 class Address {
   const Address({
       this.azAddress,
-      this.enAddress,
       this.ruAddress,
+      this.enAddress,
       this.trAddress,
   });
   
   factory Address.fromMap(Map<String, dynamic> map) => Address(
       azAddress: map["az_address"],
-      enAddress: map["en_address"],
       ruAddress: map["ru_address"],
+      enAddress: map["en_address"],
       trAddress: map["tr_address"],
   );
   
   factory Address.fromJson(String str) => Address.fromMap(json.decode(str));
   
   final String? azAddress;
-  final String? enAddress;
   final String? ruAddress;
+  final String? enAddress;
   final String? trAddress;
   
   @override
-  int get hashCode => hashValues(azAddress, enAddress, ruAddress, trAddress);
+  int get hashCode => hashValues(azAddress, ruAddress, enAddress, trAddress);
   
   Map<String, dynamic> toMap() => {
       "az_address": azAddress,
-      "en_address": enAddress,
       "ru_address": ruAddress,
+      "en_address": enAddress,
       "tr_address": trAddress,
   };
   
@@ -374,18 +374,18 @@ class Address {
   
   Address copyWith({
       String? azAddress,
-      String? enAddress,
       String? ruAddress,
+      String? enAddress,
       String? trAddress,
   }) => Address(
       azAddress: azAddress ?? this.azAddress,
-      enAddress: enAddress ?? this.enAddress,
       ruAddress: ruAddress ?? this.ruAddress,
+      enAddress: enAddress ?? this.enAddress,
       trAddress: trAddress ?? this.trAddress,
   );
   
   @override
-  String toString() => "Address(azAddress: $azAddress, enAddress: $enAddress, ruAddress: $ruAddress, trAddress: $trAddress)";
+  String toString() => "Address(azAddress: $azAddress, ruAddress: $ruAddress, enAddress: $enAddress, trAddress: $trAddress)";
   
   @override
   bool operator ==(Object other) {
@@ -397,8 +397,8 @@ class Address {
     }
     return other is Address &&
         other.azAddress == azAddress &&
-        other.enAddress == enAddress &&
         other.ruAddress == ruAddress &&
+        other.enAddress == enAddress &&
         other.trAddress == trAddress;
   }
 }
@@ -406,32 +406,32 @@ class Address {
 class Description {
   const Description({
       this.azDescription,
-      this.enDescription,
       this.ruDescription,
+      this.enDescription,
       this.trDescription,
   });
   
   factory Description.fromMap(Map<String, dynamic> map) => Description(
       azDescription: map["az_description"],
-      enDescription: map["en_description"],
       ruDescription: map["ru_description"],
+      enDescription: map["en_description"],
       trDescription: map["tr_description"],
   );
   
   factory Description.fromJson(String str) => Description.fromMap(json.decode(str));
   
   final String? azDescription;
-  final String? enDescription;
   final String? ruDescription;
+  final String? enDescription;
   final String? trDescription;
   
   @override
-  int get hashCode => hashValues(azDescription, enDescription, ruDescription, trDescription);
+  int get hashCode => hashValues(azDescription, ruDescription, enDescription, trDescription);
   
   Map<String, dynamic> toMap() => {
       "az_description": azDescription,
-      "en_description": enDescription,
       "ru_description": ruDescription,
+      "en_description": enDescription,
       "tr_description": trDescription,
   };
   
@@ -439,18 +439,18 @@ class Description {
   
   Description copyWith({
       String? azDescription,
-      String? enDescription,
       String? ruDescription,
+      String? enDescription,
       String? trDescription,
   }) => Description(
       azDescription: azDescription ?? this.azDescription,
-      enDescription: enDescription ?? this.enDescription,
       ruDescription: ruDescription ?? this.ruDescription,
+      enDescription: enDescription ?? this.enDescription,
       trDescription: trDescription ?? this.trDescription,
   );
   
   @override
-  String toString() => "Description(azDescription: $azDescription, enDescription: $enDescription, ruDescription: $ruDescription, trDescription: $trDescription)";
+  String toString() => "Description(azDescription: $azDescription, ruDescription: $ruDescription, enDescription: $enDescription, trDescription: $trDescription)";
   
   @override
   bool operator ==(Object other) {
@@ -462,8 +462,8 @@ class Description {
     }
     return other is Description &&
         other.azDescription == azDescription &&
-        other.enDescription == enDescription &&
         other.ruDescription == ruDescription &&
+        other.enDescription == enDescription &&
         other.trDescription == trDescription;
   }
 }
@@ -471,32 +471,32 @@ class Description {
 class Name {
   const Name({
       this.azName,
-      this.enName,
       this.ruName,
+      this.enName,
       this.trName,
   });
   
   factory Name.fromMap(Map<String, dynamic> map) => Name(
       azName: map["az_name"],
-      enName: map["en_name"],
       ruName: map["ru_name"],
+      enName: map["en_name"],
       trName: map["tr_name"],
   );
   
   factory Name.fromJson(String str) => Name.fromMap(json.decode(str));
   
   final String? azName;
-  final String? enName;
   final String? ruName;
+  final String? enName;
   final String? trName;
   
   @override
-  int get hashCode => hashValues(azName, enName, ruName, trName);
+  int get hashCode => hashValues(azName, ruName, enName, trName);
   
   Map<String, dynamic> toMap() => {
       "az_name": azName,
-      "en_name": enName,
       "ru_name": ruName,
+      "en_name": enName,
       "tr_name": trName,
   };
   
@@ -504,18 +504,18 @@ class Name {
   
   Name copyWith({
       String? azName,
-      String? enName,
       String? ruName,
+      String? enName,
       String? trName,
   }) => Name(
       azName: azName ?? this.azName,
-      enName: enName ?? this.enName,
       ruName: ruName ?? this.ruName,
+      enName: enName ?? this.enName,
       trName: trName ?? this.trName,
   );
   
   @override
-  String toString() => "Name(azName: $azName, enName: $enName, ruName: $ruName, trName: $trName)";
+  String toString() => "Name(azName: $azName, ruName: $ruName, enName: $enName, trName: $trName)";
   
   @override
   bool operator ==(Object other) {
@@ -527,8 +527,8 @@ class Name {
     }
     return other is Name &&
         other.azName == azName &&
-        other.enName == enName &&
         other.ruName == ruName &&
+        other.enName == enName &&
         other.trName == trName;
   }
 }

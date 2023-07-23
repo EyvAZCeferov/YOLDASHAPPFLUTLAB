@@ -17,9 +17,12 @@ class AuthController extends GetxController {
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> phonecontroller =
       Rx<TextEditingController>(TextEditingController());
+  Rx<TextEditingController> aboutcontroller =
+      Rx<TextEditingController>(TextEditingController());
   Rx<File?> imageFile = Rx<File?>(null);
-  Rx<String> authType = 'driver'.obs;
+  Rx<String> authType = 'rider'.obs;
   Rx<List<String>> selectedlang = Rx<List<String>>([]);
+  Rx<bool> refreshpage = Rx<bool>(false);
 
   @override
   void onInit() {
@@ -67,5 +70,21 @@ class AuthController extends GetxController {
     }
     print(selectedlang);
     // Get.updateLocale(lang);
+  }
+
+  void register(context) {
+    if ((namesurnamecontroller.value.text != null &&
+            namesurnamecontroller.value.text.length > 0) &&
+        (birthdaycontroller.value.text != null &&
+            birthdaycontroller.value.text.length > 0) &&
+        (emailcontroller.value.text != null &&
+            emailcontroller.value.text.length > 0) &&
+        (phonecontroller.value.text != null &&
+            phonecontroller.value.text.length > 0)) {
+      if (authType == "driver") {
+      } else {}
+    } else {
+      showToastMSG(errorcolor, "fillthefield".tr, context);
+    }
   }
 }

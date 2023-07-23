@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:yoldash/Constants/Devider.dart';
+import 'package:yoldash/Constants/ImageClass.dart';
+import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Functions/CacheManager.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
@@ -10,9 +15,15 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    fetchData('setting');
+    GetAndPost.fetchData('setting', BuildContext);
+    var bearerToken = await getvaluefromsharedprefences('bearertoken');
+    if (bearerToken != null && bearerToken.length > 0) {
+      Get.toNamed('/mainscreen');
+    } else {
+      Get.toNamed('/login');
+    }
   }
 
   @override
@@ -24,11 +35,48 @@ class _SplashState extends State<Splash> {
         body: Container(
             child: Center(
                 child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           verticalDirection: VerticalDirection.down,
           children: [
-            Devider(size: 60),
+            Devider(),
+            Center(
+              child: SizedBox(
+                width: width - 50,
+                height: width / 2,
+                child: ImageClass(
+                  type: false,
+                  boxfit: BoxFit.contain,
+                  url: "assets/images/yoldash_bg_white.png",
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                StaticText(
+                    text: "poweredby".tr,
+                    weight: FontWeight.w500,
+                    size: normaltextSize,
+                    color: secondarycolor),
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: () => launchUrlTOSITE('https://globalmart.az'),
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: ImageClass(
+                      type: false,
+                      boxfit: BoxFit.contain,
+                      url: "assets/images/globalmartlogo.png",
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ))));
   }
