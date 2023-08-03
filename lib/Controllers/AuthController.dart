@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
+import 'package:yoldash/Functions/ProviderContext.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/models/users.dart';
@@ -116,22 +118,51 @@ class AuthController extends GetxController {
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
-          var cachedSettings =
-              await CacheManager.getCachedModel<Users>('authenticated');
-          if (cachedSettings == null) {
+          var cachedSettings;
+          var getkeyauth =
+              await CacheManager.containsKeyOnPref('authenticated');
+
+          if (getkeyauth == false) {
             var data = Users.fromMap(response['data']);
-            await CacheManager.cacheModel('authenticated', data);
+            CacheManager.cacheModel('authenticated', data);
             cachedSettings =
                 await CacheManager.getCachedModel<Users>('authenticated');
+            print("Cache null");
+            print(data);
+            print(data.id);
+            if (data.id != null) {
+              Provider.of<ProviderContext>(context, listen: false)
+                  .changedata('authid', data.id);
+              CacheManager.setvaluetoprefences('auth_id', data.id);
+            }
+            CacheManager.setvaluetoprefences('email', data.email);
+            CacheManager.setvaluetoprefences('phone', data.phone);
+          } else {
+            cachedSettings =
+                await CacheManager.getCachedModel<Users>('authenticated')
+                    .then((cachedModel) async {
+              if (cachedModel != null) {
+                print(cachedModel);
+                print(cachedModel.id);
+
+                if (cachedModel.id != null) {
+                  Provider.of<ProviderContext>(context, listen: false)
+                      .changedata('authid', cachedModel.id);
+                  CacheManager.setvaluetoprefences('auth_id', cachedModel.id);
+                }
+                CacheManager.setvaluetoprefences('email', cachedModel.email);
+                CacheManager.setvaluetoprefences('phone', cachedModel.phone);
+              } else {
+                print("Cached model not found.");
+              }
+            });
           }
-          // await CacheManager.setvaluetoprefences('auth_id', cachedSettings!.id);
-          // await CacheManager.setvaluetoprefences('email', cachedSettings.email);
-          // await CacheManager.setvaluetoprefences('phone', cachedSettings.phone);
 
           Get.toNamed(
             'verificationcode',
             arguments: {'phoneNumber': phonecontroller.value.text},
           );
+
           showToastMSG(primarycolor, message, context);
         } else {
           showToastMSG(errorcolor, message, context);
@@ -191,10 +222,12 @@ class AuthController extends GetxController {
 
   void resendcode(phoneNumber, context) async {
     refreshpage.value = true;
-    print(phoneNumber);
-    Users authUser = await CacheManager.getCachedModel('authenticated');
+    var authUser = await CacheManager.getCachedModel('authenticated');
     print(authUser);
-    print(authUser.id);
+
+    var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
+    print("Auth Id");
+    print(auth_id);
 
     var body = {'phone': phoneNumber, 'auth_id': authUser.id, 'language': 'az'};
     print(body);

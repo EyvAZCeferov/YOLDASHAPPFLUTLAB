@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
+import 'package:yoldash/Functions/ProviderContext.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/settings.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -15,12 +18,24 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    GetAndPost.fetchData('setting', BuildContext);
-    var bearerToken =
-        await CacheManager.getvaluefromsharedprefences('bearertoken');
-    if (bearerToken != null && bearerToken.length > 0) {
+    init();
+  }
+
+  Future<void> init() async {
+    var response = await GetAndPost.fetchData('setting', context);
+    var cached = await CacheManager.getCachedModel<Settings>('setting');
+    if (cached == null) {
+      var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
+      CacheManager.cacheModel('setting', settings);
+    }
+
+    // var token = Provider.of<ProviderContext>(context, listen: false).token;
+    var token = CacheManager.getvaluefromsharedprefences('token');
+    print(token);
+    await Future.delayed(Duration(seconds: 10));
+    if (token != null) {
       Get.toNamed('/mainscreen');
     } else {
       Get.toNamed('/login');
