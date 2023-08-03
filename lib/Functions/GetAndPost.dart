@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
@@ -49,25 +48,20 @@ class GetAndPost {
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
 
-      var bearerToken = await getvaluefromsharedprefences('bearertoken');
+      var bearerToken =
+          await CacheManager.getvaluefromsharedprefences('bearertoken');
       if (bearerToken != null && bearerToken.length > 0) {
         headers['Authorization'] = 'Bearer $bearerToken';
       }
-      print(jsonBody);
-      var response = await http.post(apiUrl, headers: headers, body: jsonBody);
-      print(response);
-      if (response.statusCode == 200) {
-        var jsonData = jsonDecode(response.body);
-        var status = jsonData['status'];
-        var data = jsonData['data'];
 
-        if (status == 'success') {
-          return response;
-        } else if (status == 'error') {
-          showToastMSG(errorcolor, jsonData['message'], context);
-        }
-      } else {
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      var response = await http.post(apiUrl, headers: headers, body: jsonBody);
+      var jsonData = jsonDecode(response.body);
+      var status = jsonData['status'];
+
+      if (status == 'success') {
+        return jsonData;
+      } else if (status == 'error') {
+        showToastMSG(errorcolor, jsonData['message'], context);
       }
     } catch (e) {
       showToastMSG(errorcolor, e.toString(), context);

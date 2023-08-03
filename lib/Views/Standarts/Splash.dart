@@ -18,7 +18,8 @@ class _SplashState extends State<Splash> {
   void initState() async {
     super.initState();
     GetAndPost.fetchData('setting', BuildContext);
-    var bearerToken = await getvaluefromsharedprefences('bearertoken');
+    var bearerToken =
+        await CacheManager.getvaluefromsharedprefences('bearertoken');
     if (bearerToken != null && bearerToken.length > 0) {
       Get.toNamed('/mainscreen');
     } else {

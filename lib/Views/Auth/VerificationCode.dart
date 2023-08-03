@@ -6,6 +6,7 @@ import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Constants/TextButton.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class VerificationCode extends StatefulWidget {
@@ -14,7 +15,16 @@ class VerificationCode extends StatefulWidget {
 }
 
 class _VerificationCodeState extends State<VerificationCode> {
-  final TextEditingController pincontroller = TextEditingController();
+  final AuthController _controller = Get.put(AuthController());
+  late String phoneNumber = '';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Map<String, dynamic> arguments = Get.arguments;
+    phoneNumber = arguments['phoneNumber'];
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -37,8 +47,7 @@ class _VerificationCodeState extends State<VerificationCode> {
               color: darkcolor),
           Devider(size: 10),
           StaticText(
-              text:
-                  "sendedcodephone".trParams({'phoneNumber': '+994516543290'}),
+              text: "sendedcodephone".trParams({'phoneNumber': phoneNumber}),
               weight: FontWeight.w400,
               size: smalltextSize,
               align: TextAlign.center,
@@ -59,14 +68,14 @@ class _VerificationCodeState extends State<VerificationCode> {
                   fieldWidth: 70,
                   activeFillColor: secondarycolor,
                   activeBorderWidth: 1,
-                  activeColor: secondarycolor,
+                  activeColor: whitecolor,
                   borderWidth: 1,
                   disabledColor: bodycolor,
                   inactiveColor: whitecolor,
                   errorBorderColor: errorcolor,
                   errorBorderWidth: 1,
                   inactiveFillColor: whitecolor,
-                  selectedColor: secondarycolor,
+                  selectedColor: whitecolor,
                   selectedFillColor: secondarycolor,
                   selectedBorderWidth: 1,
                   inactiveBorderWidth: 1,
@@ -74,20 +83,17 @@ class _VerificationCodeState extends State<VerificationCode> {
               animationDuration: Duration(milliseconds: 300),
               backgroundColor: bodycolor,
               enableActiveFill: true,
-              controller: pincontroller,
+              controller: _controller.pincontroller.value,
               onCompleted: (v) {
-                print("Completed");
+                _controller.verifycode(
+                    phoneNumber, _controller.pincontroller.value.text, context);
               },
               onChanged: (value) {
-                print(value);
                 // setState(() {
                 //   currentText = value;
                 // });
               },
               beforeTextPaste: (text) {
-                print("Allowing to paste $text");
-                //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                //but you can show anything you want here, like your pop up saying wrong paste format or etc
                 return true;
               },
               autoFocus: true,
@@ -109,7 +115,8 @@ class _VerificationCodeState extends State<VerificationCode> {
                   borderRadius: BorderRadius.zero,
                   bgColor: bodycolor,
                   textColor: secondarycolor,
-                  onPressed: () => Get.toNamed('/register')),
+                  onPressed: () =>
+                      _controller.resendcode(phoneNumber, context)),
             ],
           ),
           Devider(size: 80),
@@ -118,7 +125,8 @@ class _VerificationCodeState extends State<VerificationCode> {
               height: 50,
               width: width - 40,
               borderRadius: BorderRadius.circular(45),
-              onPressed: () => Get.toNamed('/verificationcode')),
+              onPressed: () => _controller.verifycode(
+                  phoneNumber, _controller.pincontroller.value.text, context)),
           Devider(size: 10),
         ],
       ),
