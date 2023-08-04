@@ -9,8 +9,12 @@ import 'package:get/get.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheManager.createSharedPref();
+  ProviderContext providerContext = ProviderContext();
+
   runApp(ChangeNotifierProvider<ProviderContext>(
-      create: (BuildContext context) => ProviderContext(), child: Yoldash()));
+    create: (BuildContext context) => providerContext,
+    child: Yoldash(),
+  ));
 }
 
 class Yoldash extends StatelessWidget {

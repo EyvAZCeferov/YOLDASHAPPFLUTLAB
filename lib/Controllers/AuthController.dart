@@ -118,45 +118,25 @@ class AuthController extends GetxController {
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
-          var cachedSettings;
-          var getkeyauth =
-              await CacheManager.containsKeyOnPref('authenticated');
-
-          if (getkeyauth == false) {
-            var data = Users.fromMap(response['data']);
-            CacheManager.cacheModel('authenticated', data);
-            cachedSettings =
-                await CacheManager.getCachedModel<Users>('authenticated');
-            print("Cache null");
-            print(data);
-            print(data.id);
-            if (data.id != null) {
-              Provider.of<ProviderContext>(context, listen: false)
-                  .changedata('authid', data.id);
-              CacheManager.setvaluetoprefences('auth_id', data.id);
-            }
-            CacheManager.setvaluetoprefences('email', data.email);
-            CacheManager.setvaluetoprefences('phone', data.phone);
-          } else {
-            cachedSettings =
-                await CacheManager.getCachedModel<Users>('authenticated')
-                    .then((cachedModel) async {
-              if (cachedModel != null) {
-                print(cachedModel);
-                print(cachedModel.id);
-
-                if (cachedModel.id != null) {
-                  Provider.of<ProviderContext>(context, listen: false)
-                      .changedata('authid', cachedModel.id);
-                  CacheManager.setvaluetoprefences('auth_id', cachedModel.id);
-                }
-                CacheManager.setvaluetoprefences('email', cachedModel.email);
-                CacheManager.setvaluetoprefences('phone', cachedModel.phone);
-              } else {
-                print("Cached model not found.");
-              }
-            });
+          var data = Users.fromMap(response['data']);
+          var cachedModel =
+              await CacheManager.getCachedModel<Users>('authenticated');
+          if (cachedModel == null) {
+            await CacheManager.cacheModel('authenticated', data);
           }
+
+          if (data.id != null) {
+            // Provider.of<ProviderContext>(context, listen: false)
+            //     .changedata('authid', data.id);
+            // Provider.of<ProviderContext>(context, listen: false)
+            //     .changedata('authid', data.id);
+            CacheManager.setvaluetoprefences('auth_id', data.id);
+          }
+
+          CacheManager.setvaluetoprefences('email', data.email);
+          CacheManager.setvaluetoprefences('phone', data.phone);
+
+          print(await CacheManager.getvaluefromsharedprefences('auth_id'));
 
           Get.toNamed(
             'verificationcode',
@@ -222,20 +202,17 @@ class AuthController extends GetxController {
 
   void resendcode(phoneNumber, context) async {
     refreshpage.value = true;
-    var authUser = await CacheManager.getCachedModel('authenticated');
-    print(authUser);
 
     var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
-    print("Auth Id");
-    print(auth_id);
 
-    var body = {'phone': phoneNumber, 'auth_id': authUser.id, 'language': 'az'};
+    var body = {'phone': phoneNumber, 'auth_id': auth_id, 'language': 'az'};
     print(body);
     var response = await GetAndPost.postData("auth/resendcode", body, context);
     if (response != null) {
       String status = response['status'];
       String message = response['message'];
       if (status == "success") {
+        print(response['data']);
         showToastMSG(primarycolor, message, context);
       } else {
         showToastMSG(errorcolor, message, context);

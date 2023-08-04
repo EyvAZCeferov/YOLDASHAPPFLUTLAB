@@ -28,14 +28,12 @@ class _SplashState extends State<Splash> {
     var cached = await CacheManager.getCachedModel<Settings>('setting');
     if (cached == null) {
       var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
-      CacheManager.cacheModel('setting', settings);
+      await CacheManager.cacheModel('setting', settings);
     }
 
-    // var token = Provider.of<ProviderContext>(context, listen: false).token;
-    var token = CacheManager.getvaluefromsharedprefences('token');
-    print(token);
-    await Future.delayed(Duration(seconds: 10));
-    if (token != null) {
+    var token = await CacheManager.getvaluefromsharedprefences('token');
+    await Future.delayed(Duration(seconds: 5));
+    if (token != null && token.length > 0) {
       Get.toNamed('/mainscreen');
     } else {
       Get.toNamed('/login');
