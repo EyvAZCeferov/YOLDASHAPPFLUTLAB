@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
-import 'package:yoldash/Functions/ProviderContext.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/models/users.dart';
@@ -114,7 +112,6 @@ class AuthController extends GetxController {
       var body = {'phone': phonecontroller.value.text, 'language': 'az'};
       var response = await GetAndPost.postData("auth/login", body, context);
       if (response != null) {
-        refreshpage.value = false;
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
@@ -126,18 +123,12 @@ class AuthController extends GetxController {
           }
 
           if (data.id != null) {
-            // Provider.of<ProviderContext>(context, listen: false)
-            //     .changedata('authid', data.id);
-            // Provider.of<ProviderContext>(context, listen: false)
-            //     .changedata('authid', data.id);
             CacheManager.setvaluetoprefences('auth_id', data.id);
           }
 
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);
-
-          print(await CacheManager.getvaluefromsharedprefences('auth_id'));
-
+          refreshpage.value = false;
           Get.toNamed(
             'verificationcode',
             arguments: {'phoneNumber': phonecontroller.value.text},
@@ -145,6 +136,7 @@ class AuthController extends GetxController {
 
           showToastMSG(primarycolor, message, context);
         } else {
+          refreshpage.value = false;
           showToastMSG(errorcolor, message, context);
         }
       } else {
@@ -161,21 +153,13 @@ class AuthController extends GetxController {
   void verifycode(phoneNumber, value, context) async {
     refreshpage.value = true;
     if (value != null && value.length == 4) {
-      String auth_id =
-          await CacheManager.getvaluefromsharedprefences('auth_id');
-      print(auth_id);
+      var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
 
-      String? language =
-          await CacheManager.getvaluefromsharedprefences('language');
-
-      print(language);
-      print(phoneNumber);
-      var body = {
+      Map<String, dynamic> body = {
         'phone': phoneNumber,
         'auth_id': auth_id,
-        'language': language ?? 'az'
+        'language': 'az'
       };
-      print(body);
       var response = await GetAndPost.postData("auth/verifysms", body, context);
 
       if (response != null) {
@@ -183,6 +167,7 @@ class AuthController extends GetxController {
         String message = response['message'];
         if (status == "success") {
           showToastMSG(primarycolor, message, context);
+          CacheManager.setvaluetoprefences('token', response['access_token']);
           Get.toNamed(
             'mainscreen',
           );
@@ -205,14 +190,18 @@ class AuthController extends GetxController {
 
     var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
 
-    var body = {'phone': phoneNumber, 'auth_id': auth_id, 'language': 'az'};
-    print(body);
-    var response = await GetAndPost.postData("auth/resendcode", body, context);
+    Map<String, dynamic> body = {
+      'phone': phoneNumber,
+      'auth_id': auth_id,
+      'language': 'az'
+    };
+
+    var response = await GetAndPost.fetchData("auth/resendcode", context, body);
+
     if (response != null) {
       String status = response['status'];
       String message = response['message'];
       if (status == "success") {
-        print(response['data']);
         showToastMSG(primarycolor, message, context);
       } else {
         showToastMSG(errorcolor, message, context);

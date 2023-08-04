@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
-import 'package:yoldash/Functions/ProviderContext.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/models/settings.dart';
@@ -23,8 +21,10 @@ class _SplashState extends State<Splash> {
     init();
   }
 
+  Map<String, dynamic> body = {};
+
   Future<void> init() async {
-    var response = await GetAndPost.fetchData('setting', context);
+    var response = await GetAndPost.fetchData('setting', context, body);
     var cached = await CacheManager.getCachedModel<Settings>('setting');
     if (cached == null) {
       var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
