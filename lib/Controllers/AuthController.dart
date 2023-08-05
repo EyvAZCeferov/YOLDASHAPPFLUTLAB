@@ -25,12 +25,17 @@ class AuthController extends GetxController {
   Rx<String> authType = 'rider'.obs;
   Rx<List<String>> selectedlang = Rx<List<String>>([]);
   Rx<bool> refreshpage = Rx<bool>(false);
-  Rx<TextEditingController> pincontroller =
-      Rx<TextEditingController>(TextEditingController());
+  final pincontroller = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    pincontroller.dispose();
+    super.onClose();
   }
 
   void pickImage(context) async {
@@ -126,19 +131,22 @@ class AuthController extends GetxController {
             CacheManager.setvaluetoprefences('auth_id', data.id);
           }
 
+          CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);
-          refreshpage.value = false;
+          CacheManager.setvaluetoprefences('authtype', data.type);
+          CacheManager.setvaluetoprefences(
+              'profilepicture', data.additionalinfo?.image ?? '');
+          authType.value = data.type ?? 'rider';
           Get.toNamed(
             'verificationcode',
             arguments: {'phoneNumber': phonecontroller.value.text},
           );
-
           showToastMSG(primarycolor, message, context);
         } else {
-          refreshpage.value = false;
           showToastMSG(errorcolor, message, context);
         }
+        refreshpage.value = false;
       } else {
         refreshpage.value = false;
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
@@ -150,15 +158,17 @@ class AuthController extends GetxController {
     }
   }
 
-  void verifycode(phoneNumber, value, context) async {
+  void verifycode(phoneNumber, context) async {
     refreshpage.value = true;
+    var value = pincontroller.text;
     if (value != null && value.length == 4) {
       var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
 
       Map<String, dynamic> body = {
         'phone': phoneNumber,
         'auth_id': auth_id,
-        'language': 'az'
+        'language': 'az',
+        'code': value
       };
       var response = await GetAndPost.postData("auth/verifysms", body, context);
 

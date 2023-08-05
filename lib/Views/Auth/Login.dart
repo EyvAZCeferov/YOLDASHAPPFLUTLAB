@@ -25,7 +25,7 @@ class _LoginState extends State<Login> {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: bodycolor,
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: Obx(
           () => _controller.refreshpage.value == true
               ? LoaderScreen()

@@ -8,11 +8,37 @@ import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/AuthController.dart';
+import 'package:yoldash/Functions/CacheManager.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Profile/build_menu_items.dart';
 
 class ProfilePage extends StatelessWidget {
   final AuthController _controller = Get.put(AuthController());
+  final Rx<Map<String, String>> userdatas = Rx<Map<String, String>>({
+    'auth_id': '',
+    'name_surname': '',
+    'email': '',
+    'phone': '',
+    'profilepicture': '',
+  });
+
+  ProfilePage() {
+    getalldataoncache();
+  }
+
+  void getalldataoncache() async {
+    userdatas.update((val) {
+      val!['auth_id'] =
+          CacheManager.getvaluefromsharedprefences("auth_id") ?? '';
+      val!['name_surname'] =
+          CacheManager.getvaluefromsharedprefences("name_surname") ?? '';
+      val!['phone'] = CacheManager.getvaluefromsharedprefences("phone") ?? '';
+      val!['email'] = CacheManager.getvaluefromsharedprefences("email") ?? '';
+      val!['profilepicture'] =
+          CacheManager.getvaluefromsharedprefences("profilepicture") ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,62 +83,73 @@ class ProfilePage extends StatelessWidget {
                             spreadRadius: 0,
                           )
                         ]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: primarycolor,
-                          foregroundColor: whitecolor,
-                          radius: 45,
-                          backgroundImage: NetworkImage(
-                              "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                StaticText(
-                                    text: "Eyvaz Cəfərov",
-                                    weight: FontWeight.bold,
-                                    size: buttontextSize,
-                                    color: darkcolor),
-                                IconButtonElement(
+                    child: Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: primarycolor,
+                            foregroundColor: whitecolor,
+                            radius: 45,
+                            backgroundImage: userdatas
+                                            .value['profilepicture'] !=
+                                        null &&
+                                    userdatas.value['profilepicture'] != ''
+                                ? NetworkImage(imageurl +
+                                    userdatas.value['profilepicture']
+                                        .toString())
+                                : NetworkImage(
+                                    imageurl + "users/noprofilepicture.webp"),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  StaticText(
+                                      text:
+                                          userdatas.value['name_surname'] ?? '',
+                                      weight: FontWeight.bold,
+                                      size: buttontextSize,
+                                      color: darkcolor),
+                                  IconButtonElement(
+                                      color: secondarycolor,
+                                      size: buttontextSize,
+                                      icon: FeatherIcons.edit2,
+                                      onPressed: () =>
+                                          Get.toNamed("/profileinformation"))
+                                ],
+                              ),
+                              StaticText(
+                                  text: userdatas.value['email'] ?? '',
+                                  weight: FontWeight.w500,
+                                  size: smalltextSize,
+                                  color: Colors.grey),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FeatherIcons.phone,
                                     color: secondarycolor,
-                                    size: buttontextSize,
-                                    icon: FeatherIcons.edit2,
-                                    onPressed: () =>
-                                        Get.toNamed("/profileinformation"))
-                              ],
-                            ),
-                            StaticText(
-                                text: "eyvaz.ceferov@gmail.com",
-                                weight: FontWeight.w500,
-                                size: smalltextSize,
-                                color: Colors.grey),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  FeatherIcons.phone,
-                                  color: secondarycolor,
-                                  size: normaltextSize,
-                                ),
-                                StaticText(
-                                    text: " +994516543290",
-                                    weight: FontWeight.w400,
-                                    size: smalltextSize,
-                                    color: Colors.grey),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                                    size: normaltextSize,
+                                  ),
+                                  StaticText(
+                                      text: userdatas.value['phone'] ?? '',
+                                      weight: FontWeight.w400,
+                                      size: smalltextSize,
+                                      color: Colors.grey),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

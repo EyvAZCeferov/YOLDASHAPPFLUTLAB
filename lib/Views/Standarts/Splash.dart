@@ -32,7 +32,7 @@ class _SplashState extends State<Splash> {
     }
 
     var token = await CacheManager.getvaluefromsharedprefences('token');
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 3));
     if (token != null && token.length > 0) {
       Get.toNamed('/mainscreen');
     } else {
