@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:yoldash/Theme/ThemeService.dart';
 
 class ImageClass extends StatelessWidget {
   final String url;
@@ -11,9 +13,16 @@ class ImageClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return this.type == true
-        ? Image.network(
-            url,
-            fit: boxfit,
+        ? CachedNetworkImage(
+            imageUrl: url,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+            imageBuilder: (context, imageProvider) => CircleAvatar(
+              backgroundColor: primarycolor,
+              foregroundColor: whitecolor,
+              radius: 45,
+              backgroundImage: imageProvider,
+            ),
           )
         : Image.asset(
             url,

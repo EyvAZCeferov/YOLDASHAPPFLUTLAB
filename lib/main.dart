@@ -9,15 +9,14 @@ import 'package:get/get.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheManager.createSharedPref();
-  ProviderContext providerContext = ProviderContext();
-
-  runApp(ChangeNotifierProvider<ProviderContext>(
-    create: (BuildContext context) => providerContext,
-    child: Yoldash(),
-  ));
+  var language =
+      await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
+  runApp(Yoldash(language: language));
 }
 
 class Yoldash extends StatelessWidget {
+  final String language;
+  const Yoldash({required this.language});
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -26,16 +25,8 @@ class Yoldash extends StatelessWidget {
       getPages: Routes,
       initialRoute: '/splash',
       translations: TranslationAdditionals(),
-      locale: Locale(
-          Provider.of<ProviderContext>(context, listen: false).language,
-          Provider.of<ProviderContext>(context, listen: false)
-              .language
-              .toUpperCase()),
-      fallbackLocale: Locale(
-          Provider.of<ProviderContext>(context, listen: false).language,
-          Provider.of<ProviderContext>(context, listen: false)
-              .language
-              .toUpperCase()),
+      locale: Locale(language, language.toUpperCase()),
+      fallbackLocale: Locale(language, language.toUpperCase()),
       enableLog: true,
       defaultTransition: Transition.cupertino,
       opaqueRoute: Get.isOpaqueRouteDefault,

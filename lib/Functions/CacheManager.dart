@@ -60,8 +60,7 @@ class CacheManager {
   static dynamic getvaluefromsharedprefences(String key) async {
     try {
       var box = await _getBox();
-      dynamic data = box.get(key) ?? ("");
-      return data;
+      return box.get(key);
     } catch (e) {
       print("Error Getting Value");
       print(e.toString());

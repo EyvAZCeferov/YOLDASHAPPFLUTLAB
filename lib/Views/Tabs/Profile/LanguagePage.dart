@@ -4,10 +4,14 @@ import 'package:get/get.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/MainController.dart';
+import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class LanguagePage extends StatelessWidget {
+  final MainController _controller = Get.put(MainController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +30,8 @@ class LanguagePage extends StatelessWidget {
           Devider(),
           GestureDetector(
             onTap: () {
-              Get.updateLocale(Locale('az', 'AZ'));
+              Get.updateLocale(Locale('az', 'az'));
+              CacheManager.setvaluetoprefences('language', 'az');
               showToastMSG(primarycolor, "changedlang".tr, context);
             },
             child: Row(
@@ -54,13 +59,17 @@ class LanguagePage extends StatelessWidget {
                       text: "Azərbaycan",
                       weight: FontWeight.w600,
                       size: buttontextSize,
-                      color: darkcolor),
+                      color: _controller.getstoragedat('language').toString() ==
+                              'az'
+                          ? primarycolor
+                          : darkcolor),
                 ]),
           ),
           Devider(size: 20),
           GestureDetector(
             onTap: () {
               Get.updateLocale(Locale('ru', 'RU'));
+              CacheManager.setvaluetoprefences('language', 'ru');
               showToastMSG(primarycolor, "changedlang".tr, context);
             },
             child: Row(
@@ -88,13 +97,17 @@ class LanguagePage extends StatelessWidget {
                       text: "Rus",
                       weight: FontWeight.w600,
                       size: buttontextSize,
-                      color: darkcolor),
+                      color: _controller.getstoragedat('language').toString() ==
+                              'ru'
+                          ? primarycolor
+                          : darkcolor),
                 ]),
           ),
           Devider(size: 20),
           GestureDetector(
             onTap: () {
               Get.updateLocale(Locale('en', 'EN'));
+              CacheManager.setvaluetoprefences('language', 'en');
               showToastMSG(primarycolor, "changedlang".tr, context);
             },
             child: Row(
@@ -122,13 +135,17 @@ class LanguagePage extends StatelessWidget {
                       text: "İngilis",
                       weight: FontWeight.w600,
                       size: buttontextSize,
-                      color: darkcolor),
+                      color: _controller.getstoragedat('language').toString() ==
+                              'en'
+                          ? primarycolor
+                          : darkcolor),
                 ]),
           ),
           Devider(size: 20),
           GestureDetector(
             onTap: () {
               Get.updateLocale(Locale('tr', 'TR'));
+              CacheManager.setvaluetoprefences('language', 'tr');
               showToastMSG(primarycolor, "changedlang".tr, context);
             },
             child: Row(
@@ -156,7 +173,10 @@ class LanguagePage extends StatelessWidget {
                       text: "Türk",
                       weight: FontWeight.w600,
                       size: buttontextSize,
-                      color: darkcolor),
+                      color: _controller.getstoragedat('language').toString() ==
+                              'tr'
+                          ? primarycolor
+                          : darkcolor),
                 ]),
           )
         ],

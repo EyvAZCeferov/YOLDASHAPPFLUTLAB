@@ -25,17 +25,12 @@ class AuthController extends GetxController {
   Rx<String> authType = 'rider'.obs;
   Rx<List<String>> selectedlang = Rx<List<String>>([]);
   Rx<bool> refreshpage = Rx<bool>(false);
-  final pincontroller = TextEditingController();
+  Rx<TextEditingController> pincontroller =
+      Rx<TextEditingController>(TextEditingController());
 
   @override
   void onInit() {
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    pincontroller.dispose();
-    super.onClose();
   }
 
   void pickImage(context) async {
@@ -57,8 +52,55 @@ class AuthController extends GetxController {
     }
   }
 
-  void updateprofiledata() {
-    print("Update Profile");
+  void updateprofiledata(context) async {
+    if (phonecontroller.value.text != null &&
+        phonecontroller.value.text.length > 0 &&
+        emailcontroller.value.text != null &&
+        emailcontroller.value.text.length > 0 &&
+        namesurnamecontroller.value.text != null &&
+        namesurnamecontroller.value.text.length > 0) {
+      refreshpage.value = true;
+      var language =
+          await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
+      var body = {
+        'phone': phonecontroller.value.text,
+        'language': language,
+        'email': emailcontroller.value.text,
+        'name_surname': namesurnamecontroller.value.text
+      };
+      var response =
+          await GetAndPost.postData("auth/updatedata", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = response['message'];
+        if (status == "success") {
+          var data = Users.fromMap(response['data']);
+          var cachedModel =
+              await CacheManager.getCachedModel<Users>('authenticated');
+          if (cachedModel == null) {
+            await CacheManager.cacheModel('authenticated', data);
+          }
+
+          CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
+          CacheManager.setvaluetoprefences('email', data.email);
+          CacheManager.setvaluetoprefences('phone', data.phone);
+          CacheManager.setvaluetoprefences(
+              'profilepicture', data.additionalinfo?.image ?? '');
+
+          showToastMSG(primarycolor, message, context);
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
+    } else {
+      refreshpage.value = true;
+      showToastMSG(errorcolor, "fillthefield".tr, context);
+      refreshpage.value = false;
+    }
   }
 
   void changeprofpage() {
@@ -135,6 +177,7 @@ class AuthController extends GetxController {
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);
           CacheManager.setvaluetoprefences('authtype', data.type);
+          CacheManager.setvaluetoprefences('language', 'az');
           CacheManager.setvaluetoprefences(
               'profilepicture', data.additionalinfo?.image ?? '');
           authType.value = data.type ?? 'rider';
@@ -158,9 +201,40 @@ class AuthController extends GetxController {
     }
   }
 
+  void logout(context) async {
+    refreshpage.value = true;
+    var body = {};
+    var response = await GetAndPost.postData("auth/logout", body, context);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        await CacheManager.cacheModel('authenticated', '');
+        CacheManager.setvaluetoprefences('auth_id', '');
+
+        CacheManager.setvaluetoprefences('name_surname', '');
+        CacheManager.setvaluetoprefences('email', '');
+        CacheManager.setvaluetoprefences('phone', '');
+        CacheManager.setvaluetoprefences('authtype', '');
+        CacheManager.setvaluetoprefences('profilepicture', '');
+        authType.value = '';
+        Get.offAllNamed(
+          'login',
+        );
+        showToastMSG(primarycolor, message, context);
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
   void verifycode(phoneNumber, context) async {
     refreshpage.value = true;
-    var value = pincontroller.text;
+    var value = pincontroller.value.text;
     if (value != null && value.length == 4) {
       var auth_id = await CacheManager.getvaluefromsharedprefences("auth_id");
 

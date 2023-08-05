@@ -6,321 +6,365 @@ import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
+import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Profile/build_menu_items.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final AuthController _controller = Get.put(AuthController());
-  final Rx<Map<String, String>> userdatas = Rx<Map<String, String>>({
+  Map<String, dynamic> userdatas = {
     'auth_id': '',
     'name_surname': '',
     'email': '',
     'phone': '',
-    'profilepicture': '',
-  });
+    'profilepicture': 'users/noprofilepicture.webp',
+  };
 
-  ProfilePage() {
+  @override
+  void initState() {
+    super.initState();
     getalldataoncache();
   }
 
   void getalldataoncache() async {
-    userdatas.update((val) {
-      val!['auth_id'] =
-          CacheManager.getvaluefromsharedprefences("auth_id") ?? '';
-      val!['name_surname'] =
-          CacheManager.getvaluefromsharedprefences("name_surname") ?? '';
-      val!['phone'] = CacheManager.getvaluefromsharedprefences("phone") ?? '';
-      val!['email'] = CacheManager.getvaluefromsharedprefences("email") ?? '';
-      val!['profilepicture'] =
-          CacheManager.getvaluefromsharedprefences("profilepicture") ?? '';
-    });
+    try {
+      _controller.refreshpage.value = true;
+      var auth_id =
+          await CacheManager.getvaluefromsharedprefences("auth_id") ?? '';
+      var name_surname =
+          await CacheManager.getvaluefromsharedprefences("name_surname") ?? '';
+      var phone =
+          ' ' + await CacheManager.getvaluefromsharedprefences("phone") ?? '';
+      var email = await CacheManager.getvaluefromsharedprefences("email") ?? '';
+      var profilepicture =
+          await CacheManager.getvaluefromsharedprefences("profilepicture") ??
+              'users/noprofilepicture.webp';
+      if (profilepicture == null || profilepicture.isEmpty) {
+        profilepicture = 'users/noprofilepicture.webp';
+      }
+      Map<String, dynamic> getData = {
+        'auth_id': auth_id,
+        'name_surname': name_surname,
+        'email': ' ' + email,
+        'phone': phone,
+        'profilepicture': profilepicture,
+      };
+      setState(() {
+        userdatas = getData;
+      });
+
+      _controller.refreshpage.value = false;
+    } catch (e) {
+      _controller.refreshpage.value = false;
+      Get.back();
+      print(e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Obx(
-      () => Scaffold(
-          backgroundColor: bodycolor,
-          appBar: BaseAppBar(
-              backbutton: false,
-              title: "myaccount".tr,
-              changeprof: true,
-              titlebg: false,
-              authtype: _controller.authType.value,
-              changeprofpage: () => _controller.changeprofpage()),
-          body: SingleChildScrollView(
-            controller: ScrollController(),
-            physics: ScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              textBaseline: TextBaseline.alphabetic,
-              textDirection: TextDirection.ltr,
-              verticalDirection: VerticalDirection.down,
-              children: [
-                Center(
-                  child: Container(
-                    height: width / 3,
-                    width: width - 40,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                        color: whitecolor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            blurStyle: BlurStyle.solid,
-                            color: Colors.black38,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ]),
-                    child: Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: primarycolor,
-                            foregroundColor: whitecolor,
-                            radius: 45,
-                            backgroundImage: userdatas
-                                            .value['profilepicture'] !=
-                                        null &&
-                                    userdatas.value['profilepicture'] != ''
-                                ? NetworkImage(imageurl +
-                                    userdatas.value['profilepicture']
-                                        .toString())
-                                : NetworkImage(
-                                    imageurl + "users/noprofilepicture.webp"),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  StaticText(
-                                      text:
-                                          userdatas.value['name_surname'] ?? '',
-                                      weight: FontWeight.bold,
-                                      size: buttontextSize,
-                                      color: darkcolor),
-                                  IconButtonElement(
+    return Scaffold(
+        backgroundColor: bodycolor,
+        appBar: BaseAppBar(
+            backbutton: false,
+            title: "myaccount".tr,
+            changeprof: true,
+            titlebg: false,
+            authtype: _controller.authType.value,
+            changeprofpage: () => _controller.changeprofpage()),
+        body: Obx(() => _controller.refreshpage.value == true
+            ? LoaderScreen()
+            : SingleChildScrollView(
+                controller: ScrollController(),
+                physics: ScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  textBaseline: TextBaseline.alphabetic,
+                  textDirection: TextDirection.ltr,
+                  verticalDirection: VerticalDirection.down,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: width / 3,
+                        width: width - 40,
+                        alignment: Alignment.center,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: whitecolor,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurStyle: BlurStyle.solid,
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: imageurl +
+                                  userdatas['profilepicture'].toString(),
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                backgroundColor: primarycolor,
+                                foregroundColor: whitecolor,
+                                radius: 35,
+                                backgroundImage: imageProvider,
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    StaticText(
+                                        text: userdatas['name_surname'] ?? '',
+                                        weight: FontWeight.bold,
+                                        size: normaltextSize,
+                                        color: darkcolor),
+                                    IconButtonElement(
+                                        color: secondarycolor,
+                                        size: buttontextSize,
+                                        icon: FeatherIcons.edit2,
+                                        onPressed: () =>
+                                            Get.toNamed("/profileinformation"))
+                                  ],
+                                ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        FeatherIcons.mail,
+                                        color: secondarycolor,
+                                        size: normaltextSize,
+                                      ),
+                                      StaticText(
+                                          text: userdatas['email'] ?? '',
+                                          weight: FontWeight.w500,
+                                          size: smalltextSize,
+                                          color: Colors.grey),
+                                    ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FeatherIcons.phone,
                                       color: secondarycolor,
-                                      size: buttontextSize,
-                                      icon: FeatherIcons.edit2,
-                                      onPressed: () =>
-                                          Get.toNamed("/profileinformation"))
-                                ],
-                              ),
-                              StaticText(
-                                  text: userdatas.value['email'] ?? '',
-                                  weight: FontWeight.w500,
-                                  size: smalltextSize,
-                                  color: Colors.grey),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FeatherIcons.phone,
-                                    color: secondarycolor,
-                                    size: normaltextSize,
-                                  ),
-                                  StaticText(
-                                      text: userdatas.value['phone'] ?? '',
-                                      weight: FontWeight.w400,
-                                      size: smalltextSize,
-                                      color: Colors.grey),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                                      size: normaltextSize,
+                                    ),
+                                    StaticText(
+                                        text: userdatas['phone'] ?? '',
+                                        weight: FontWeight.w400,
+                                        size: smalltextSize,
+                                        color: Colors.grey),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Devider(
-                  size: 10,
-                ),
-                _controller.authType.value == "driver"
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Devider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Devider(
+                      size: 10,
+                    ),
+                    _controller.authType.value == "driver"
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              GestureDetector(
-                                onTap: () => Get.toNamed('/balance/add'),
+                              Devider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed('/balance/add'),
+                                    child: Container(
+                                      width: width / 2 - 30,
+                                      alignment: Alignment.center,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                          color: whitecolor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              blurStyle: BlurStyle.solid,
+                                              color: Colors.black38,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
+                                              spreadRadius: 0,
+                                            )
+                                          ]),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          StaticText(
+                                            color: darkcolor,
+                                            size: buttontextSize,
+                                            weight: FontWeight.w600,
+                                            align: TextAlign.center,
+                                            text: "320 AZN",
+                                          ),
+                                          StaticText(
+                                            color: darkcolor,
+                                            size: smalltextSize,
+                                            weight: FontWeight.w400,
+                                            align: TextAlign.center,
+                                            text: "Aylıq balans",
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed('/balance/add'),
+                                    child: Container(
+                                      width: width / 2 - 30,
+                                      alignment: Alignment.center,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                          color: whitecolor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              blurStyle: BlurStyle.solid,
+                                              color: Colors.black38,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
+                                              spreadRadius: 0,
+                                            )
+                                          ]),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          StaticText(
+                                            color: darkcolor,
+                                            size: buttontextSize,
+                                            weight: FontWeight.w600,
+                                            align: TextAlign.center,
+                                            text: "15 AZN",
+                                          ),
+                                          StaticText(
+                                            color: darkcolor,
+                                            size: smalltextSize,
+                                            weight: FontWeight.w400,
+                                            align: TextAlign.center,
+                                            text: "Bugünki balans",
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Devider(size: 20),
+                              Center(
                                 child: Container(
-                                  width: width / 2 - 30,
-                                  alignment: Alignment.center,
-                                  height: 80,
+                                  width: width - 40,
+                                  height: width / 1.8,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                      color: whitecolor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          blurStyle: BlurStyle.solid,
-                                          color: Colors.black38,
-                                          blurRadius: 10,
-                                          offset: Offset(0, 4),
-                                          spreadRadius: 0,
-                                        )
-                                      ]),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      StaticText(
-                                        color: darkcolor,
-                                        size: buttontextSize,
-                                        weight: FontWeight.w600,
-                                        align: TextAlign.center,
-                                        text: "320 AZN",
-                                      ),
-                                      StaticText(
-                                        color: darkcolor,
-                                        size: smalltextSize,
-                                        weight: FontWeight.w400,
-                                        align: TextAlign.center,
-                                        text: "Aylıq balans",
-                                      ),
+                                    color: whitecolor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        blurStyle: BlurStyle.solid,
+                                        color: Colors.black38,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 4),
+                                        spreadRadius: 0,
+                                      )
                                     ],
                                   ),
+                                  child: AddableWidget(type: 'cards'),
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () => Get.toNamed('/balance/add'),
+                              Devider(size: 20),
+                              Center(
                                 child: Container(
-                                  width: width / 2 - 30,
-                                  alignment: Alignment.center,
-                                  height: 80,
+                                  width: width - 40,
+                                  height: width / 1.8,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                      color: whitecolor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          blurStyle: BlurStyle.solid,
-                                          color: Colors.black38,
-                                          blurRadius: 10,
-                                          offset: Offset(0, 4),
-                                          spreadRadius: 0,
-                                        )
-                                      ]),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      StaticText(
-                                        color: darkcolor,
-                                        size: buttontextSize,
-                                        weight: FontWeight.w600,
-                                        align: TextAlign.center,
-                                        text: "15 AZN",
-                                      ),
-                                      StaticText(
-                                        color: darkcolor,
-                                        size: smalltextSize,
-                                        weight: FontWeight.w400,
-                                        align: TextAlign.center,
-                                        text: "Bugünki balans",
-                                      ),
+                                    color: whitecolor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        blurStyle: BlurStyle.solid,
+                                        color: Colors.black38,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 4),
+                                        spreadRadius: 0,
+                                      )
                                     ],
                                   ),
+                                  child: AddableWidget(type: 'automobils'),
                                 ),
                               ),
+                              Devider(),
                             ],
-                          ),
-                          Devider(size: 20),
-                          Center(
-                            child: Container(
-                              width: width - 40,
-                              height: width / 1.8,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: whitecolor,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    blurStyle: BlurStyle.solid,
-                                    color: Colors.black38,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: AddableWidget(type: 'cards'),
-                            ),
-                          ),
-                          Devider(size: 20),
-                          Center(
-                            child: Container(
-                              width: width - 40,
-                              height: width / 1.8,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: whitecolor,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    blurStyle: BlurStyle.solid,
-                                    color: Colors.black38,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: AddableWidget(type: 'automobils'),
-                            ),
-                          ),
-                          Devider(),
-                        ],
-                      )
-                    : Container(),
-                Devider(),
-                build_menu_items(_controller.authType.value),
-                Devider(),
-              ],
-            ),
+                          )
+                        : Container(),
+                    Devider(),
+                    build_menu_items(_controller.authType.value),
+                    Devider(),
+                  ],
+                ),
+              )),
+        bottomNavigationBar: Container(
+          height: 60,
+          margin: EdgeInsets.only(bottom: 15),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ButtonElement(
+                text: "logout".tr,
+                height: 50,
+                width: width - 100,
+                borderRadius: BorderRadius.circular(45),
+                onPressed: () => _controller.logout(context)),
           ),
-          bottomNavigationBar: Container(
-            height: 60,
-            margin: EdgeInsets.only(bottom: 15),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: ButtonElement(
-                  text: "logout".tr,
-                  height: 50,
-                  width: width - 100,
-                  borderRadius: BorderRadius.circular(45),
-                  onPressed: () => print("Logout")),
-            ),
-          )),
-    );
+        ));
   }
 }

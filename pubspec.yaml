@@ -47,6 +47,7 @@ dependencies:
   provider: ^6.0.5
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  cached_network_image: ^3.2.0
   # agora_rtc_engine: 
 
 # dependency_overrides:
