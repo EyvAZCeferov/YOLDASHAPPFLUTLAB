@@ -24,16 +24,16 @@ class _SplashState extends State<Splash> {
   Map<String, dynamic> body = {};
 
   Future<void> init() async {
-    var response = await GetAndPost.fetchData('setting', context, body);
-    var cached = await CacheManager.getCachedModel<Settings>('setting');
-    if (cached == null) {
-      var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
-      await CacheManager.cacheModel('setting', settings);
-    }
+    // var response = await GetAndPost.fetchData('setting', context, body);
+    // var cached = await CacheManager.getCachedModel<Settings>('setting');
+    // if (cached == null) {
+    //   var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
+    //   await CacheManager.cacheModel('setting', settings);
+    // }
 
     var token = await CacheManager.getvaluefromsharedprefences('token');
     await Future.delayed(Duration(seconds: 3));
-    if (token != null && token.length > 0) {
+    if (token != null && token != '' && token.length > 0) {
       Get.toNamed('/mainscreen');
     } else {
       Get.toNamed('/login');

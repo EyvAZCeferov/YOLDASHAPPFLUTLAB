@@ -5,63 +5,41 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
-import 'package:yoldash/Models/MessageGroups.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/message_groups.dart';
 
 class MessagesController extends GetxController {
   var showattachmenu = false.obs;
+  Rx<bool> refreshpage = Rx<bool>(false);
   Rx<File?> imageFile = Rx<File?>(null);
   Rx<GoogleMapController?> googleMapController = Rx<GoogleMapController?>(null);
   LatLng? selectedCoordinate;
   late TextEditingController messagetextcontroller = TextEditingController();
-  RxList<MessageGroups> data = <MessageGroups>[
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0),
-    MessageGroups(
-        title: "Taytl",
-        image:
-            "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-        unread: 0)
-  ].obs;
+  RxList<MessageGroups> data = <MessageGroups>[].obs;
 
-  Future<void> refreshData() async {
-    await Future.delayed(Duration(seconds: 2));
-    data.value = [
-      MessageGroups(
-          title: "Taytl",
-          image:
-              "https://pub-static.fotor.com/assets/projects/pages/5ff61721271e45d2b9bbc6dbbd4b14c7/300w/purple-cute-school-girl-78a8ba2c107c4ce1bb7e5a3de0ed9528.jpg",
-          unread: 0)
-    ];
+  Future<void> getMessages(context) async {
+    print("FunctionsStarted");
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("chats/messages", body, context);
+    print(response);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        print(response['data']);
+        data.value = [];
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
   }
 
   void toggleattachmenu() {

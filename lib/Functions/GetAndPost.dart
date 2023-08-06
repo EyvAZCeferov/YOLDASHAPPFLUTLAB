@@ -15,9 +15,13 @@ class GetAndPost {
       data.forEach((key, value) {
         params += '$key=${Uri.encodeQueryComponent(value.toString())}&';
       });
-
-      var url = Uri.parse('$baseapiurl/$urlold?$params');
-
+      var url;
+      if (params.length > 2) {
+        url = Uri.parse('$baseapiurl/$urlold?$params');
+      } else {
+        url = Uri.parse('$baseapiurl/$urlold');
+      }
+      print(url);
       var headers = {'Content-Type': 'application/json'};
       var token = await CacheManager.getvaluefromsharedprefences("token");
       if (token != null && token.length > 0) {
@@ -25,6 +29,7 @@ class GetAndPost {
       }
 
       var response = await http.get(url, headers: headers);
+      print(response);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         var status = jsonData['status'];
@@ -38,6 +43,7 @@ class GetAndPost {
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
+      print(e.toString());
       showToastMSG(errorcolor, e.toString(), context);
     }
   }

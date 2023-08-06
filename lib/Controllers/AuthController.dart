@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
@@ -10,6 +11,7 @@ import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/models/users.dart';
 
 class AuthController extends GetxController {
+  final MainController _maincontroller = Get.put(MainController());
   Rx<TextEditingController> namesurnamecontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> gendercontroller =
@@ -28,9 +30,13 @@ class AuthController extends GetxController {
   Rx<TextEditingController> pincontroller =
       Rx<TextEditingController>(TextEditingController());
 
-  @override
-  void onInit() {
-    super.onInit();
+  AuthController() {
+    init();
+  }
+
+  void init() async {
+    _maincontroller.getstoragedat('authtype');
+    authType.value = _maincontroller.authtype.value;
   }
 
   void pickImage(context) async {
@@ -122,6 +128,8 @@ class AuthController extends GetxController {
   }
 
   void register(context) async {
+    refreshpage.value = true;
+
     if ((namesurnamecontroller.value.text != null &&
             namesurnamecontroller.value.text.length > 0) &&
         (birthdaycontroller.value != null &&
@@ -130,7 +138,6 @@ class AuthController extends GetxController {
             emailcontroller.value.text.length > 0) &&
         (phonecontroller.value.text != null &&
             phonecontroller.value.text.length > 0)) {
-      refreshpage.value = true;
       var body = {
         'phone': phonecontroller.value.text,
         'name_surname': namesurnamecontroller.value.text,
@@ -141,13 +148,42 @@ class AuthController extends GetxController {
         'language': 'az'
       };
       var response = await GetAndPost.postData("auth/register", body, context);
-      if (authType.value == "driver") {
-      } else {}
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = true;
-      showToastMSG(errorcolor, "fillthefield".tr, context);
-      refreshpage.value = false;
+      if (response != null) {
+        String status = response['status'];
+        String message = response['message'];
+        if (status == "success") {
+          var data = Users.fromMap(response['data']);
+          var cachedModel =
+              await CacheManager.getCachedModel<Users>('authenticated');
+          if (cachedModel == null) {
+            await CacheManager.cacheModel('authenticated', data);
+          }
+
+          if (data.id != null) {
+            CacheManager.setvaluetoprefences('auth_id', data.id);
+          }
+
+          CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
+          CacheManager.setvaluetoprefences('email', data.email);
+          CacheManager.setvaluetoprefences('phone', data.phone);
+          CacheManager.setvaluetoprefences('authtype', data.type);
+          CacheManager.setvaluetoprefences('language', 'az');
+          CacheManager.setvaluetoprefences(
+              'profilepicture', data.additionalinfo?.image ?? '');
+          authType.value = data.type ?? 'rider';
+          Get.toNamed(
+            'verificationcode',
+            arguments: {'phoneNumber': phonecontroller.value.text},
+          );
+          showToastMSG(primarycolor, message, context);
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      } else {
+        showToastMSG(errorcolor, "fillthefield".tr, context);
+        refreshpage.value = false;
+      }
     }
   }
 
