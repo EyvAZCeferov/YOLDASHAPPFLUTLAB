@@ -1,17 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Controllers/MessagesController.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Messages/MessageBubble.dart';
 
 class MessagesShow extends StatelessWidget {
-  final MessagesController _controller = Get.find<MessagesController>();
-
-  final index = int.parse(Get.parameters['index'] ?? '');
+  late MessagesController _controller = Get.put(MessagesController());
+  late AuthController _authcontroller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +82,42 @@ class MessagesShow extends StatelessWidget {
                   icon: FeatherIcons.chevronLeft,
                   color: Colors.black,
                   size: buttontextSize,
-                  onPressed: () => Get.back()),
+                  onPressed: () {
+                    _controller.selectedMessageGroup = null;
+                    Get.back();
+                  }),
             ),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundColor: primarycolor,
-                  foregroundColor: whitecolor,
-                  radius: 20,
-                  backgroundImage: NetworkImage(
-                      "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
+                CachedNetworkImage(
+                  imageUrl: _authcontroller.authType == 'rider'
+                      ? imageurl +
+                          (_controller.selectedMessageGroup!.receiverImage ??
+                              'users/noprofilepicture.webp')
+                      : imageurl +
+                          (_controller.selectedMessageGroup!.senderImage ??
+                              'users/noprofilepicture.webp'),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  imageBuilder: (context, imageProvider) => CircleAvatar(
+                    backgroundColor: primarycolor,
+                    foregroundColor: whitecolor,
+                    radius: 20,
+                    backgroundImage: imageProvider,
+                  ),
                 ),
                 SizedBox(width: 5),
                 StaticText(
                     align: TextAlign.center,
                     color: darkcolor,
                     size: smalltextSize,
-                    text: "Eyvaz Ceferov",
+                    text: _authcontroller.authType == 'rider'
+                        ? _controller.selectedMessageGroup!.receiverName
+                            .toString()
+                        : _controller.selectedMessageGroup!.senderName
+                            .toString(),
                     weight: FontWeight.w500),
               ],
             )),
@@ -107,10 +126,7 @@ class MessagesShow extends StatelessWidget {
         () => Column(
           children: [
             Expanded(
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                reverse: true,
-                padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
                 children: [
                   _controller.showattachmenu.value == true
                       ? Container(
@@ -193,22 +209,20 @@ class MessagesShow extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10),
-                  MessageBubble(
-                    message: "Hello",
-                    isMine: false,
-                  ),
-                  MessageBubble(
-                    message: "I'm good, thanks!",
-                    isMine: false,
-                  ),
-                  MessageBubble(
-                    message: "Hey!",
-                    isMine: true,
-                  ),
-                  MessageBubble(
-                    message: "I'm fine. How about you?",
-                    isMine: true,
-                  ),
+                  ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      reverse: true,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      itemCount:
+                          _controller.selectedMessageGroup!.messages!.length,
+                      itemBuilder: (context, index) {
+                        var item =
+                            _controller.selectedMessageGroup!.messages![index];
+                        return MessageBubble(
+                          message: "Hello",
+                          isMine: false,
+                        );
+                      }),
                 ],
               ),
             ),

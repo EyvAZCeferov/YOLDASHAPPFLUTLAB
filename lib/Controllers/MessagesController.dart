@@ -18,19 +18,34 @@ class MessagesController extends GetxController {
   LatLng? selectedCoordinate;
   late TextEditingController messagetextcontroller = TextEditingController();
   RxList<MessageGroups> data = <MessageGroups>[].obs;
+  MessageGroups? selectedMessageGroup;
 
   Future<void> getMessages(context) async {
-    print("FunctionsStarted");
     refreshpage.value = true;
     Map<String, dynamic> body = {};
-    var response = await GetAndPost.fetchData("chats/messages", body, context);
-    print(response);
+    var response = await GetAndPost.fetchData("chats/messages", context, body);
     if (response != null) {
       String status = response['status'];
       String message = response['message'];
       if (status == "success") {
-        print(response['data']);
-        data.value = [];
+        data.value = (response['data'] as List).map((dat) {
+          List<Messages> messages = (dat['messages'] as List)
+              .map((messageData) => Messages.fromJson(messageData))
+              .toList();
+
+          return MessageGroups(
+            id: dat["id"],
+            receiverId: dat["receiver_id"],
+            senderId: dat["sender_id"],
+            messagegroupCreatedAt: dat["messagegroup_created_at"],
+            count: dat["count"],
+            receiverName: dat["receiver_name"],
+            senderName: dat["sender_name"],
+            receiverImage: dat["receiver_image"],
+            senderImage: dat["sender_image"],
+            messages: messages,
+          );
+        }).toList();
       } else {
         showToastMSG(errorcolor, message, context);
       }

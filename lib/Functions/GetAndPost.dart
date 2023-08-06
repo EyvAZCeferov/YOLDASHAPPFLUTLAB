@@ -12,24 +12,23 @@ class GetAndPost {
       String urlold, context, Map<String, dynamic> data) async {
     try {
       String params = '';
-      data.forEach((key, value) {
-        params += '$key=${Uri.encodeQueryComponent(value.toString())}&';
-      });
+      if (data != null && data.isNotEmpty) {
+        data.forEach((key, value) {
+          params += '$key=${Uri.encodeQueryComponent(value.toString())}&';
+        });
+      }
       var url;
       if (params.length > 2) {
         url = Uri.parse('$baseapiurl/$urlold?$params');
       } else {
         url = Uri.parse('$baseapiurl/$urlold');
       }
-      print(url);
       var headers = {'Content-Type': 'application/json'};
       var token = await CacheManager.getvaluefromsharedprefences("token");
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
-
       var response = await http.get(url, headers: headers);
-      print(response);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         var status = jsonData['status'];

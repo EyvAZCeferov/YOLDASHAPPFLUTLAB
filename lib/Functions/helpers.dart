@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
@@ -27,5 +29,24 @@ Future<void> launchUrlTOSITE(url) async {
   Uri uri = Uri.parse(url);
   if (!await launchUrl(uri)) {
     throw Exception('Could not launch $uri');
+  }
+}
+
+String formatDateTime(DateTime dateTime) {
+  Duration difference = DateTime.now().difference(dateTime);
+  if (difference.inSeconds < 60) {
+    return "differenceinSeconds"
+        .trParams({'timevar': difference.inSeconds.toString()});
+  } else if (difference.inMinutes < 60) {
+    return "differenceinMinutes"
+        .trParams({'timevar': difference.inMinutes.toString()});
+  } else if (difference.inHours < 24) {
+    return "differenceinHours"
+        .trParams({'timevar': difference.inHours.toString()});
+  } else if (difference.inDays < 30) {
+    return "differenceinDays"
+        .trParams({'timevar': difference.inDays.toString()});
+  } else {
+    return DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
   }
 }

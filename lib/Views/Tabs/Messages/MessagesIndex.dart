@@ -1,14 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Controllers/MessagesController.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class MessagesIndex extends StatelessWidget {
   late MessagesController _controller = Get.put(MessagesController());
+  late AuthController _authcontroller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +39,13 @@ class MessagesIndex extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: _controller.data.length,
                     itemBuilder: (context, index) {
+                      var item = _controller.data[index];
+
                       return GestureDetector(
-                        onTap: () =>
-                            Get.toNamed('/messages/$index', arguments: index),
+                        onTap: () {
+                          _controller.selectedMessageGroup = item;
+                          Get.toNamed('/messages/${item.id}', arguments: item);
+                        },
                         child: Center(
                             child: Container(
                           width: width - 40,
@@ -60,12 +68,26 @@ class MessagesIndex extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    backgroundColor: primarycolor,
-                                    foregroundColor: whitecolor,
-                                    radius: 25,
-                                    backgroundImage: NetworkImage(
-                                        "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
+                                  CachedNetworkImage(
+                                    imageUrl: _authcontroller.authType ==
+                                            'rider'
+                                        ? imageurl +
+                                            (item.receiverImage ??
+                                                'users/noprofilepicture.webp')
+                                        : imageurl +
+                                            (item.senderImage ??
+                                                'users/noprofilepicture.webp'),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                      backgroundColor: primarycolor,
+                                      foregroundColor: whitecolor,
+                                      radius: 25,
+                                      backgroundImage: imageProvider,
+                                    ),
                                   ),
                                   SizedBox(width: 5),
                                   Column(
@@ -74,13 +96,21 @@ class MessagesIndex extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       StaticText(
-                                          text: "Eyvaz Ceferov",
+                                          text: _authcontroller.authType ==
+                                                  'rider'
+                                              ? item.receiverName.toString()
+                                              : item.senderName.toString(),
                                           weight: FontWeight.w500,
                                           size: normaltextSize,
                                           color: darkcolor,
                                           align: TextAlign.left),
                                       StaticText(
-                                          text: "Salam",
+                                          text: (item.messages != null &&
+                                                  item.messages!.isNotEmpty)
+                                              ? item.messages![0].message!
+                                                      .substring(0, 8) +
+                                                  '...'
+                                              : '',
                                           weight: FontWeight.w500,
                                           size: smalltextSize,
                                           color: iconcolor,
@@ -93,7 +123,7 @@ class MessagesIndex extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    index % 2 == 0
+                                    item.count != null && item.count! > 0
                                         ? Container(
                                             width: 35,
                                             height: 20,
@@ -106,7 +136,7 @@ class MessagesIndex extends StatelessWidget {
                                             child: StaticText(
                                               color: whitecolor,
                                               size: smalltextSize,
-                                              text: "1",
+                                              text: item.count!.toString(),
                                               weight: FontWeight.w500,
                                               align: TextAlign.center,
                                             ),
@@ -121,14 +151,16 @@ class MessagesIndex extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        index % 2 == 0
+                                        item.count != 0
                                             ? SizedBox()
                                             : Icon(FontAwesomeIcons.checkDouble,
                                                 color: secondarycolor,
                                                 size: buttontextSize),
                                         SizedBox(width: 10),
                                         StaticText(
-                                          text: "15:19",
+                                          text: formatDateTime(DateTime.parse(
+                                              item.messagegroupCreatedAt
+                                                  as String)),
                                           weight: FontWeight.w400,
                                           size: smalltextSize,
                                           color: iconcolor,
