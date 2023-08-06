@@ -35,8 +35,8 @@ class AuthController extends GetxController {
   }
 
   void init() async {
-    _maincontroller.getstoragedat('authtype');
-    authType.value = _maincontroller.authtype.value;
+    var newval = await _maincontroller.getstoragedat('authtype');
+    authType.value = newval;
   }
 
   void pickImage(context) async {
@@ -159,10 +159,7 @@ class AuthController extends GetxController {
             await CacheManager.cacheModel('authenticated', data);
           }
 
-          if (data.id != null) {
-            CacheManager.setvaluetoprefences('auth_id', data.id);
-          }
-
+          CacheManager.setvaluetoprefences('auth_id', data.id);
           CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);
@@ -205,10 +202,7 @@ class AuthController extends GetxController {
             await CacheManager.cacheModel('authenticated', data);
           }
 
-          if (data.id != null) {
-            CacheManager.setvaluetoprefences('auth_id', data.id);
-          }
-
+          CacheManager.setvaluetoprefences('auth_id', data.id);
           CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);

@@ -11,8 +11,12 @@ import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class MessagesIndex extends StatelessWidget {
-  late MessagesController _controller = Get.put(MessagesController());
-  late AuthController _authcontroller = Get.put(AuthController());
+  final MessagesController _controller = Get.put(MessagesController());
+  final AuthController _authcontroller = Get.put(AuthController());
+
+  MessagesIndex() {
+    _authcontroller.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,6 @@ class MessagesIndex extends StatelessWidget {
                     itemCount: _controller.data.length,
                     itemBuilder: (context, index) {
                       var item = _controller.data[index];
-
                       return GestureDetector(
                         onTap: () {
                           _controller.selectedMessageGroup = item;
@@ -69,7 +72,7 @@ class MessagesIndex extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   CachedNetworkImage(
-                                    imageUrl: _authcontroller.authType ==
+                                    imageUrl: _authcontroller.authType.value ==
                                             'rider'
                                         ? imageurl +
                                             (item.receiverImage ??
@@ -96,20 +99,47 @@ class MessagesIndex extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       StaticText(
-                                          text: _authcontroller.authType ==
-                                                  'rider'
-                                              ? item.receiverName.toString()
-                                              : item.senderName.toString(),
+                                          text:
+                                              _authcontroller.authType.value ==
+                                                      'rider'
+                                                  ? item.receiverName
+                                                              .toString()
+                                                              .length >
+                                                          15
+                                                      ? item.receiverName
+                                                          .toString()
+                                                          .substring(0, 15)
+                                                      : item.receiverName
+                                                          .toString()
+                                                  : item.senderName
+                                                              .toString()
+                                                              .length >
+                                                          15
+                                                      ? item.senderName
+                                                          .toString()
+                                                          .substring(0, 15)
+                                                      : item.senderName
+                                                          .toString(),
                                           weight: FontWeight.w500,
                                           size: normaltextSize,
                                           color: darkcolor,
                                           align: TextAlign.left),
                                       StaticText(
                                           text: (item.messages != null &&
-                                                  item.messages!.isNotEmpty)
-                                              ? item.messages![0].message!
-                                                      .substring(0, 8) +
-                                                  '...'
+                                                  item.messages!.isNotEmpty &&
+                                                  item.messages![0]
+                                                          .messageelementtype ==
+                                                      "TEXT")
+                                              ? (item.messages![0].message
+                                                          .toString()
+                                                          .length >
+                                                      8
+                                                  ? item.messages![0].message
+                                                          .toString()
+                                                          .substring(0, 8) +
+                                                      '...'
+                                                  : item.messages![0].message
+                                                      .toString())
                                               : '',
                                           weight: FontWeight.w500,
                                           size: smalltextSize,
