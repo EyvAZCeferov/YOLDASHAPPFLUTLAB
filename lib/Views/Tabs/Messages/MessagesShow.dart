@@ -99,7 +99,7 @@ class MessagesShow extends StatelessWidget {
                         color: Colors.black,
                         size: buttontextSize,
                         onPressed: () {
-                          _controller.selectedMessageGroup = null;
+                          _controller.selectedMessageGroup.value = null;
                           Get.back();
                         }),
                   ),
@@ -110,12 +110,12 @@ class MessagesShow extends StatelessWidget {
                       CachedNetworkImage(
                         imageUrl: _authcontroller.authType == 'rider'
                             ? imageurl +
-                                (_controller
-                                        .selectedMessageGroup!.receiverImage ??
+                                (_controller.selectedMessageGroup.value!
+                                        .receiverImage ??
                                     'users/noprofilepicture.webp')
                             : imageurl +
-                                (_controller
-                                        .selectedMessageGroup!.senderImage ??
+                                (_controller.selectedMessageGroup.value!
+                                        .senderImage ??
                                     'users/noprofilepicture.webp'),
                         placeholder: (context, url) =>
                             CircularProgressIndicator(),
@@ -132,171 +132,213 @@ class MessagesShow extends StatelessWidget {
                           align: TextAlign.center,
                           color: darkcolor,
                           size: smalltextSize,
-                          text: _authcontroller.authType == 'rider'
-                              ? _controller.selectedMessageGroup!.receiverName
-                                  .toString()
-                              : _controller.selectedMessageGroup!.senderName
-                                  .toString(),
+                          text: _authcontroller.authType.value == 'rider'
+                              ? _controller.selectedMessageGroup.value!
+                                          .receiverName
+                                          .toString()
+                                          .length >
+                                      15
+                                  ? _controller
+                                      .selectedMessageGroup.value!.receiverName
+                                      .toString()
+                                      .substring(0, 15)
+                                  : _controller
+                                      .selectedMessageGroup.value!.receiverName
+                                      .toString()
+                              : _controller.selectedMessageGroup.value!
+                                          .senderName
+                                          .toString()
+                                          .length >
+                                      15
+                                  ? _controller
+                                      .selectedMessageGroup.value!.senderName
+                                      .toString()
+                                      .substring(0, 15)
+                                  : _controller
+                                      .selectedMessageGroup.value!.senderName
+                                      .toString(),
                           weight: FontWeight.w500),
                     ],
                   )),
             ),
-            body: Obx(
-              () => Column(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              reverse: true,
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: _controller
-                                  .selectedMessageGroup!.messages!.length,
-                              itemBuilder: (context, index) {
-                                var item = _controller
-                                    .selectedMessageGroup!.messages![index];
-
-                                return MessageBubble(
-                                  message: item.message.toString(),
-                                  isMine: snapshot.data == item.userId!
-                                      ? true
-                                      : false,
-                                );
-                              }),
-                        ),
-                        SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          children: [
-                            GestureDetector(
-                              onTap: () => print("Hi"),
-                              child: Chip(
-                                backgroundColor: whitecolor,
-                                labelPadding: EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 9),
-                                elevation: 5,
-                                label: StaticText(
-                                    color: darkcolor,
-                                    size: normaltextSize,
-                                    weight: FontWeight.w400,
-                                    align: TextAlign.center,
-                                    text: "Hi"),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => print("How are you?"),
-                              child: Chip(
-                                backgroundColor: whitecolor,
-                                labelPadding: EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 9),
-                                elevation: 5,
-                                label: StaticText(
-                                    color: darkcolor,
-                                    size: normaltextSize,
-                                    weight: FontWeight.w400,
-                                    align: TextAlign.center,
-                                    text: "How Area you?"),
-                              ),
-                            ),
-                          ],
-                        ),
-                        _controller.showattachmenu.value == true
-                            ? Container(
-                                width: 60,
-                                height: 100,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: whitecolor,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: IconButton(
-                                        alignment: Alignment.center,
-                                        icon: Icon(FeatherIcons.image,
-                                            color: iconcolor,
-                                            size: buttontextSize),
-                                        onPressed: () {
-                                          _controller.pickImage(context);
-                                        },
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: whitecolor,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: IconButton(
-                                        alignment: Alignment.center,
-                                        icon: Icon(FeatherIcons.mapPin,
-                                            color: iconcolor,
-                                            size: buttontextSize),
-                                        onPressed: () {
-                                          _controller.showmap(context);
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      width: width - 40,
-                      decoration: BoxDecoration(
-                          color: whitecolor,
-                          borderRadius: BorderRadius.circular(25)),
-                      child: Row(
+            body: Obx(() {
+              final selectedgroup = _controller.selectedMessageGroup.value;
+              if (selectedgroup == null) {
+                return LoaderScreen();
+              } else {
+                return _controller.refreshpage.value == true
+                    ? LoaderScreen()
+                    : Column(
                         children: [
-                          IconButton(
-                            alignment: Alignment.center,
-                            icon: Icon(FeatherIcons.paperclip,
-                                color: iconcolor, size: subHeadingSize),
-                            onPressed: () {
-                              _controller.toggleattachmenu();
-                            },
-                          ),
                           Expanded(
-                            child: TextField(
-                              controller: _controller.messagetextcontroller,
-                              decoration: InputDecoration.collapsed(
-                                hintText: "message".tr + '...',
-                              ),
-                              onSubmitted: (value) {
-                                print(value);
-                              },
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                      itemCount: selectedgroup.messages!.length,
+                                      itemBuilder: (context, index) {
+                                        var item =
+                                            selectedgroup.messages![index];
+                                        return MessageBubble(
+                                          message: item.message.toString(),
+                                          isMine: snapshot.data == item.userId!
+                                              ? true
+                                              : false,
+                                        );
+                                      }),
+                                ),
+                                SizedBox(height: 10),
+                                Center(
+                                  child: Container(
+                                    width: width - 50,
+                                    height: 50,
+                                    child: ListView.builder(
+                                      itemCount:
+                                          _controller.quickreplies.length,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (context, index) {
+                                        var item =
+                                            _controller.quickreplies[index];
+                                        return Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                _controller
+                                                    .messagetextcontroller
+                                                    .value
+                                                    .text = item;
+                                                _controller
+                                                    .sendtextmessage(context);
+                                              },
+                                              child: Chip(
+                                                backgroundColor: whitecolor,
+                                                labelPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 4,
+                                                        horizontal: 9),
+                                                elevation: 5,
+                                                label: StaticText(
+                                                    color: darkcolor,
+                                                    size: normaltextSize,
+                                                    weight: FontWeight.w400,
+                                                    align: TextAlign.center,
+                                                    text: item),
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                _controller.showattachmenu.value == true
+                                    ? Container(
+                                        width: 60,
+                                        height: 100,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: whitecolor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: IconButton(
+                                                alignment: Alignment.center,
+                                                icon: Icon(FeatherIcons.image,
+                                                    color: iconcolor,
+                                                    size: buttontextSize),
+                                                onPressed: () {
+                                                  _controller
+                                                      .pickImage(context);
+                                                },
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: whitecolor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: IconButton(
+                                                alignment: Alignment.center,
+                                                icon: Icon(FeatherIcons.mapPin,
+                                                    color: iconcolor,
+                                                    size: buttontextSize),
+                                                onPressed: () {
+                                                  _controller.showmap(context);
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(),
+                              ],
                             ),
                           ),
-                          IconButton(
-                            alignment: Alignment.center,
-                            icon: Icon(FeatherIcons.send,
-                                color: iconcolor, size: subHeadingSize),
-                            onPressed: () {
-                              _controller.sendmessage(context);
-                            },
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 5),
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              width: width - 40,
+                              decoration: BoxDecoration(
+                                  color: whitecolor,
+                                  borderRadius: BorderRadius.circular(25)),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    alignment: Alignment.center,
+                                    icon: Icon(FeatherIcons.paperclip,
+                                        color: iconcolor, size: subHeadingSize),
+                                    onPressed: () {
+                                      _controller.toggleattachmenu();
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _controller
+                                          .messagetextcontroller.value,
+                                      decoration: InputDecoration.collapsed(
+                                        hintText: "message".tr + '...',
+                                      ),
+                                      onSubmitted: (value) {
+                                        print(value);
+                                      },
+                                    ),
+                                  ),
+                                  IconButton(
+                                    alignment: Alignment.center,
+                                    icon: Icon(FeatherIcons.send,
+                                        color: iconcolor, size: subHeadingSize),
+                                    onPressed: () {
+                                      _controller.sendtextmessage(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      );
+              }
+            }),
           );
         } else if (snapshot.hasError) {
           return LoaderScreen();

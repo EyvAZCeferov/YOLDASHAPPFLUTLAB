@@ -46,7 +46,7 @@ class MessagesIndex extends StatelessWidget {
                       var item = _controller.data[index];
                       return GestureDetector(
                         onTap: () {
-                          _controller.selectedMessageGroup = item;
+                          _controller.selectedMessageGroup.value = item;
                           Get.toNamed('/messages/${item.id}', arguments: item);
                         },
                         child: Center(
@@ -126,20 +126,16 @@ class MessagesIndex extends StatelessWidget {
                                           align: TextAlign.left),
                                       StaticText(
                                           text: (item.messages != null &&
-                                                  item.messages!.isNotEmpty &&
-                                                  item.messages![0]
-                                                          .messageelementtype ==
-                                                      "TEXT")
-                                              ? (item.messages![0].message
+                                                  item.messages!.isNotEmpty)
+                                              ? item.messages![0].message
                                                           .toString()
                                                           .length >
                                                       8
-                                                  ? item.messages![0].message
-                                                          .toString()
+                                                  ? item.messages![0].message!
                                                           .substring(0, 8) +
                                                       '...'
                                                   : item.messages![0].message
-                                                      .toString())
+                                                      .toString()
                                               : '',
                                           weight: FontWeight.w500,
                                           size: smalltextSize,
@@ -187,15 +183,19 @@ class MessagesIndex extends StatelessWidget {
                                                 color: secondarycolor,
                                                 size: buttontextSize),
                                         SizedBox(width: 10),
-                                        StaticText(
-                                          text: formatDateTime(DateTime.parse(
-                                              item.messagegroupCreatedAt
-                                                  as String)),
-                                          weight: FontWeight.w400,
-                                          size: smalltextSize,
-                                          color: iconcolor,
-                                          align: TextAlign.center,
-                                        )
+                                        (item.messages != null &&
+                                                item.messages!.isNotEmpty)
+                                            ? StaticText(
+                                                text: formatDateTime(
+                                                    DateTime.parse(item
+                                                        .messages![0]!
+                                                        .createdAt! as String)),
+                                                weight: FontWeight.w400,
+                                                size: smalltextSize,
+                                                color: iconcolor,
+                                                align: TextAlign.center,
+                                              )
+                                            : SizedBox(),
                                       ],
                                     ),
                                   ]),

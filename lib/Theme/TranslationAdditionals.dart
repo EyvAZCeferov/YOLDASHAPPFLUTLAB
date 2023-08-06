@@ -113,10 +113,13 @@ class TranslationAdditionals extends Translations {
           "poweredby": "Powered by",
           "errordatanotfound": "Xəta! Məlumat tapılmadı!",
           "fillthefield": "Xanaları doldurun",
-          "differenceinSeconds": "@timevar saniyə öncə",
-          "differenceinMinutes": "@timevar dəqiqə öncə",
-          "differenceinHours": "@timevar saat öncə",
-          "differenceinDays": "@timevar gün öncə",
+          "differenceinSeconds": "@timevar san. öncə",
+          "differenceinMinutes": "@timevar dəq. öncə",
+          "differenceinHours": "@timevar s. öncə",
+          "differenceinDays": "@timevar g. öncə",
+          'replies.hi': 'Salam.',
+          'replies.iamcoming': "Çatıram.",
+          'replies.iamwaiting': "Gözləyirəm."
         }
       };
 }

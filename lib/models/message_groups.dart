@@ -5,7 +5,6 @@ class MessageGroups {
     this.id,
     this.receiverId,
     this.senderId,
-    this.messagegroupCreatedAt,
     this.count,
     this.receiverName,
     this.senderName,
@@ -18,7 +17,6 @@ class MessageGroups {
         id: map["id"],
         receiverId: map["receiver_id"],
         senderId: map["sender_id"],
-        messagegroupCreatedAt: map["messagegroup_created_at"],
         count: map["count"],
         receiverName: map["receiver_name"],
         senderName: map["sender_name"],
@@ -35,7 +33,6 @@ class MessageGroups {
       id: map["id"],
       receiverId: map["receiver_id"],
       senderId: map["sender_id"],
-      messagegroupCreatedAt: map["messagegroup_created_at"],
       count: map["count"],
       receiverName: map["receiver_name"],
       senderName: map["sender_name"],
@@ -53,7 +50,6 @@ class MessageGroups {
   final int? id;
   final int? receiverId;
   final int? senderId;
-  final String? messagegroupCreatedAt;
   final int? count;
   final String? receiverName;
   final String? senderName;
@@ -65,7 +61,6 @@ class MessageGroups {
         "id": id,
         "receiver_id": receiverId,
         "sender_id": senderId,
-        "messagegroup_created_at": messagegroupCreatedAt,
         "count": count,
         "receiver_name": receiverName,
         "sender_name": senderName,
@@ -80,7 +75,6 @@ class MessageGroups {
     int? id,
     int? receiverId,
     int? senderId,
-    String? messagegroupCreatedAt,
     int? count,
     String? receiverName,
     String? senderName,
@@ -92,8 +86,6 @@ class MessageGroups {
         id: id ?? this.id,
         receiverId: receiverId ?? this.receiverId,
         senderId: senderId ?? this.senderId,
-        messagegroupCreatedAt:
-            messagegroupCreatedAt ?? this.messagegroupCreatedAt,
         count: count ?? this.count,
         receiverName: receiverName ?? this.receiverName,
         senderName: senderName ?? this.senderName,
@@ -104,39 +96,40 @@ class MessageGroups {
 
   @override
   String toString() =>
-      "MessageGroups(id: $id, receiverId: $receiverId, senderId: $senderId, messagegroupCreatedAt: $messagegroupCreatedAt, count: $count, receiverName: $receiverName, senderName: $senderName, receiverImage: $receiverImage, senderImage: $senderImage, messages: $messages)";
+      "MessageGroups(id: $id, receiverId: $receiverId, senderId: $senderId, count: $count, receiverName: $receiverName, senderName: $senderName, receiverImage: $receiverImage, senderImage: $senderImage, messages: $messages)";
 }
 
 class Messages {
-  const Messages({
-    this.messageGroupId,
-    this.message,
-    this.userId,
-    this.messageelementtype,
-    this.status,
-  });
+  const Messages(
+      {this.messageGroupId,
+      this.message,
+      this.userId,
+      this.messageelementtype,
+      this.status,
+      this.createdAt});
 
   factory Messages.fromMap(Map<String, dynamic> map) => Messages(
-        messageGroupId: map["message_group_id"],
-        message: map["message"],
-        userId: map["user_id"],
-        messageelementtype: map["messageelementtype"],
-        status: map["status"],
-      );
+      messageGroupId: map["message_group_id"],
+      message: map["message"],
+      userId: map["user_id"],
+      messageelementtype: map["messageelementtype"],
+      status: map["status"],
+      createdAt: map['createdAt']);
 
   factory Messages.fromJson(Map<String, dynamic> map) => Messages(
-        messageGroupId: map["message_group_id"],
-        message: map["message"],
-        userId: map["user_id"],
-        messageelementtype: map["messageelementtype"],
-        status: map["status"],
-      );
+      messageGroupId: map["message_group_id"],
+      message: map["message"],
+      userId: map["user_id"],
+      messageelementtype: map["messageelementtype"],
+      status: map["status"],
+      createdAt: map['createdAt']);
 
   final int? messageGroupId;
   final String? message;
   final int? userId;
   final String? messageelementtype;
   final bool? status;
+  final String? createdAt;
 
   Map<String, dynamic> toMap() => {
         "message_group_id": messageGroupId,
@@ -144,26 +137,27 @@ class Messages {
         "user_id": userId,
         "messageelementtype": messageelementtype,
         "status": status,
+        "createdAt": createdAt,
       };
 
   String toJson() => json.encode(toMap());
 
-  Messages copyWith({
-    int? messageGroupId,
-    String? message,
-    int? userId,
-    String? messageelementtype,
-    bool? status,
-  }) =>
+  Messages copyWith(
+          {int? messageGroupId,
+          String? message,
+          int? userId,
+          String? messageelementtype,
+          bool? status,
+          String? createdAt}) =>
       Messages(
-        messageGroupId: messageGroupId ?? this.messageGroupId,
-        message: message ?? this.message,
-        userId: userId ?? this.userId,
-        messageelementtype: messageelementtype ?? this.messageelementtype,
-        status: status ?? this.status,
-      );
+          messageGroupId: messageGroupId ?? this.messageGroupId,
+          message: message ?? this.message,
+          userId: userId ?? this.userId,
+          messageelementtype: messageelementtype ?? this.messageelementtype,
+          status: status ?? this.status,
+          createdAt: createdAt ?? this.createdAt);
 
   @override
   String toString() =>
-      "Messages(messageGroupId: $messageGroupId, message: $message, userId: $userId, messageelementtype: $messageelementtype, status: $status)";
+      "Messages(messageGroupId: $messageGroupId, message: $message, userId: $userId, messageelementtype: $messageelementtype, status: $status, createdAt:$createdAt)";
 }

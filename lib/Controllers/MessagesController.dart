@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
@@ -16,14 +17,21 @@ class MessagesController extends GetxController {
   Rx<File?> imageFile = Rx<File?>(null);
   Rx<GoogleMapController?> googleMapController = Rx<GoogleMapController?>(null);
   LatLng? selectedCoordinate;
-  late TextEditingController messagetextcontroller = TextEditingController();
+  Rx<TextEditingController> messagetextcontroller =
+      Rx<TextEditingController>(TextEditingController());
   RxList<MessageGroups> data = <MessageGroups>[].obs;
-  MessageGroups? selectedMessageGroup;
+  Rx<MessageGroups?> selectedMessageGroup = Rx<MessageGroups?>(null);
+  List<String> quickreplies = [
+    'replies.hi'.tr,
+    'replies.iamcoming'.tr,
+    'replies.iamwaiting'.tr
+  ];
+  late MainController _maincontroller = Get.put(MainController());
 
   Future<void> getMessages(context) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
-    var response = await GetAndPost.fetchData("chats/messages", context, body);
+    var response = await GetAndPost.fetchData("chats", context, body);
     if (response != null) {
       String status = response['status'];
       String message = response['message'];
@@ -37,7 +45,6 @@ class MessagesController extends GetxController {
             id: dat["id"],
             receiverId: dat["receiver_id"],
             senderId: dat["sender_id"],
-            messagegroupCreatedAt: dat["messagegroup_created_at"],
             count: dat["count"],
             receiverName: dat["receiver_name"],
             senderName: dat["sender_name"],
@@ -121,10 +128,59 @@ class MessagesController extends GetxController {
     );
   }
 
-  void sendmessage(context) {
-    if (messagetextcontroller.value != null) {
-      print(messagetextcontroller.value);
+  void sendtextmessage(context) async {
+    refreshpage.value = true;
+
+    if (messagetextcontroller.value.text != null) {
+      var auth_id = await _maincontroller.getstoragedat('auth_id');
+      MessageGroups oldmessagegroup = selectedMessageGroup.value!;
+      var body = {
+        'message_group_id': oldmessagegroup.id,
+        'message': messagetextcontroller.value.text,
+        'type': 'TEXT'
+      };
+      var response = await GetAndPost.postData("messages", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = response['message'];
+        if (status == "success") {
+          List<Messages>? messages = oldmessagegroup.messages;
+          messages?.add(Messages(
+            messageGroupId: oldmessagegroup.id,
+            message: messagetextcontroller.value.text,
+            userId: auth_id,
+            messageelementtype: "TEXT",
+            status: true,
+          ));
+          selectedMessageGroup.update((messageGroup) {
+            var updatedMessageGroup = MessageGroups(
+              id: oldmessagegroup.id,
+              receiverId: oldmessagegroup.receiverId,
+              senderId: oldmessagegroup.senderId,
+              count: oldmessagegroup.count,
+              receiverName: oldmessagegroup.receiverName,
+              senderName: oldmessagegroup.senderName,
+              receiverImage: oldmessagegroup.receiverImage,
+              senderImage: oldmessagegroup.senderImage,
+              messages: messages,
+            );
+            messageGroup = updatedMessageGroup;
+          });
+
+          messagetextcontroller.value.text = '';
+          getMessages(context);
+        } else {
+          messagetextcontroller.value.text = '';
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      } else {
+        messagetextcontroller.value.text = '';
+        refreshpage.value = false;
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
     } else {
+      refreshpage.value = false;
       showToastMSG(errorcolor, 'messageisnothavenull'.tr, context);
     }
   }
