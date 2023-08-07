@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
@@ -48,5 +50,12 @@ String formatDateTime(DateTime dateTime) {
         .trParams({'timevar': difference.inDays.toString()});
   } else {
     return DateFormat('dd.MM.yyyy HH:mm').format(dateTime);
+  }
+}
+
+void handlepermissionreq(Permission permission, context) async {
+  final status = await permission.request();
+  if (status.isDenied) {
+    showToastMSG(errorcolor, "permissiondenied".tr, context);
   }
 }

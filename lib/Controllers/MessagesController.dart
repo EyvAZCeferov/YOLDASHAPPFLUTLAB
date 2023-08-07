@@ -96,18 +96,21 @@ class MessagesController extends GetxController {
           child: Column(
             children: [
               Expanded(
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target:
-                        LatLng(37.7749, -122.4194), // Başlangıç koordinatları
-                    zoom: 12, // Yakınlaştırma seviyesi
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target:
+                          LatLng(37.7749, -122.4194), // Başlangıç koordinatları
+                      zoom: 12, // Yakınlaştırma seviyesi
+                    ),
+                    onMapCreated: (controller) {
+                      googleMapController.value = controller;
+                    },
+                    onTap: (LatLng latLng) {
+                      selectedCoordinate = latLng;
+                    },
                   ),
-                  onMapCreated: (controller) {
-                    googleMapController.value = controller;
-                  },
-                  onTap: (LatLng latLng) {
-                    selectedCoordinate = latLng;
-                  },
                 ),
               ),
               ElevatedButton(
@@ -186,23 +189,14 @@ class MessagesController extends GetxController {
   void callpageredirect(type, context) async {
     try {
       if (type == "video") {
-        _handlecameraandmic(Permission.camera, context);
-      } else {
-        print("calling");
+        handlepermissionreq(Permission.camera, context);
       }
 
-      _handlecameraandmic(Permission.microphone, context);
+      handlepermissionreq(Permission.microphone, context);
 
       Get.toNamed('/callpage/${type}', arguments: {type: type});
     } catch (error) {
       showToastMSG(errorcolor, error, context);
-    }
-  }
-
-  void _handlecameraandmic(Permission permission, context) async {
-    final status = await permission.request();
-    if (status.isDenied) {
-      showToastMSG(errorcolor, "permissiondenied".tr, context);
     }
   }
 }
