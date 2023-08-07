@@ -152,20 +152,18 @@ class MessagesController extends GetxController {
             messageelementtype: "TEXT",
             status: true,
           ));
-          selectedMessageGroup.update((messageGroup) {
-            var updatedMessageGroup = MessageGroups(
-              id: oldmessagegroup.id,
-              receiverId: oldmessagegroup.receiverId,
-              senderId: oldmessagegroup.senderId,
-              count: oldmessagegroup.count,
-              receiverName: oldmessagegroup.receiverName,
-              senderName: oldmessagegroup.senderName,
-              receiverImage: oldmessagegroup.receiverImage,
-              senderImage: oldmessagegroup.senderImage,
-              messages: messages,
-            );
-            messageGroup = updatedMessageGroup;
-          });
+          selectedMessageGroup.value = null;
+          selectedMessageGroup.value = MessageGroups(
+            id: oldmessagegroup.id,
+            receiverId: oldmessagegroup.receiverId,
+            senderId: oldmessagegroup.senderId,
+            count: oldmessagegroup.count,
+            receiverName: oldmessagegroup.receiverName,
+            senderName: oldmessagegroup.senderName,
+            receiverImage: oldmessagegroup.receiverImage,
+            senderImage: oldmessagegroup.senderImage,
+            messages: messages,
+          );
 
           messagetextcontroller.value.text = '';
           getMessages(context);

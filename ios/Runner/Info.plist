@@ -87,5 +87,10 @@
 	<string>Resimleri seçmek için erişim izni gerekiyor.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Kamera kullanarak resim çekmek için erişim izni gerekiyor.</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>GoogleMapsApiKey</key>
+	<string>AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4</string>
+
 </dict>
 </plist>
