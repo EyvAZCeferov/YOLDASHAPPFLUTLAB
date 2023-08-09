@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:yoldash/Models/Cards.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
+import 'package:yoldash/Functions/helpers.dart';
+import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/cards.dart';
 
 class CardsController extends GetxController {
-  RxList<Cards> cards = <Cards>[].obs;
+  Rx<bool> refreshpage = Rx<bool>(false);
+  RxList<Cards> data = <Cards>[].obs;
+  Rx<Cards?> selectedCards = Rx<Cards?>(null);
+
   Rx<TextEditingController> cardNumberController =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> validityDateController =
@@ -13,28 +19,57 @@ class CardsController extends GetxController {
   Rx<TextEditingController> holderNameController =
       Rx<TextEditingController>(TextEditingController());
 
-  @override
-  void onInit() {
-    fetchCards();
-    super.onInit();
-  }
+  Future<void> fetchDatas(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("cards", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        data.value = (response['data'] as List).map((dat) {
+          return Cards.fromMap(dat);
+        }).toList();
 
-  void fetchCards() {
-    cards = [
-      Cards(title: 'Ev', description: "Aciqlama", value: false),
-      Cards(title: 'İş', description: "Aciqlama", value: true),
-      Cards(title: 'Okul', description: "Aciqlama 2", value: false),
-    ].obs;
-  }
-
-  void updateSelection(int index, bool value) {
-    for (var i = 0; i < cards.length; i++) {
-      if (i == index) {
-        cards[i].value = value;
+        selectedCards.value = data.firstWhere(
+            (automobil) => automobil.selected == true,
+            orElse: () => Cards());
       } else {
-        cards[i].value = false;
+        showToastMSG(errorcolor, message, context);
       }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      selectedCards.value = Cards();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
-    cards.refresh();
+  }
+
+  Future<void> updateSelection(int index, bool value, context) async {
+    refreshpage.value = true;
+    var selectedelement;
+
+    selectedelement = data.firstWhere((automobil) => automobil.id == index,
+        orElse: () => Cards());
+
+    var body = {};
+    var response = await GetAndPost.patchData(
+        "cards/${selectedelement.id}", body, context);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        fetchDatas(context);
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      selectedCards.value = Cards();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
   }
 }

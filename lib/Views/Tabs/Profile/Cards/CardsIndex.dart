@@ -13,17 +13,18 @@ class CardsIndex extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _controller.fetchDatas(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,
       appBar: BaseAppBar(
         backbutton: true,
-        title: "cardsinformation".tr,
+        title: "bank_account_and_cards".tr,
         changeprof: false,
         titlebg: false,
       ),
       body: Obx(() {
-        final cards = _controller.cards;
+        final cards = _controller.data;
         if (cards.isEmpty) {
           return Center(
             child: StaticText(
@@ -36,9 +37,9 @@ class CardsIndex extends StatelessWidget {
           );
         } else {
           return ListView.builder(
-            itemCount: _controller.cards.length,
+            itemCount: _controller.data.length,
             itemBuilder: (context, index) {
-              final item = _controller.cards[index];
+              final item = _controller.data[index];
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -57,14 +58,14 @@ class CardsIndex extends StatelessWidget {
                     ),
                     trailing: Radio<bool>(
                       value: true,
-                      groupValue: item.value,
+                      groupValue: item.selected,
                       activeColor: primarycolor,
                       focusColor: primarycolor,
                       hoverColor: primarycolor,
                       toggleable: true,
                       visualDensity: VisualDensity.adaptivePlatformDensity,
                       onChanged: (value) {
-                        _controller.updateSelection(index, value!);
+                        _controller.updateSelection(index, true, context);
                       },
                     ),
                   ),

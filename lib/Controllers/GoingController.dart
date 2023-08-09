@@ -406,9 +406,9 @@ class GoingController extends GetxController {
               width: Get.width,
               height: Get.width / 2,
               child: ListView.builder(
-                itemCount: cardscontroller.cards.length,
+                itemCount: cardscontroller.data.length,
                 itemBuilder: (context, index) {
-                  final item = cardscontroller.cards[index];
+                  final item = cardscontroller.data[index];
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -427,14 +427,15 @@ class GoingController extends GetxController {
                         ),
                         trailing: Radio<bool>(
                           value: true,
-                          groupValue: item.value,
+                          groupValue: item.selected,
                           activeColor: primarycolor,
                           focusColor: primarycolor,
                           hoverColor: primarycolor,
                           toggleable: true,
                           visualDensity: VisualDensity.adaptivePlatformDensity,
                           onChanged: (value) {
-                            cardscontroller.updateSelection(index, value!);
+                            cardscontroller.updateSelection(
+                                index, true, context);
                           },
                         ),
                       ),
