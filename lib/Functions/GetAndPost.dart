@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:yoldash/Functions/CacheManager.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 const String baseapiurl = "https://sovqat369777.az/api";
+final MainController _maincontroller = Get.put(MainController());
 
 class GetAndPost {
   static Future<dynamic> fetchData(
@@ -24,7 +25,8 @@ class GetAndPost {
         url = Uri.parse('$baseapiurl/$urlold');
       }
       var headers = {'Content-Type': 'application/json'};
-      var token = await CacheManager.getvaluefromsharedprefences("token");
+      var token = await _maincontroller.getstoragedat('token');
+      print(token);
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
@@ -56,7 +58,8 @@ class GetAndPost {
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
-      var token = await CacheManager.getvaluefromsharedprefences("token");
+      var token = await _maincontroller.getstoragedat('token');
+
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
@@ -84,12 +87,12 @@ class GetAndPost {
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
-      var token = await CacheManager.getvaluefromsharedprefences("token");
+      var token = await _maincontroller.getstoragedat('token');
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
       var response = await http.put(apiUrl, headers: headers, body: jsonBody);
-
+      print(response);
       var jsonData = jsonDecode(response.body);
       var status = jsonData['status'];
 
