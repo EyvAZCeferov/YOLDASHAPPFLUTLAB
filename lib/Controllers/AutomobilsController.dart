@@ -2,51 +2,109 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
-import 'package:yoldash/Models/Automobils.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/automobils.dart';
 
 class AutomobilsController extends GetxController {
-  RxList<Automobils> data = <Automobils>[].obs;
+  Rx<bool> refreshpage = Rx<bool>(false);
+  RxList<Automobils> data = RxList<Automobils>();
+  Rx<Automobils?> selectedAutomobil = Rx<Automobils?>(null);
+
   Rx<File?> suruculukvesiqesi = Rx<File?>(null);
   Rx<File?> idcard = Rx<File?>(null);
   Rx<File?> autotexpasport = Rx<File?>(null);
   Rx<TextEditingController> licensePlateController =
       Rx<TextEditingController>(TextEditingController());
 
-  @override
-  void onInit() {
-    fetchDatas();
-    super.onInit();
-  }
+  Future<void> fetchDatas(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("automobils", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        data.value = (response['data'] as List).map((dat) {
+          return Automobils(
+              id: dat["id"],
+              userId: dat["user_id"],
+              drivingLicence: dat["driving_licence"],
+              idCard: dat["id_card"],
+              technicalPassport: dat["technical_passport"],
+              autoSerialNumber: dat["auto_serial_number"],
+              selected: dat["selected"],
+              autoMarkId: dat["auto_mark_id"],
+              autoModelId: dat["auto_model_id"],
+              autoColorId: dat["auto_color_id"],
+              createdAt: dat["created_at"],
+              updatedAt: dat["updated_at"],
+              deletedAt: dat["deleted_at"],
+              automark: dat["automark"] == null
+                  ? null
+                  : Automark.fromMap(dat["automark"]),
+              automodels: dat["automodels"] == null
+                  ? null
+                  : Automodels.fromMap(dat["automodels"]),
+              autocolors: dat["autocolors"] == null
+                  ? null
+                  : Autocolors.fromMap(dat["autocolors"]),
+              images: dat["images"].length == 0
+                  ? null
+                  : List<Images>.from(
+                      dat["images"].map((e) => Images.fromMap(e))));
+        }).toList();
 
-  void fetchDatas() {
-    data = [
-      Automobils(
-          icon: FontAwesomeIcons.car,
-          name: "Wolkswagen-CC",
-          statebadge: "90-NR-190",
-          value: true),
-      Automobils(
-          icon: FontAwesomeIcons.car,
-          name: "Wolkswagen-AUTO",
-          statebadge: "90-BA-190",
-          value: false)
-    ].obs;
-  }
-
-  void updateSelection(int index, bool value) {
-    for (var i = 0; i < data.length; i++) {
-      if (i == index) {
-        data[i].value = value;
+        selectedAutomobil.value = data.firstWhere(
+            (automobil) => automobil.selected == true,
+            orElse: () => Automobils());
       } else {
-        data[i].value = false;
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      selectedAutomobil.value = Automobils();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  Future<void> updateSelection(int index, bool value, context) async {
+    refreshpage.value = true;
+    var selectedelement;
+    for (var i = 0; i < data.value.length; i++) {
+      if (i == index) {
+        data.value[index].selected != value as bool;
+        selectedelement = data.value[index];
+      } else {
+        data.value[index].selected != false;
       }
     }
     data.refresh();
+    var body = {};
+    var response = await GetAndPost.patchData(
+        "automobils/${selectedelement.id}", context, body);
+    print(response);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        print("Selected");
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      selectedAutomobil.value = Automobils();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
   }
 
   void pickImage(type, context) async {

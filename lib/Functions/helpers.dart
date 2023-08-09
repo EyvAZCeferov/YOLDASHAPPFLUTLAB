@@ -59,3 +59,68 @@ void handlepermissionreq(Permission permission, context) async {
     showToastMSG(errorcolor, "permissiondenied".tr, context);
   }
 }
+
+String? getLocalizedValue(dynamic data, String type) {
+  var lang = Get.locale?.languageCode ?? 'az';
+
+  if (data != null && data.azName != null && type == 'name' && lang == 'az') {
+    return data.azName;
+  } else if (data != null &&
+      data.ruName != null &&
+      type == 'name' &&
+      lang == 'ru') {
+    return data.ruName;
+  } else if (data != null &&
+      data.enName != null &&
+      type == 'name' &&
+      lang == 'en') {
+    return data.enName;
+  } else if (data != null &&
+      data.trName != null &&
+      type == 'name' &&
+      lang == 'tr') {
+    return data.trName;
+  } else if (data != null &&
+      data.azSlug != null &&
+      type == 'slug' &&
+      lang == 'az') {
+    return data.azSlug;
+  } else if (data != null &&
+      data.ruSlug != null &&
+      type == 'slug' &&
+      lang == 'ru') {
+    return data.ruSlug;
+  } else if (data != null &&
+      data.enSlug != null &&
+      type == 'slug' &&
+      lang == 'en') {
+    return data.enSlug;
+  } else if (data != null &&
+      data.trSlug != null &&
+      type == 'slug' &&
+      lang == 'tr') {
+    return data.trSlug;
+  } else if (data != null &&
+      data.azDescription != null &&
+      type == 'description' &&
+      lang == 'az') {
+    return data.azDescription;
+  } else if (data != null &&
+      data.ruDescription != null &&
+      type == 'description' &&
+      lang == 'ru') {
+    return data.ruDescription;
+  } else if (data != null &&
+      data.enDescription != null &&
+      type == 'description' &&
+      lang == 'en') {
+    return data.enDescription;
+  } else if (data != null &&
+      data.trDescription != null &&
+      type == 'description' &&
+      lang == 'tr') {
+    return data.trDescription;
+  }
+
+  return null;
+}

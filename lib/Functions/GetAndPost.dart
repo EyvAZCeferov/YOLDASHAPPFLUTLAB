@@ -47,7 +47,11 @@ class GetAndPost {
     }
   }
 
-  static Future<dynamic> postData(String url, dynamic body, context) async {
+  static Future<dynamic> postData(
+    String url,
+    dynamic body,
+    context,
+  ) async {
     try {
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'application/json'};
@@ -56,8 +60,36 @@ class GetAndPost {
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
-
       var response = await http.post(apiUrl, headers: headers, body: jsonBody);
+
+      var jsonData = jsonDecode(response.body);
+      var status = jsonData['status'];
+
+      if (status == 'success') {
+        return jsonData;
+      } else if (status == 'error') {
+        showToastMSG(errorcolor, jsonData['message'], context);
+      }
+    } catch (e) {
+      showToastMSG(errorcolor, e.toString(), context);
+    }
+  }
+
+  static Future<dynamic> patchData(
+    String url,
+    dynamic body,
+    context,
+  ) async {
+    try {
+      var apiUrl = Uri.parse('$baseapiurl/$url');
+      var headers = {'Content-Type': 'application/json'};
+      var jsonBody = jsonEncode(body);
+      var token = await CacheManager.getvaluefromsharedprefences("token");
+      if (token != null && token.length > 0) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      var response = await http.put(apiUrl, headers: headers, body: jsonBody);
+
       var jsonData = jsonDecode(response.body);
       var status = jsonData['status'];
 
