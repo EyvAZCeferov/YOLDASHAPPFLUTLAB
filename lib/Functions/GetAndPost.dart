@@ -26,7 +26,6 @@ class GetAndPost {
       }
       var headers = {'Content-Type': 'application/json'};
       var token = await _maincontroller.getstoragedat('token');
-      print(token);
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
@@ -91,8 +90,7 @@ class GetAndPost {
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
-      var response = await http.put(apiUrl, headers: headers, body: jsonBody);
-      print(response);
+      var response = await http.patch(apiUrl, headers: headers, body: jsonBody);
       var jsonData = jsonDecode(response.body);
       var status = jsonData['status'];
 

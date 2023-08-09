@@ -80,7 +80,8 @@ class AutomobilsIndex extends StatelessWidget {
                         toggleable: true,
                         visualDensity: VisualDensity.adaptivePlatformDensity,
                         onChanged: (value) {
-                          _controller.updateSelection(index, value!, context);
+                          _controller.updateSelection(
+                              item.id as int, true, context);
                         },
                       ),
                     ),

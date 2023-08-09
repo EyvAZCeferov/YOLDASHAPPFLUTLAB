@@ -77,24 +77,18 @@ class AutomobilsController extends GetxController {
   Future<void> updateSelection(int index, bool value, context) async {
     refreshpage.value = true;
     var selectedelement;
-    for (var i = 0; i < data.value.length; i++) {
-      if (i == index) {
-        data.value[index].selected != value as bool;
-        selectedelement = data.value[index];
-      } else {
-        data.value[index].selected != false;
-      }
-    }
-    data.refresh();
+
+    selectedelement = data.firstWhere((automobil) => automobil.id == index,
+        orElse: () => Automobils());
+
     var body = {};
     var response = await GetAndPost.patchData(
-        "automobils/${selectedelement.id}", context, body);
-    print(response);
+        "automobils/${selectedelement.id}", body, context);
     if (response != null) {
       String status = response['status'];
       String message = response['message'];
       if (status == "success") {
-        print("Selected");
+        fetchDatas(context);
       } else {
         showToastMSG(errorcolor, message, context);
       }
