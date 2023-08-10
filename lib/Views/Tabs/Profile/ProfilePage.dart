@@ -9,7 +9,8 @@ import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/AuthController.dart';
-import 'package:yoldash/Functions/CacheManager.dart';
+import 'package:yoldash/Controllers/AutomobilsController.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:yoldash/Views/Tabs/Profile/build_menu_items.dart';
@@ -22,6 +23,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final AuthController _controller = Get.put(AuthController());
+  final MainController _maincontroller = Get.put(MainController());
+  final AutomobilsController automobilscontroller =
+      Get.put(AutomobilsController());
   Map<String, dynamic> userdatas = {
     'auth_id': '',
     'name_surname': '',
@@ -39,15 +43,13 @@ class _ProfilePageState extends State<ProfilePage> {
   void getalldataoncache() async {
     try {
       _controller.refreshpage.value = true;
-      var auth_id =
-          await CacheManager.getvaluefromsharedprefences("auth_id") ?? '';
-      var name_surname =
-          await CacheManager.getvaluefromsharedprefences("name_surname") ?? '';
-      var phone =
-          ' ' + await CacheManager.getvaluefromsharedprefences("phone") ?? '';
-      var email = await CacheManager.getvaluefromsharedprefences("email") ?? '';
+      var auth_id = await _maincontroller.getstoragedat('auth_id');
+
+      var name_surname = await _maincontroller.getstoragedat('name_surname');
+      var phone = ' ' + await _maincontroller.getstoragedat('phone');
+      var email = await _maincontroller.getstoragedat('email');
       var profilepicture =
-          await CacheManager.getvaluefromsharedprefences("profilepicture") ??
+          await _maincontroller.getstoragedat('profilepicture') ??
               'users/noprofilepicture.webp';
       if (profilepicture == null || profilepicture.isEmpty) {
         profilepicture = 'users/noprofilepicture.webp';
@@ -198,13 +200,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     Devider(
                       size: 10,
                     ),
-                    _controller.authType.value == "driver"
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Devider(),
-                              Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Devider(),
+                        _controller.authType.value == "driver"
+                            ? Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -296,32 +298,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ],
-                              ),
-                              Devider(size: 20),
-                              Center(
-                                child: Container(
-                                  width: width - 40,
-                                  height: width / 1.8,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: whitecolor,
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        blurStyle: BlurStyle.solid,
-                                        color: Colors.black38,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 4),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: AddableWidget(type: 'cards'),
-                                ),
-                              ),
-                              Devider(size: 20),
-                              Center(
+                              )
+                            : SizedBox(),
+                        Devider(size: 20),
+                        Center(
+                          child: Container(
+                            width: width - 40,
+                            height: width / 1.8,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: whitecolor,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                  blurStyle: BlurStyle.solid,
+                                  color: Colors.black38,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: AddableWidget(type: 'cards'),
+                          ),
+                        ),
+                        Devider(size: 20),
+                        _controller.authType.value == "driver"
+                            ? Center(
                                 child: Container(
                                   width: width - 40,
                                   height: width / 1.8,
@@ -342,11 +346,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   child: AddableWidget(type: 'automobils'),
                                 ),
-                              ),
-                              Devider(),
-                            ],
-                          )
-                        : Container(),
+                              )
+                            : SizedBox(),
+                        Devider()
+                      ],
+                    ),
                     Devider(),
                     build_menu_items(_controller.authType.value),
                     Devider(),

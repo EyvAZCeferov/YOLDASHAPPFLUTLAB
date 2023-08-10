@@ -7,6 +7,10 @@ class MainController extends GetxController {
   Rx<String> authtype = ''.obs;
   Rx<dynamic> auth_id = Rx<dynamic>(null);
   Rx<String> token = ''.obs;
+  Rx<String> name_surname = ''.obs;
+  Rx<String> email = ''.obs;
+  Rx<String> phone = ''.obs;
+  Rx<String> profilepicture = ''.obs;
 
   Future<dynamic> getstoragedat(String type) async {
     var data;
@@ -35,6 +39,30 @@ class MainController extends GetxController {
           ? data.trim()
           : await CacheManager.getvaluefromsharedprefences(type);
       data = auth_id.value;
+    } else if (type == "name_surname") {
+      data = name_surname.value;
+      name_surname.value = data != null && data.length > 0
+          ? data.trim()
+          : await CacheManager.getvaluefromsharedprefences(type);
+      data = name_surname.value;
+    } else if (type == "email") {
+      data = email.value;
+      email.value = data != null && data.length > 0
+          ? data.trim()
+          : await CacheManager.getvaluefromsharedprefences(type);
+      data = email.value;
+    } else if (type == "phone") {
+      data = phone.value;
+      phone.value = data != null && data.length > 0
+          ? data.trim()
+          : await CacheManager.getvaluefromsharedprefences(type);
+      data = phone.value;
+    } else if (type == "profilepicture") {
+      data = profilepicture.value;
+      profilepicture.value = data != null && data.length > 0
+          ? data.trim()
+          : await CacheManager.getvaluefromsharedprefences(type);
+      data = profilepicture.value;
     }
     return data;
   }
