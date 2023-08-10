@@ -4,8 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/Devider.dart';
+import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/CardsController.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class CardsIndex extends StatelessWidget {
@@ -24,56 +26,61 @@ class CardsIndex extends StatelessWidget {
         titlebg: false,
       ),
       body: Obx(() {
-        final cards = _controller.data;
-        if (cards.isEmpty) {
-          return Center(
-            child: StaticText(
-              color: errorcolor,
-              size: subHeadingSize,
-              weight: FontWeight.w400,
-              align: TextAlign.center,
-              text: "nohasdata".tr,
-            ),
-          );
+        if (_controller.refreshpage.value == true) {
+          return LoaderScreen();
         } else {
-          return ListView.builder(
-            itemCount: _controller.data.length,
-            itemBuilder: (context, index) {
-              final item = _controller.data[index];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ListTile(
-                    leading: Icon(FontAwesomeIcons.ccVisa,
-                        color: secondarycolor,
-                        size: headingSize,
-                        textDirection: TextDirection.ltr),
-                    title: StaticText(
-                      color: darkcolor,
-                      size: normaltextSize,
-                      text: "***0049",
-                      weight: FontWeight.w500,
-                      align: TextAlign.left,
+          final cards = _controller.data;
+          if (cards.isEmpty) {
+            return Center(
+              child: StaticText(
+                color: errorcolor,
+                size: subHeadingSize,
+                weight: FontWeight.w400,
+                align: TextAlign.center,
+                text: "nohasdata".tr,
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: _controller.data.length,
+              itemBuilder: (context, index) {
+                final item = _controller.data[index];
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                          fontawesome(item.cardtype ?? 'visa') as IconData?,
+                          color: secondarycolor,
+                          size: headingSize,
+                          textDirection: TextDirection.ltr),
+                      title: StaticText(
+                        color: darkcolor,
+                        size: normaltextSize,
+                        text: maskLastFourDigits(item.cardnumber ?? ''),
+                        weight: FontWeight.w500,
+                        align: TextAlign.left,
+                      ),
+                      trailing: Radio<bool>(
+                        value: true,
+                        groupValue: item.selected,
+                        activeColor: primarycolor,
+                        focusColor: primarycolor,
+                        hoverColor: primarycolor,
+                        toggleable: true,
+                        visualDensity: VisualDensity.adaptivePlatformDensity,
+                        onChanged: (value) {
+                          _controller.updateSelection(index, true, context);
+                        },
+                      ),
                     ),
-                    trailing: Radio<bool>(
-                      value: true,
-                      groupValue: item.selected,
-                      activeColor: primarycolor,
-                      focusColor: primarycolor,
-                      hoverColor: primarycolor,
-                      toggleable: true,
-                      visualDensity: VisualDensity.adaptivePlatformDensity,
-                      onChanged: (value) {
-                        _controller.updateSelection(index, true, context);
-                      },
-                    ),
-                  ),
-                  Devider(),
-                ],
-              );
-            },
-          );
+                    Devider(),
+                  ],
+                );
+              },
+            );
+          }
         }
       }),
       floatingActionButton: FloatingActionButton(
@@ -88,5 +95,17 @@ class CardsIndex extends StatelessWidget {
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
+  }
+
+  IconData fontawesome(String type) {
+    if (type == "visa") {
+      return FontAwesomeIcons.ccVisa;
+    } else if (type == "master") {
+      return FontAwesomeIcons.ccMastercard;
+    } else if (type == "american express") {
+      return FontAwesomeIcons.ccAmex;
+    } else {
+      return FontAwesomeIcons.ccVisa;
+    }
   }
 }

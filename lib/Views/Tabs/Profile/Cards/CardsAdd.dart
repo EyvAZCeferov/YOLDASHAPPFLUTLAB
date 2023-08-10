@@ -5,6 +5,7 @@ import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/InputElement.dart';
+import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Controllers/CardsController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
@@ -24,81 +25,88 @@ class CardsAdd extends StatelessWidget {
           changeprof: false,
           titlebg: false,
         ),
-        body: Column(
-          children: [
-            Devider(),
-            Obx(
-              () => CreditCardWidget(
-                cardNumber: _controller.cardNumberController.value.text,
-                expiryDate: _controller.validityDateController.value.text,
-                cardHolderName: _controller.holderNameController.value.text,
-                cvvCode: _controller.cvvController.value.text,
-                showBackView: false,
-                onCreditCardWidgetChange: (evt) => print(evt),
-                animationDuration: Duration(milliseconds: 500),
-                cardBgColor: primarycolor,
-                cardType: CardType.mastercard,
-                chipColor: secondarycolor,
-                frontCardBorder: Border.all(
-                    color: iconcolor, width: 1, style: BorderStyle.solid),
-                isChipVisible: false,
-                isHolderNameVisible: false,
-                isSwipeGestureEnabled: true,
-                labelCardHolder: "name_surname".tr,
-                labelExpiredDate: "xx/xx",
-                obscureCardCvv: true,
-                obscureCardNumber: false,
-                obscureInitialCardNumber: true,
-                padding: 10,
-                textStyle: GoogleFonts.poppins(
-                  color: whitecolor,
-                  fontWeight: FontWeight.w500,
-                  fontSize: normaltextSize,
+        body: Obx(
+          () => _controller.refreshpage.value == true
+              ? LoaderScreen()
+              : Column(
+                  children: [
+                    Devider(),
+                    CreditCardWidget(
+                      cardNumber: _controller.cardNumberController.value.text,
+                      expiryDate: _controller.validityDateController.value.text,
+                      cardHolderName:
+                          _controller.holderNameController.value.text,
+                      cvvCode: _controller.cvvController.value.text,
+                      showBackView: false,
+                      onCreditCardWidgetChange: (evt) => print(evt),
+                      animationDuration: Duration(milliseconds: 500),
+                      cardBgColor: primarycolor,
+                      cardType: _controller.getcardtype(),
+                      chipColor: secondarycolor,
+                      frontCardBorder: Border.all(
+                          color: iconcolor, width: 1, style: BorderStyle.solid),
+                      isChipVisible: false,
+                      isHolderNameVisible: false,
+                      isSwipeGestureEnabled: true,
+                      labelCardHolder: "validtydate".tr,
+                      labelExpiredDate: "xx/xx",
+                      obscureCardCvv: true,
+                      obscureCardNumber: false,
+                      obscureInitialCardNumber: true,
+                      padding: 10,
+                      textStyle: GoogleFonts.poppins(
+                        color: whitecolor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: normaltextSize,
+                      ),
+                    ),
+                    Devider(),
+                    Container(
+                      width: width - 40,
+                      child: InputElement(
+                          placeholder: "name_surname".tr,
+                          accentColor: primarycolor,
+                          textColor: bodycolor,
+                          inputType: TextInputType.text,
+                          cornerradius: BorderRadius.all(Radius.circular(50)),
+                          controller: _controller.holderNameController.value),
+                    ),
+                    Devider(),
+                    Container(
+                      width: width - 40,
+                      child: InputElement(
+                          placeholder: "cardnumber".tr,
+                          accentColor: primarycolor,
+                          textColor: bodycolor,
+                          inputType: TextInputType.number,
+                          cornerradius: BorderRadius.all(Radius.circular(50)),
+                          controller: _controller.cardNumberController.value),
+                    ),
+                    Devider(),
+                    Container(
+                      width: width - 40,
+                      child: InputElement(
+                          placeholder: "validtydate".tr,
+                          accentColor: primarycolor,
+                          textColor: bodycolor,
+                          inputType: TextInputType.text,
+                          cornerradius: BorderRadius.all(Radius.circular(50)),
+                          controller: _controller.validityDateController.value),
+                    ),
+                    Devider(),
+                    Container(
+                      width: width - 40,
+                      child: InputElement(
+                          placeholder: "CVV",
+                          accentColor: primarycolor,
+                          textColor: bodycolor,
+                          inputType: TextInputType.number,
+                          cornerradius: BorderRadius.all(Radius.circular(50)),
+                          controller: _controller.cvvController.value),
+                    ),
+                    Devider(),
+                  ],
                 ),
-              ),
-            ),
-            Devider(),
-            Container(
-              width: width - 40,
-              child: InputElement(
-                  placeholder: "name_surname".tr,
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: _controller.holderNameController.value),
-            ),
-            Devider(),
-            Container(
-              width: width - 40,
-              child: InputElement(
-                  placeholder: "cardnumber".tr,
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: _controller.cardNumberController.value),
-            ),
-            Devider(),
-            Container(
-              width: width - 40,
-              child: InputElement(
-                  placeholder: "validtydate".tr,
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: _controller.validityDateController.value),
-            ),
-            Devider(),
-            Container(
-              width: width - 40,
-              child: InputElement(
-                  placeholder: "CVV",
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: _controller.cvvController.value),
-            ),
-            Devider(),
-          ],
         ),
         bottomNavigationBar: Container(
           height: 60,

@@ -124,3 +124,12 @@ String? getLocalizedValue(dynamic data, String type) {
 
   return null;
 }
+
+String maskLastFourDigits(String text) {
+  if (text.length <= 4) {
+    return text;
+  }
+  String lastFourDigits = text.substring(text.length - 4);
+  String maskedDigits = '*' * 4;
+  return maskedDigits + lastFourDigits;
+}

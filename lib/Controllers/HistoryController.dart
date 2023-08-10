@@ -1,18 +1,10 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:yoldash/Models/Cards.dart';
+import 'package:yoldash/models/cards.dart';
 
 class HistoryController extends GetxController {
-  RxList<Cards> data = <Cards>[
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false),
-    Cards(description: "Description", title: "Taytl", value: false)
-  ].obs;
+  RxList<Cards> data = <Cards>[].obs;
   Rx<String> authtype = "rider".obs;
   RxBool openmodalval = false.obs;
   Rx<String> image = "".obs;
@@ -21,9 +13,6 @@ class HistoryController extends GetxController {
 
   Future<void> refreshData() async {
     await Future.delayed(Duration(seconds: 2));
-    data.value = [
-      Cards(description: "Description", title: "Taytl", value: false)
-    ];
   }
 
   Future<void> getCurrentLocation() async {

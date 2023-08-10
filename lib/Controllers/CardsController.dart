@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:get/get.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
@@ -7,7 +8,7 @@ import 'package:yoldash/models/cards.dart';
 
 class CardsController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
-  RxList<Cards> data = <Cards>[].obs;
+  RxList<Cards> data = RxList<Cards>();
   Rx<Cards?> selectedCards = Rx<Cards?>(null);
 
   Rx<TextEditingController> cardNumberController =
@@ -70,6 +71,19 @@ class CardsController extends GetxController {
       data.value = [];
       selectedCards.value = Cards();
       showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  CardType getcardtype() {
+    var cardNumber = cardNumberController.value.text;
+    if (cardNumber.startsWith('4')) {
+      return CardType.visa;
+    } else if (cardNumber.startsWith('5')) {
+      return CardType.mastercard;
+    } else if (cardNumber.startsWith('3')) {
+      return CardType.americanExpress;
+    } else {
+      return CardType.elo;
     }
   }
 }
