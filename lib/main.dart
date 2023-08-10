@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
 import 'package:yoldash/Functions/ProviderContext.dart';
 import 'package:yoldash/Theme/Routes.dart';
@@ -9,14 +10,26 @@ import 'package:get/get.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheManager.createSharedPref();
-  var language =
-      await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
-  runApp(Yoldash(language: language));
+
+  runApp(Yoldash());
 }
 
 class Yoldash extends StatelessWidget {
-  final String language;
-  const Yoldash({required this.language});
+  final MainController _maincontroller = Get.put(MainController());
+  String selectedlang = 'az';
+
+  Yoldash() {
+    _loadLanguage();
+  }
+
+  _loadLanguage() async {
+    String language = await _maincontroller.getstoragedat('language');
+    if (language != null) {
+      selectedlang = language;
+    }
+    print(language);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -25,8 +38,8 @@ class Yoldash extends StatelessWidget {
       getPages: Routes,
       initialRoute: '/splash',
       translations: TranslationAdditionals(),
-      locale: Locale(language, language.toUpperCase()),
-      fallbackLocale: Locale(language, language.toUpperCase()),
+      locale: Locale(selectedlang, selectedlang.toUpperCase()),
+      fallbackLocale: Locale(selectedlang, selectedlang.toUpperCase()),
       enableLog: true,
       defaultTransition: Transition.cupertino,
       opaqueRoute: Get.isOpaqueRouteDefault,

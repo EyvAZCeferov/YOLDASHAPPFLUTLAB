@@ -5,11 +5,14 @@ import 'package:get/get.dart';
 import 'package:yoldash/Constants/IconButtonElement.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Constants/TextButton.dart';
+import 'package:yoldash/Controllers/AutomobilsController.dart';
 import 'package:yoldash/Controllers/CardsController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
 class AddableWidget extends StatelessWidget {
   final CardsController _cardscontroller = Get.put(CardsController());
+  final AutomobilsController _automobilscontroller =
+      Get.put(AutomobilsController());
   final String type;
 
   AddableWidget({
@@ -83,94 +86,96 @@ class AddableWidget extends StatelessWidget {
   }
 
   Widget _buildbankorauto(type) {
-    return type == "cards"
-        ? Row(
+    if (type == "cards") {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+              width: 80,
+              height: 60,
+              margin: EdgeInsets.only(right: 10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color(0xffF4F5F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(FontAwesomeIcons.buildingColumns,
+                  color: secondarycolor, size: headingSize)),
+          Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                  width: 80,
-                  height: 60,
-                  margin: EdgeInsets.only(right: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Color(0xffF4F5F6),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(FontAwesomeIcons.buildingColumns,
-                      color: secondarycolor, size: headingSize)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  StaticText(
-                    text: "ABB",
-                    color: darkcolor,
-                    size: buttontextSize,
-                    weight: FontWeight.w500,
-                    align: TextAlign.left,
-                  ),
-                  StaticText(
-                    text: "mainaccount".tr,
-                    color: Colors.grey,
-                    size: smalltextSize,
-                    weight: FontWeight.w400,
-                    align: TextAlign.left,
-                  ),
-                  TextButtonElement(
-                      width: 40,
-                      text: "remove".tr,
-                      fontsize: smalltextSize,
-                      bgColor: whitecolor,
-                      textColor: errorcolor,
-                      onPressed: () => print("remove"))
-                ],
-              )
+              StaticText(
+                text: "ABB",
+                color: darkcolor,
+                size: buttontextSize,
+                weight: FontWeight.w500,
+                align: TextAlign.left,
+              ),
+              StaticText(
+                text: "mainaccount".tr,
+                color: Colors.grey,
+                size: smalltextSize,
+                weight: FontWeight.w400,
+                align: TextAlign.left,
+              ),
+              TextButtonElement(
+                  width: 40,
+                  text: "remove".tr,
+                  fontsize: smalltextSize,
+                  bgColor: whitecolor,
+                  textColor: errorcolor,
+                  onPressed: () => print("remove"))
             ],
           )
-        : Row(
+        ],
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+              width: 80,
+              height: 60,
+              margin: EdgeInsets.only(right: 10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color(0xffF4F5F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(FontAwesomeIcons.carSide,
+                  color: secondarycolor, size: headingSize)),
+          Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                  width: 80,
-                  height: 60,
-                  margin: EdgeInsets.only(right: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Color(0xffF4F5F6),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(FontAwesomeIcons.carSide,
-                      color: secondarycolor, size: headingSize)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  StaticText(
-                    text: "Wolkswagen-CC",
-                    color: darkcolor,
-                    size: buttontextSize,
-                    weight: FontWeight.w500,
-                    align: TextAlign.left,
-                  ),
-                  StaticText(
-                    text: "90-DT-190",
-                    color: Colors.grey,
-                    size: smalltextSize,
-                    weight: FontWeight.w400,
-                    align: TextAlign.left,
-                  ),
-                  TextButtonElement(
-                      width: 40,
-                      text: "remove".tr,
-                      fontsize: smalltextSize,
-                      bgColor: whitecolor,
-                      textColor: errorcolor,
-                      onPressed: () => print("remove"))
-                ],
-              )
+              StaticText(
+                text: "Wolkswagen-CC",
+                color: darkcolor,
+                size: buttontextSize,
+                weight: FontWeight.w500,
+                align: TextAlign.left,
+              ),
+              StaticText(
+                text: "90-DT-190",
+                color: Colors.grey,
+                size: smalltextSize,
+                weight: FontWeight.w400,
+                align: TextAlign.left,
+              ),
+              TextButtonElement(
+                  width: 40,
+                  text: "remove".tr,
+                  fontsize: smalltextSize,
+                  bgColor: whitecolor,
+                  textColor: errorcolor,
+                  onPressed: () => print("remove"))
             ],
-          );
+          )
+        ],
+      );
+    }
   }
 }
