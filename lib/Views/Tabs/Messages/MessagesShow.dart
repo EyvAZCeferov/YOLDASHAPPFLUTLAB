@@ -20,6 +20,7 @@ class MessagesShow extends StatelessWidget {
 
   Future<int> getAuthId() async {
     var data = await _maincontroller.getstoragedat('auth_id');
+    print(data);
     return data;
   }
 

@@ -96,16 +96,4 @@ class CardsIndex extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
-
-  IconData fontawesome(String type) {
-    if (type == "visa") {
-      return FontAwesomeIcons.ccVisa;
-    } else if (type == "master") {
-      return FontAwesomeIcons.ccMastercard;
-    } else if (type == "american express") {
-      return FontAwesomeIcons.ccAmex;
-    } else {
-      return FontAwesomeIcons.ccVisa;
-    }
-  }
 }

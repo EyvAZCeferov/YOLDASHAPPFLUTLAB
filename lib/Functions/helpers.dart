@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -132,4 +133,16 @@ String maskLastFourDigits(String text) {
   String lastFourDigits = text.substring(text.length - 4);
   String maskedDigits = '*' * 4;
   return maskedDigits + lastFourDigits;
+}
+
+IconData fontawesome(String type) {
+  if (type == "visa") {
+    return FontAwesomeIcons.ccVisa;
+  } else if (type == "master") {
+    return FontAwesomeIcons.ccMastercard;
+  } else if (type == "american express") {
+    return FontAwesomeIcons.ccAmex;
+  } else {
+    return FontAwesomeIcons.ccVisa;
+  }
 }
