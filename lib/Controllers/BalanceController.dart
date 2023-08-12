@@ -1,31 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/balance_types.dart';
 
 class BalanceController extends GetxController {
-  Rx<String> selectedType = Rx<String>('');
-  Rx<String> selectedprice = Rx<String>('');
-  RxInt selectedDay = RxInt(0);
-  RxInt selectedSuggestingPrice = RxInt(0);
+  Rx<BalanceTypes?> selectedType = Rx<BalanceTypes?>(null);
+  Rx<int?> price = Rx<int?>(null);
+  Rx<bool> refreshpage = Rx<bool>(false);
+  RxList<BalanceTypes> data = RxList<BalanceTypes>();
+  Rx<BalanceElement?> selectedElement = Rx<BalanceElement?>(null);
 
-  void changeAddType(String newType) {
-    selectedType.value = newType;
-    selectedprice.value = '';
-    if (newType == "ayliq") {
-      selectedprice.value = "20.00";
-    } else if (newType == 'gunluk') {
-      if (selectedDay.value != 0) {
-        selectedprice.value = selectedDay.value.toString();
+  void changeAddType(String newType, context) {
+    refreshpage.value = true;
+    selectedType.value = null;
+    price.value = null;
+    for (var balanceType in data.value) {
+      if (balanceType.type == newType) {
+        selectedType.value = balanceType;
+        break;
       }
-    } else if (newType == 'ferdi') {
-      if (selectedSuggestingPrice.value != 0) {
-        selectedprice.value = selectedSuggestingPrice.value.toString();
+    }
+    refreshpage.value = false;
+    if (newType == "monthly") {
+      selectedElement.value = selectedType.value!.elements![0];
+      selectPriceType("monthly", selectedElement.value!.id, context);
+    }
+  }
+
+  Future<void> fetchDatas(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("balance_actions", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        List<String> groups = response['data'].keys.toList();
+        for (String group in groups) {
+          List<dynamic> elements = response['data'][group];
+          List<BalanceElement> balanceElements = elements.map((element) {
+            return BalanceElement.fromMap(element);
+          }).toList();
+
+          data.value.add(BalanceTypes(
+            type: group,
+            elements: balanceElements,
+          ));
+        }
+      } else {
+        showToastMSG(errorcolor, message, context);
       }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      selectedType.value = BalanceTypes();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
   }
 
   Color getActiveBgColor(type) {
-    if (selectedType.value == type) {
+    if (selectedType.value != null && selectedType.value!.type == type) {
       return primarycolor;
     } else {
       return whitecolor;
@@ -33,21 +70,26 @@ class BalanceController extends GetxController {
   }
 
   Color getActiveTextColor(type) {
-    if (selectedType.value == type) {
+    if (selectedType.value != null && selectedType.value!.type == type) {
       return whitecolor;
     } else {
       return darkcolor;
     }
   }
 
-  void selectPriceType(type, index) {
-    selectedSuggestingPrice.value = 0;
-    selectedDay.value = 0;
-    if (type == "gunluk") {
-      selectedDay.value = index;
-    } else {
-      selectedSuggestingPrice.value = index;
+  void selectPriceType(type, id, context) {
+    refreshpage.value = true;
+    price.value = null;
+    if (selectedType.value != null) {
+      List<BalanceElement>? elements = selectedType!.value!.elements;
+      for (var element in elements!) {
+        if (element.id == id) {
+          selectedElement.value = element;
+          price.value = element.price;
+          break;
+        }
+      }
     }
-    changeAddType(type);
+    refreshpage.value = false;
   }
 }

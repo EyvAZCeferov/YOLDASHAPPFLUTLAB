@@ -3,9 +3,12 @@ import 'package:get/get.dart';
 import 'package:yoldash/Constants/BaseAppBar.dart';
 import 'package:yoldash/Constants/ButtonElement.dart';
 import 'package:yoldash/Constants/Devider.dart';
+import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/BalanceController.dart';
+import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/balance_types.dart';
 
 class BalanceCreate extends StatefulWidget {
   @override
@@ -17,6 +20,7 @@ class _BalanceCreateState extends State<BalanceCreate> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.fetchDatas(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -28,217 +32,148 @@ class _BalanceCreateState extends State<BalanceCreate> {
           titlebg: false,
         ),
         body: Obx(
-          () => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Devider(),
-              GestureDetector(
-                onTap: () => _controller.changeAddType('ayliq'),
-                child: Container(
-                  width: width - 40,
-                  height: 35,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: primarycolor,
-                          style: BorderStyle.solid,
-                          width: 1),
-                      color: _controller.getActiveBgColor('ayliq')),
-                  child: StaticText(
-                    color: _controller.getActiveTextColor('ayliq'),
-                    size: normaltextSize,
-                    align: TextAlign.center,
-                    weight: FontWeight.w500,
-                    text: "monthly_balance".tr,
-                  ),
+          () => _controller.refreshpage.value == true
+              ? LoaderScreen()
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Devider(size: 40),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _controller.data.length,
+                        itemBuilder: (context, index) {
+                          final item = _controller.data[index];
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () => _controller.changeAddType(
+                                    item.type.toString(), context),
+                                child: Container(
+                                  width: width - 40,
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: primarycolor,
+                                          style: BorderStyle.solid,
+                                          width: 1),
+                                      color: _controller.getActiveBgColor(
+                                          item.type.toString())),
+                                  child: StaticText(
+                                    color: _controller.getActiveTextColor(
+                                        item.type.toString()),
+                                    size: normaltextSize,
+                                    align: TextAlign.center,
+                                    weight: FontWeight.w500,
+                                    text: "${item.type}_balance".tr,
+                                  ),
+                                ),
+                              ),
+                              Devider(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Devider(),
+                    SizedBox(
+                        width: width - 40, child: getDailyOrPersonal(context)),
+                    Devider(size: 35),
+                    Obx(
+                      () => _controller.price.value != null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                StaticText(
+                                    text: _controller.price.value!.toString() +
+                                        'AZN',
+                                    weight: FontWeight.w500,
+                                    size: subHeadingSize,
+                                    color: secondarycolor),
+                                ButtonElement(
+                                    text: "add".tr,
+                                    height: 50,
+                                    width: width - 200,
+                                    borderRadius: BorderRadius.circular(45),
+                                    onPressed: () =>
+                                        _controller.addbalance(context)),
+                              ],
+                            )
+                          : SizedBox(),
+                    ),
+                  ],
                 ),
-              ),
-              Devider(size: 15),
-              GestureDetector(
-                onTap: () => _controller.changeAddType('gunluk'),
-                child: Container(
-                  width: width - 40,
-                  height: 35,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: primarycolor,
-                          style: BorderStyle.solid,
-                          width: 1),
-                      color: _controller.getActiveBgColor('gunluk')),
-                  child: StaticText(
-                    color: _controller.getActiveTextColor('gunluk'),
-                    size: normaltextSize,
-                    align: TextAlign.center,
-                    weight: FontWeight.w500,
-                    text: "daily_balance".tr,
-                  ),
-                ),
-              ),
-              Devider(size: 15),
-              GestureDetector(
-                onTap: () => _controller.changeAddType('ferdi'),
-                child: Container(
-                  width: width - 40,
-                  height: 35,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: primarycolor,
-                          style: BorderStyle.solid,
-                          width: 1),
-                      color: _controller.getActiveBgColor('ferdi')),
-                  child: StaticText(
-                    color: _controller.getActiveTextColor('ferdi'),
-                    size: normaltextSize,
-                    align: TextAlign.center,
-                    weight: FontWeight.w500,
-                    text: "personal_adding".tr,
-                  ),
-                ),
-              ),
-              Devider(size: 15),
-              SizedBox(
-                  width: width - 40,
-                  child: Obx(() => getDailyOrPersonal(context))),
-              Devider(size: 15),
-            ],
-          ),
         ),
         bottomNavigationBar: Container(
           height: 60,
           margin: EdgeInsets.only(bottom: 15),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Obx(
-              () => _controller.selectedprice.value != null &&
-                      _controller.selectedprice.value != '' &&
-                      _controller.selectedprice.value != ' '
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        StaticText(
-                            text: _controller.selectedprice.value + 'AZN',
-                            weight: FontWeight.w500,
-                            size: subHeadingSize,
-                            color: secondarycolor),
-                        ButtonElement(
-                            text: "add".tr,
-                            height: 50,
-                            width: width - 200,
-                            borderRadius: BorderRadius.circular(45),
-                            onPressed: () => print("add")),
-                      ],
-                    )
-                  : SizedBox(),
-            ),
-          ),
+          child: Align(alignment: Alignment.bottomCenter, child: SizedBox()),
         ));
   }
 
   Row getDailyOrPersonal(context) {
     final width = MediaQuery.of(context).size.width;
-    if (_controller.selectedType.value == "gunluk") {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          verticalDirection: VerticalDirection.down,
-          children: [
-            Container(
-              width: width - 40,
-              height: width / 5,
-              child: ListView.builder(
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => _controller.selectPriceType('gunluk', index),
-                  child: Container(
-                    width: width / 4,
-                    height: width / 4,
-                    margin: EdgeInsets.only(right: 5),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: primarycolor,
-                          style: BorderStyle.solid,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10),
-                      color: _controller.selectedDay.value == index
-                          ? primarycolor
-                          : whitecolor,
-                    ),
-                    child: StaticText(
-                      color: _controller.selectedDay.value == index
-                          ? whitecolor
-                          : darkcolor,
-                      size: smalltextSize,
-                      text: "${index} day",
-                      weight: FontWeight.w400,
-                      align: TextAlign.center,
-                    ),
-                  ),
-                ),
-                itemCount: 5,
-                controller: ScrollController(),
-                physics: ScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                scrollDirection: Axis.horizontal,
-              ),
-            )
-          ]);
-    } else if (_controller.selectedType.value == "ferdi") {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          verticalDirection: VerticalDirection.down,
-          children: [
-            Container(
-              width: width - 40,
-              height: width / 5,
-              child: ListView.builder(
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => _controller.selectPriceType('ferdi', index),
-                  child: Container(
-                    width: width / 4,
-                    height: width / 4,
-                    margin: EdgeInsets.only(right: 5),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: primarycolor,
-                          style: BorderStyle.solid,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10),
-                      color: _controller.selectedDay.value == index
-                          ? primarycolor
-                          : whitecolor,
-                    ),
-                    child: StaticText(
-                      color: _controller.selectedDay.value == index
-                          ? whitecolor
-                          : darkcolor,
-                      size: smalltextSize,
-                      text: "${index} AZN",
-                      weight: FontWeight.w400,
-                      align: TextAlign.center,
-                    ),
-                  ),
-                ),
-                itemCount: 5,
-                controller: ScrollController(),
-                physics: ScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                scrollDirection: Axis.horizontal,
-              ),
-            )
-          ]);
-    } else {
+    List<BalanceElement>? elements = _controller.selectedType?.value?.elements;
+    if (elements == null ||
+        _controller.selectedType?.value?.type == "monthly") {
       return Row();
+    } else {
+      BalanceElement? selectedElement = _controller.selectedElement?.value;
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          verticalDirection: VerticalDirection.down,
+          children: [
+            Container(
+              width: width - 40,
+              height: width / 5,
+              child: ListView.builder(
+                itemCount: elements!.length,
+                itemBuilder: (context, index) {
+                  BalanceElement element = elements[index];
+                  return GestureDetector(
+                    onTap: () => _controller.selectPriceType(
+                        element.type, element.id, context),
+                    child: Container(
+                      width: width / 4,
+                      height: width / 4,
+                      margin: EdgeInsets.only(right: 5),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: primarycolor,
+                            style: BorderStyle.solid,
+                            width: 1),
+                        borderRadius: BorderRadius.circular(10),
+                        color: selectedElement != null &&
+                                selectedElement.id == element.id
+                            ? primarycolor
+                            : whitecolor,
+                      ),
+                      child: StaticText(
+                        color: selectedElement != null &&
+                                selectedElement.id == element.id
+                            ? whitecolor
+                            : darkcolor,
+                        size: smalltextSize,
+                        text: getLocalizedValue(element.name, 'name') as String,
+                        weight: FontWeight.w400,
+                        align: TextAlign.center,
+                      ),
+                    ),
+                  );
+                },
+                controller: ScrollController(),
+                physics: ScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                scrollDirection: Axis.horizontal,
+              ),
+            )
+          ]);
     }
   }
 }

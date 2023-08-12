@@ -27,7 +27,6 @@ class Yoldash extends StatelessWidget {
     if (language != null) {
       selectedlang = language;
     }
-    print(language);
   }
 
   @override
