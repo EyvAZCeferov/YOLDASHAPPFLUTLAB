@@ -20,7 +20,7 @@ class _BalanceCreateState extends State<BalanceCreate> {
 
   @override
   Widget build(BuildContext context) {
-    _controller.fetchDatas(context);
+    _controller.fetchTypes(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -41,9 +41,9 @@ class _BalanceCreateState extends State<BalanceCreate> {
                     Devider(size: 40),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: _controller.data.length,
+                        itemCount: _controller.balancetypes.length,
                         itemBuilder: (context, index) {
-                          final item = _controller.data[index];
+                          final item = _controller.balancetypes[index];
                           return Column(
                             children: [
                               GestureDetector(

@@ -10,6 +10,7 @@ import 'package:yoldash/Constants/LoaderScreen.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Controllers/AutomobilsController.dart';
+import 'package:yoldash/Controllers/BalanceController.dart';
 import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
@@ -26,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final MainController _maincontroller = Get.put(MainController());
   final AutomobilsController automobilscontroller =
       Get.put(AutomobilsController());
+  final BalanceController balancecontroller = Get.put(BalanceController());
   Map<String, dynamic> userdatas = {
     'auth_id': '',
     'name_surname': '',
@@ -76,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    balancecontroller.fetchData(context);
     return Scaffold(
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
@@ -212,9 +215,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   GestureDetector(
-                                    onTap: () => Get.toNamed('/balance/add'),
+                                    onTap: () => Get.toNamed('/balance'),
                                     child: Container(
-                                      width: width / 2 - 30,
+                                      width: width - 50,
                                       alignment: Alignment.center,
                                       height: 80,
                                       decoration: BoxDecoration(
@@ -241,57 +244,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                             size: buttontextSize,
                                             weight: FontWeight.w600,
                                             align: TextAlign.center,
-                                            text: "320 AZN",
+                                            text:
+                                                "${balancecontroller.totalprice.value} AZN",
                                           ),
                                           StaticText(
                                             color: darkcolor,
                                             size: smalltextSize,
                                             weight: FontWeight.w400,
                                             align: TextAlign.center,
-                                            text: "Aylıq balans",
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => Get.toNamed('/balance/add'),
-                                    child: Container(
-                                      width: width / 2 - 30,
-                                      alignment: Alignment.center,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                          color: whitecolor,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: <BoxShadow>[
-                                            BoxShadow(
-                                              blurStyle: BlurStyle.solid,
-                                              color: Colors.black38,
-                                              blurRadius: 10,
-                                              offset: Offset(0, 4),
-                                              spreadRadius: 0,
-                                            )
-                                          ]),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: buttontextSize,
-                                            weight: FontWeight.w600,
-                                            align: TextAlign.center,
-                                            text: "15 AZN",
-                                          ),
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: smalltextSize,
-                                            weight: FontWeight.w400,
-                                            align: TextAlign.center,
-                                            text: "Bugünki balans",
+                                            text: "Balans",
                                           ),
                                         ],
                                       ),

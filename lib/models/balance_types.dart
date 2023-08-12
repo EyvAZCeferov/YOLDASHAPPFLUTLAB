@@ -54,6 +54,18 @@ class BalanceElement {
       deletedAt: map['deleted_at'],
     );
   }
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "name": name,
+        "type": type,
+        "price": price,
+        "order": order,
+        "days": days,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+        "deleted_at": deletedAt,
+      };
 }
 
 class Name {
