@@ -119,7 +119,10 @@ class TranslationAdditionals extends Translations {
           "differenceinDays": "@timevar g. öncə",
           'replies.hi': 'Salam.',
           'replies.iamcoming': "Çatıram.",
-          'replies.iamwaiting': "Gözləyirəm."
+          'replies.iamwaiting': "Gözləyirəm.",
+          'success_payment': "Ödəniş uğurla tamamlandı.",
+          'error_payment': "Ödəniş uğursuz oldu.",
+          "notpickedprice": "Məbləğ seçilməyib"
         }
       };
 }

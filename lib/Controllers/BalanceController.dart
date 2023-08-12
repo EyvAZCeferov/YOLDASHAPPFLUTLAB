@@ -92,4 +92,14 @@ class BalanceController extends GetxController {
     }
     refreshpage.value = false;
   }
+
+  void addbalance(context) {
+    refreshpage.value = true;
+    if (price.value != null) {
+    } else {
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+
+    refreshpage.value = false;
+  }
 }
