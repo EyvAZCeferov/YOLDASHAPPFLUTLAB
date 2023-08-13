@@ -9,12 +9,13 @@ import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/StaticText.dart';
 import 'package:yoldash/Constants/TimePicker.dart';
 import 'package:yoldash/Controllers/CardsController.dart';
+import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/models/user_locations.dart';
 
 class GoingController extends GetxController {
-  final String authtype = "rider";
-
+  Rx<bool> refreshpage = Rx<bool>(false);
   final TextEditingController fromcontroller = TextEditingController();
   final TextEditingController tocontroller = TextEditingController();
   final TextEditingController weightcontroller = TextEditingController();
@@ -28,6 +29,7 @@ class GoingController extends GetxController {
   final selectedindex = 0.obs;
   final Rx<DateTime> selectedTime = DateTime.now().obs;
   final selectedplace = 0.obs;
+  RxList<UserLocations> userlocations = <UserLocations>[].obs;
 
   void addsections() {
     addedsectionshow.value = !addedsectionshow.value;
@@ -468,4 +470,47 @@ class GoingController extends GetxController {
   }
 
   void selectplacing() {}
+
+  Future<void> fetchlocations(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("locations", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        userlocations.value = (response['data'] as List).map((dat) {
+          var data = UserLocations.fromMap(dat);
+          return data;
+        }).toList();
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      data.value = [];
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  void createorselectlocation(String type) {
+    if (userlocations.value != null) {
+    } else {
+      //create
+    }
+  }
+
+  String? gettypeoflocationaddress(String type) {
+    if (userlocations.value != null) {
+      for (UserLocations location in userlocations.value) {
+        if (location.type == type) {
+          return getLocalizedValue(location.name, 'name');
+          break;
+        }
+      }
+    } else {
+      return null;
+    }
+  }
 }

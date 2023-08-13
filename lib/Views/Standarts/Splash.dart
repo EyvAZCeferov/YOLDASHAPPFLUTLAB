@@ -3,11 +3,10 @@ import 'package:get/get.dart';
 import 'package:yoldash/Constants/Devider.dart';
 import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/MainController.dart';
 import 'package:yoldash/Functions/CacheManager.dart';
-import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
-import 'package:yoldash/models/settings.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -15,23 +14,15 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  final MainController _maincontroller = Get.put(MainController());
   @override
   void initState() {
     super.initState();
     init();
   }
 
-  Map<String, dynamic> body = {};
-
   Future<void> init() async {
-    // var response = await GetAndPost.fetchData('setting', context, body);
-    // var cached = await CacheManager.getCachedModel<Settings>('setting');
-    // if (cached == null) {
-    //   var settings = Settings.fromMap(response["data"] as Map<String, dynamic>);
-    //   await CacheManager.cacheModel('setting', settings);
-    // }
-
-    var token = await CacheManager.getvaluefromsharedprefences('token');
+    var token = await _maincontroller.getstoragedat('token');
     await Future.delayed(Duration(seconds: 3));
     if (token != null && token != '' && token.length > 0) {
       Get.toNamed('/mainscreen');
@@ -70,7 +61,7 @@ class _SplashState extends State<Splash> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 StaticText(
-                    text: "poweredby".tr,
+                    text: "developedby".tr,
                     weight: FontWeight.w500,
                     size: normaltextSize,
                     color: secondarycolor),

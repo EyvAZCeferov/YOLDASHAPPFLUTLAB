@@ -112,7 +112,7 @@ class TranslationAdditionals extends Translations {
           "driver": "Sürücü",
           "langinformations": "Dil bilikləri",
           "writeaboutyou": "Özünüz haqqında yazın",
-          "poweredby": "Powered by",
+          "developedby": "Developed by",
           "errordatanotfound": "Xəta! Məlumat tapılmadı!",
           "fillthefield": "Xanaları doldurun",
           "differenceinSeconds": "@timevar san. öncə",

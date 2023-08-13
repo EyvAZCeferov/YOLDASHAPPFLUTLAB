@@ -10,7 +10,7 @@ import workmanager
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    GMSServices.provideAPIKey("YOUR KEY HERE")
+    GMSServices.provideAPIKey("AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4")
     WorkmanagerPlugin.registerTask(withIdentifier: "task-identifier")
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

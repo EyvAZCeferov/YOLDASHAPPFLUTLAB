@@ -9,6 +9,7 @@ import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/InputElement.dart';
 import 'package:yoldash/Constants/LineLoaderWidget.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Controllers/GoingController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
@@ -19,9 +20,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
+  late AuthController _authcontroller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
+    _controller.fetchlocations(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -241,7 +244,8 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     GestureDetector(
-                                      onTap: () => print("Hi"),
+                                      onTap: () => _controller
+                                          .createorselectlocation('home'),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -271,7 +275,17 @@ class _HomePageState extends State<HomePage> {
                                                   size: smalltextSize,
                                                   weight: FontWeight.w400,
                                                   align: TextAlign.center,
-                                                  text: "Xırdalan şəh."),
+                                                  text: _controller
+                                                              .gettypeoflocationaddress(
+                                                                  'home') !=
+                                                          null
+                                                      ? _controller
+                                                              .gettypeoflocationaddress(
+                                                                  'home')
+                                                              .toString()
+                                                              .substring(0, 8) +
+                                                          '...'
+                                                      : 'add'.tr),
                                             ],
                                           ),
                                         ],
@@ -279,7 +293,8 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     SizedBox(width: 7),
                                     GestureDetector(
-                                      onTap: () => print("Hi"),
+                                      onTap: () => _controller
+                                          .createorselectlocation('work'),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -309,7 +324,17 @@ class _HomePageState extends State<HomePage> {
                                                   size: smalltextSize,
                                                   weight: FontWeight.w400,
                                                   align: TextAlign.center,
-                                                  text: "Yasamal ray."),
+                                                  text: _controller
+                                                              .gettypeoflocationaddress(
+                                                                  'work') !=
+                                                          null
+                                                      ? _controller
+                                                              .gettypeoflocationaddress(
+                                                                  'work')
+                                                              .toString()
+                                                              .substring(0, 8) +
+                                                          '...'
+                                                      : 'add'.tr),
                                             ],
                                           ),
                                         ],
@@ -355,7 +380,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               Devider(),
-                              _controller.authtype == "driver"
+                              _authcontroller.authType == "driver"
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -386,7 +411,7 @@ class _HomePageState extends State<HomePage> {
                                     )
                                   : SizedBox(),
                               Devider(),
-                              _controller.authtype == "driver"
+                              _authcontroller.authType == "driver"
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -527,7 +552,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               Devider(),
-                              _controller.authtype == "driver"
+                              _authcontroller.authType == "driver"
                                   ? SizedBox()
                                   : Row(
                                       mainAxisAlignment:
@@ -616,7 +641,7 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                               Devider(),
-                              _controller.authtype == "driver"
+                              _authcontroller.authType == "driver"
                                   ? Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -846,7 +871,7 @@ class _HomePageState extends State<HomePage> {
                               textColor: whitecolor,
                               text: _controller.loading.value == true
                                   ? "stopsearching".tr
-                                  : _controller.authtype == 'rider'
+                                  : _authcontroller.authType == 'rider'
                                       ? "search".tr
                                       : "reservation".tr,
                               width: width - 70,

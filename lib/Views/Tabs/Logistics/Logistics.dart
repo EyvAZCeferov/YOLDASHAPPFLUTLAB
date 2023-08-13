@@ -9,6 +9,7 @@ import 'package:yoldash/Constants/ImageClass.dart';
 import 'package:yoldash/Constants/InputElement.dart';
 import 'package:yoldash/Constants/LineLoaderWidget.dart';
 import 'package:yoldash/Constants/StaticText.dart';
+import 'package:yoldash/Controllers/AuthController.dart';
 import 'package:yoldash/Controllers/GoingController.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
 
@@ -19,6 +20,7 @@ class Logistics extends StatefulWidget {
 
 class _LogisticsState extends State<Logistics> {
   late GoingController _controller = Get.put(GoingController());
+  late AuthController _authcontroller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -699,7 +701,7 @@ class _LogisticsState extends State<Logistics> {
                               textColor: whitecolor,
                               text: _controller.loading.value == true
                                   ? "stopsearching".tr
-                                  : _controller.authtype == 'rider'
+                                  : _authcontroller.authType == 'rider'
                                       ? "search".tr
                                       : "reservation".tr,
                               width: width - 70,

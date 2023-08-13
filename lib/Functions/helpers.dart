@@ -27,6 +27,7 @@ const String appagcert2 = "5f93b97444044e53b97be9006828c102";
 const String appcert1token =
     "007eJxTYGCJ8luUxbyzLDg4ym277AdVBa2W+qK4Ja8ehD+1kf5a9FGBwdIw1djE1DjV1CDV1MQ42SzJ1MggzTwpLdUgLdEiydJMz3BNSkMgI8NGASVWRgYIBPHZGSrzc1ISizMYGAAP2x6P";
 const String imageurl = 'https://sovqat369777.az/uploads/';
+const String mapsApiKey = "AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4";
 
 Future<void> launchUrlTOSITE(url) async {
   Uri uri = Uri.parse(url);
