@@ -17,6 +17,7 @@ import 'package:yoldash/Views/Tabs/Messages/MessagesShow.dart';
 import 'package:yoldash/Views/Tabs/Profile/Automobils/AutomobilsCreate.dart';
 import 'package:yoldash/Views/Tabs/Profile/Automobils/AutomobilsIndex.dart';
 import 'package:yoldash/Views/Tabs/Profile/Balance/BalanceCreate.dart';
+import 'package:yoldash/Views/Tabs/Profile/Balance/BalanceIndex.dart';
 import 'package:yoldash/Views/Tabs/Profile/Cards/CardsAdd.dart';
 import 'package:yoldash/Views/Tabs/Profile/Cards/CardsIndex.dart';
 import 'package:yoldash/Views/Tabs/Profile/History/HistoryIndex.dart';
@@ -65,6 +66,13 @@ final List<GetPage> Routes = [
     page: () => AutomobilsCreate(),
     binding: BindingsBuilder(() {
       Get.put(AutomobilsController());
+    }),
+  ),
+  GetPage(
+    name: '/balance',
+    page: () => BalanceIndex(),
+    binding: BindingsBuilder(() {
+      Get.put(BalanceController());
     }),
   ),
   GetPage(

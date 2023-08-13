@@ -233,29 +233,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                               spreadRadius: 0,
                                             )
                                           ]),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: buttontextSize,
-                                            weight: FontWeight.w600,
-                                            align: TextAlign.center,
-                                            text:
-                                                "${balancecontroller.totalprice.value} AZN",
-                                          ),
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: smalltextSize,
-                                            weight: FontWeight.w400,
-                                            align: TextAlign.center,
-                                            text: "Balans",
-                                          ),
-                                        ],
-                                      ),
+                                      child: balancecontroller
+                                                  .refreshpage.value ==
+                                              true
+                                          ? LoaderScreen()
+                                          : Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                StaticText(
+                                                  color: darkcolor,
+                                                  size: buttontextSize,
+                                                  weight: FontWeight.w600,
+                                                  align: TextAlign.center,
+                                                  text:
+                                                      "${balancecontroller.totalprice.value} AZN",
+                                                ),
+                                                StaticText(
+                                                  color: darkcolor,
+                                                  size: smalltextSize,
+                                                  weight: FontWeight.w400,
+                                                  align: TextAlign.center,
+                                                  text: "balance".tr,
+                                                ),
+                                              ],
+                                            ),
                                     ),
                                   ),
                                 ],

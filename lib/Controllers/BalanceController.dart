@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:yoldash/Functions/GetAndPost.dart';
 import 'package:yoldash/Functions/helpers.dart';
 import 'package:yoldash/Theme/ThemeService.dart';
+import 'package:yoldash/Views/Standarts/WebveiwFunctions.dart';
 import 'package:yoldash/models/balance_types.dart';
 import 'package:yoldash/models/user_balances.dart';
 
@@ -12,7 +13,7 @@ class BalanceController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   RxList<BalanceTypes> balancetypes = RxList<BalanceTypes>();
   RxList<UserBalances?> userbalances = RxList<UserBalances?>();
-  Rx<int?> totalprice = Rx<int?>(null);
+  Rx<int?> totalprice = Rx<int?>(0);
   Rx<BalanceElement?> selectedElement = Rx<BalanceElement?>(null);
 
   void changeAddType(String newType, context) {
@@ -42,22 +43,11 @@ class BalanceController extends GetxController {
       if (status == "success") {
         if (response['data'] != null) {
           userbalances.value = (response['data'] as List).map((dat) {
-            BalanceElement balanceelement = dat['balancetype'];
-
-            return UserBalances(
-                id: dat['id'],
-                userId: dat['user_id'],
-                balanceTypeId: dat['balance_type_id'],
-                price: dat['price'],
-                action: dat['action'],
-                startsAt: dat['starts_at'],
-                endsAt: dat['ends_at'],
-                createdAt: dat['created_at'],
-                updatedAt: dat['updated_at'],
-                deletedAt: dat['deleted_at'],
-                balancetype: balanceelement);
+            var data = UserBalances.fromMap(dat);
+            return data;
           }).toList();
         }
+
         totalprice.value = response['price'];
       } else {
         showToastMSG(errorcolor, message, context);
@@ -139,13 +129,40 @@ class BalanceController extends GetxController {
     refreshpage.value = false;
   }
 
-  void addbalance(context) {
+  void addbalance(context) async {
     refreshpage.value = true;
     if (price.value != null) {
+      Map<String, dynamic> body = {
+        'price': price.value,
+        'balance_type': selectedElement.value!.id,
+        'package_type': selectedType.value!.type
+      };
+      var response =
+          await GetAndPost.postData("balance_actions", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = response['message'];
+        if (status == "success") {
+          if (response['data'] != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WebviewFunctions(
+                    paymentUrl: response['data'], title: 'paynow'.tr),
+              ),
+            );
+          } else {
+            showToastMSG(errorcolor, "nothavepaymentlink".tr, context);
+          }
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      }
     } else {
+      refreshpage.value = false;
+
       showToastMSG(errorcolor, "notpickedprice".tr, context);
     }
-
-    refreshpage.value = false;
   }
 }

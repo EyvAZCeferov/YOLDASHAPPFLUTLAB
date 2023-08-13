@@ -54,6 +54,17 @@ String formatDateTime(DateTime dateTime) {
   }
 }
 
+String differenceintwotimes(DateTime starttime, DateTime endtime) {
+  Duration difference = endtime.difference(starttime);
+  if (difference.inDays < 30) {
+    return "inDays".trParams({'timevar': difference.inDays.toString()});
+  } else if (difference.inDays >= 30) {
+    return "inMonths".trParams({'timevar': "1"});
+  } else {
+    return DateFormat('dd.MM.yyyy HH:mm').format(starttime);
+  }
+}
+
 void handlepermissionreq(Permission permission, context) async {
   final status = await permission.request();
   if (status.isDenied) {

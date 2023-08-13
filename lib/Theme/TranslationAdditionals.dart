@@ -61,6 +61,8 @@ class TranslationAdditionals extends Translations {
           "autonumber": "Avtomobilin seriya nömrəsi",
           "cardnumber": "Kart nömrəsi",
           "validtydate": "Bitmə tarixi",
+          "balance": "Balans",
+          "balanceactions": "Balans əməliyyatları",
           "addbalance": "Balansı artır",
           "monthly_balance": "Aylıq balans",
           "daily_balance": "Günlük balans",
@@ -117,12 +119,18 @@ class TranslationAdditionals extends Translations {
           "differenceinMinutes": "@timevar dəq. öncə",
           "differenceinHours": "@timevar s. öncə",
           "differenceinDays": "@timevar g. öncə",
+          "inDays": "@timevar gün",
+          "inMonths": "@timevar ay",
           'replies.hi': 'Salam.',
           'replies.iamcoming': "Çatıram.",
           'replies.iamwaiting': "Gözləyirəm.",
           'success_payment': "Ödəniş uğurla tamamlandı.",
           'error_payment': "Ödəniş uğursuz oldu.",
-          "notpickedprice": "Məbləğ seçilməyib"
+          "notpickedprice": "Məbləğ seçilməyib",
+          "price": "Məbləğ",
+          "time": "Zaman",
+          "nothavepaymentlink": "Ödəniş linki mövcud deyil.",
+          "paynow": "Ödəniş et"
         }
       };
 }

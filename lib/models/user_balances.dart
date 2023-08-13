@@ -17,7 +17,9 @@ class UserBalances {
     this.balancetype,
   });
 
-  factory UserBalances.fromMap(Map<String, dynamic> map) => UserBalances(
+  factory UserBalances.fromMap(Map<String, dynamic> map) {
+    try {
+      return UserBalances(
         id: map['id'],
         userId: map['user_id'],
         balanceTypeId: map['balance_type_id'],
@@ -32,6 +34,11 @@ class UserBalances {
             ? null
             : BalanceElement.fromMap(map['balancetype']),
       );
+    } catch (e) {
+      print(e.toString());
+      return UserBalances();
+    }
+  }
 
   factory UserBalances.fromJson(String str) =>
       UserBalances.fromMap(json.decode(str));
