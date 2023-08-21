@@ -36,6 +36,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
@@ -44,5 +45,15 @@
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4"/>
+        <!-- <queries>
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="sms" />
+            </intent>
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="tel" />
+            </intent>
+        </queries> -->
     </application>
 </manifest>

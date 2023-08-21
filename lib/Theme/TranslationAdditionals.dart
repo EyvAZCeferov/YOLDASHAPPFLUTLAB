@@ -134,7 +134,8 @@ class TranslationAdditionals extends Translations {
           "nothavepaymentlink": "Ödəniş linki mövcud deyil.",
           "paynow": "Ödəniş et",
           "mylocation":"Mənim məkanım",
-          "destinationlocation":"Gedəcəyim məkan"
+          "destinationlocation":"Gedəcəyim məkan",
+          "checknetworkconnection":"İnternet statusunuzu yoxlayın."
         }
       };
 }

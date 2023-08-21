@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/models/message_groups.dart';
 
 import '../../../Constants/BaseAppBar.dart';
 import '../../../Constants/LoaderScreen.dart';
@@ -22,7 +23,7 @@ class MessagesIndex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    _controller.getMessages(context);
+    _controller.getMessages(context, null);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,
@@ -36,7 +37,7 @@ class MessagesIndex extends StatelessWidget {
           ? LoaderScreen()
           : _controller.data.length > 0
               ? RefreshIndicator(
-                  onRefresh: () => _controller.getMessages(context),
+                  onRefresh: () => _controller.getMessages(context, null),
                   color: secondarycolor,
                   strokeWidth: 2,
                   triggerMode: RefreshIndicatorTriggerMode.anywhere,
@@ -45,9 +46,14 @@ class MessagesIndex extends StatelessWidget {
                     itemCount: _controller.data.length,
                     itemBuilder: (context, index) {
                       var item = _controller.data[index];
+                      Messages? firstTextMessage = item.messages?.firstWhere(
+                          (message) => message.messageelementtype == "TEXT",
+                          orElse: () => Messages());
+
                       return GestureDetector(
                         onTap: () {
                           _controller.selectedMessageGroup.value = item;
+                          _controller.getMessages(context, item.id);
                           Get.toNamed('/messages/${item.id}', arguments: item);
                         },
                         child: Center(
@@ -126,16 +132,15 @@ class MessagesIndex extends StatelessWidget {
                                           color: darkcolor,
                                           align: TextAlign.left),
                                       StaticText(
-                                          text: (item.messages != null &&
-                                                  item.messages!.isNotEmpty)
-                                              ? item.messages![0].message
+                                          text: firstTextMessage != null
+                                              ? firstTextMessage.message
                                                           .toString()
                                                           .length >
                                                       8
-                                                  ? item.messages![0].message!
+                                                  ? firstTextMessage.message!
                                                           .substring(0, 8) +
                                                       '...'
-                                                  : item.messages![0].message
+                                                  : firstTextMessage.message
                                                       .toString()
                                               : '',
                                           weight: FontWeight.w500,
@@ -150,7 +155,14 @@ class MessagesIndex extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    item.count != null && item.count! > 0
+                                    item.messages != null &&
+                                            item.messages!.length > 0 &&
+                                            countMessageUnread(
+                                                    item.messages
+                                                        as List<Messages>,
+                                                    _controller.auth_id.value
+                                                        as int) >
+                                                0
                                         ? Container(
                                             width: 35,
                                             height: 20,
@@ -163,7 +175,12 @@ class MessagesIndex extends StatelessWidget {
                                             child: StaticText(
                                               color: whitecolor,
                                               size: smalltextSize,
-                                              text: item.count!.toString(),
+                                              text: countMessageUnread(
+                                                      item.messages
+                                                          as List<Messages>,
+                                                      _controller.auth_id.value
+                                                          as int)
+                                                  .toString(),
                                               weight: FontWeight.w500,
                                               align: TextAlign.center,
                                             ),

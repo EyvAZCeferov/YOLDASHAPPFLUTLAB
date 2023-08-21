@@ -35,33 +35,42 @@ class BalanceController extends GetxController {
   }
 
   Future<void> fetchData(context) async {
-    refreshpage.value = true;
-    Map<String, dynamic> body = {};
-    var response = await GetAndPost.fetchData("balance_actions", context, body);
-    if (response != null) {
-      String status = response['status'];
-      String message = response['message'];
-      if (status == "success") {
-        if (response['data'] != null) {
-          userbalances.value = (response['data'] as List).map((dat) {
-            var data = UserBalances.fromMap(dat);
-            return data;
-          }).toList();
-        }
+    try {
+      refreshpage.value = true;
+      Map<String, dynamic> body = {};
+      var response =
+          await GetAndPost.fetchData("balance_actions", context, body);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          if (response['data'] != null) {
+            if (response['data'] != null) {
+              userbalances.value = (response['data'] as List).map((dat) {
+                var data = UserBalances.fromMap(dat);
+                return data;
+              }).toList();
+            }
+          }
 
-        totalprice.value = response['price'];
+          totalprice.value = response['price'];
+        } else {
+          showToastMSG(errorcolor, message, context);
+          totalprice.value = 0;
+        }
+        refreshpage.value = false;
       } else {
-        showToastMSG(errorcolor, message, context);
+        refreshpage.value = false;
         totalprice.value = 0;
+        userbalances.value = [];
+        balancetypes.value = [];
+        selectedType.value = BalanceTypes();
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
+    } catch (e) {
       refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-      totalprice.value = 0;
-      userbalances.value = [];
-      balancetypes.value = [];
-      selectedType.value = BalanceTypes();
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      print("Balance error " + e.toString());
     }
   }
 

@@ -74,11 +74,12 @@ class MainController extends GetxController {
                 : await CacheManager.getvaluefromsharedprefences(type);
         data = profilepicture.value;
       }
-      print("$type : $data");
+
+      print("PAGEEEEEEEE : $type");
+      print(data);
       return data ?? null;
     } catch (e) {
-      print("Main controller error");
-      print(e.toString());
+      print("Main controller error: $e");
     }
   }
 }

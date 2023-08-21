@@ -10,75 +10,17 @@ import '../../../Constants/IconButtonElement.dart';
 import '../../../Constants/InputElement.dart';
 import '../../../Constants/LoaderScreen.dart';
 import '../../../Controllers/AuthController.dart';
-import '../../../Controllers/MainController.dart';
-import '../../../Functions/CacheManager.dart';
 import '../../../Functions/helpers.dart';
 import '../../../Theme/ThemeService.dart';
 
-class ProfileInformation extends StatefulWidget {
-  @override
-  State<ProfileInformation> createState() => _ProfileInformationState();
-}
+class ProfileInformation extends StatelessWidget {
+  final AuthController _controller = Get.find<AuthController>();
 
-class _ProfileInformationState extends State<ProfileInformation> {
-  final AuthController _controller = Get.put(AuthController());
-  final MainController _maincontroller = Get.put(MainController());
-  Map<String, dynamic> userdatas = {
-    'auth_id': '',
-    'name_surname': '',
-    'email': '',
-    'phone': '',
-    'profilepicture': 'users/noprofilepicture.webp',
-  };
-  @override
-  void initState() {
-    super.initState();
-    getalldataoncache();
-  }
-
-  void getalldataoncache() async {
-    try {
-      _controller.refreshpage.value = true;
-
-      var auth_id = await _maincontroller.getstoragedat('auth_id');
-
-      var name_surname = await _maincontroller.getstoragedat('name_surname');
-      var phone = ' ' + await _maincontroller.getstoragedat('phone');
-      var email = await _maincontroller.getstoragedat('email');
-      var profilepicture =
-          await _maincontroller.getstoragedat('profilepicture') ??
-              'users/noprofilepicture.webp';
-      if (profilepicture == null || profilepicture.isEmpty) {
-        profilepicture = 'users/noprofilepicture.webp';
-      }
-      Map<String, dynamic> getData = {
-        'auth_id': auth_id,
-        'name_surname': name_surname,
-        'email': email,
-        'phone': phone,
-        'profilepicture': profilepicture,
-      };
-      setState(() {
-        userdatas = getData;
-      });
-
-      print(getData);
-
-      _controller.namesurnamecontroller.value.text = name_surname;
-      _controller.emailcontroller.value.text = email;
-      _controller.phonecontroller.value.text = phone;
-
-      _controller.refreshpage.value = false;
-    } catch (e) {
-      _controller.refreshpage.value = false;
-      Get.back();
-      print(e.toString());
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+  _controller.getalldataoncache(context);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: bodycolor,
@@ -108,8 +50,11 @@ class _ProfileInformationState extends State<ProfileInformation> {
                           child: Stack(
                             children: [
                               CachedNetworkImage(
-                                imageUrl: imageurl +
-                                    userdatas['profilepicture'].toString(),
+                                imageUrl: getimageurl(
+                                  "user",
+                                  'users',
+                                  _controller
+                                      .userdatas.value?.additionalinfo?.image),
                                 placeholder: (context, url) =>
                                     CircularProgressIndicator(),
                                 errorWidget: (context, url, error) =>

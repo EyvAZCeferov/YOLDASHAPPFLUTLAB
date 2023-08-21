@@ -25,62 +25,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final AuthController _controller = Get.put(AuthController());
-  final MainController _maincontroller = Get.put(MainController());
   final AutomobilsController automobilscontroller =
       Get.put(AutomobilsController());
   final BalanceController balancecontroller = Get.put(BalanceController());
-  Map<String, dynamic> userdatas = {
-    'auth_id': '',
-    'name_surname': '',
-    'email': '',
-    'phone': '',
-    'profilepicture': 'users/noprofilepicture.webp',
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    getalldataoncache();
-  }
-
-  void getalldataoncache() async {
-    try {
-      _controller.refreshpage.value = true;
-      var auth_id = await _maincontroller.getstoragedat('auth_id');
-
-      var name_surname = await _maincontroller.getstoragedat('name_surname');
-      var phone = ' ' + await _maincontroller.getstoragedat('phone');
-      var email = await _maincontroller.getstoragedat('email')??null;
-      var profilepicture =
-          await _maincontroller.getstoragedat('profilepicture') ??
-              'users/noprofilepicture.webp';
-      if (profilepicture == null || profilepicture.isEmpty) {
-        profilepicture = 'users/noprofilepicture.webp';
-      }
-      Map<String, dynamic> getData = {
-        'auth_id': auth_id,
-        'name_surname': name_surname,
-        'email': ' ' + email,
-        'phone': phone,
-        'profilepicture': profilepicture,
-      };
-      print(getData);
-      setState(() {
-        userdatas = getData;
-      });
-
-      _controller.refreshpage.value = false;
-    } catch (e) {
-      _controller.refreshpage.value = false;
-      Get.back();
-      print(e.toString());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     balancecontroller.fetchData(context);
+    _controller.getalldataoncache(context);
     return Scaffold(
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
@@ -128,8 +81,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             CachedNetworkImage(
-                              imageUrl: imageurl +
-                                  userdatas['profilepicture'].toString(),
+                              imageUrl: getimageurl(
+                                  "user",
+                                  'users',
+                                  _controller
+                                      .userdatas.value?.additionalinfo?.image),
                               placeholder: (context, url) =>
                                   CircularProgressIndicator(),
                               errorWidget: (context, url, error) =>
@@ -152,7 +108,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     StaticText(
-                                        text: userdatas['name_surname'] ?? '',
+                                        text: _controller
+                                                .userdatas.value?.nameSurname ??
+                                            '',
                                         weight: FontWeight.bold,
                                         size: normaltextSize,
                                         color: darkcolor),
@@ -164,22 +122,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Get.toNamed("/profileinformation"))
                                   ],
                                 ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FeatherIcons.mail,
-                                        color: secondarycolor,
-                                        size: normaltextSize,
-                                      ),
-                                      StaticText(
-                                          text: userdatas['email'] ?? '',
-                                          weight: FontWeight.w500,
-                                          size: smalltextSize,
-                                          color: Colors.grey),
-                                    ]),
+                                _controller.userdatas.value != null &&
+                                        _controller.userdatas.value?.email !=
+                                            '' &&
+                                        _controller.userdatas.value?.email !=
+                                            ' '
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                            Icon(
+                                              FeatherIcons.mail,
+                                              color: secondarycolor,
+                                              size: normaltextSize,
+                                            ),
+                                            StaticText(
+                                                text: ' ' +
+                                                    _controller
+                                                        .userdatas.value!.email
+                                                        .toString(),
+                                                weight: FontWeight.w500,
+                                                size: smalltextSize,
+                                                color: Colors.grey),
+                                          ])
+                                    : SizedBox(),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -190,7 +158,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                       size: normaltextSize,
                                     ),
                                     StaticText(
-                                        text: userdatas['phone'] ?? '',
+                                        text: _controller.userdatas.value!.phone
+                                                .toString() ??
+                                            '',
                                         weight: FontWeight.w400,
                                         size: smalltextSize,
                                         color: Colors.grey),
@@ -268,51 +238,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               )
                             : SizedBox(),
                         Devider(size: 20),
-                        Center(
-                          child: Container(
-                            width: width - 40,
-                            height: width / 1.8,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: whitecolor,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  blurStyle: BlurStyle.solid,
-                                  color: Colors.black38,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 4),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: AddableWidget(type: 'cards'),
-                          ),
-                        ),
+                        AddableWidget(type: 'cards', width: width),
                         Devider(size: 20),
                         _controller.authType.value == "driver"
-                            ? Center(
-                                child: Container(
-                                  width: width - 40,
-                                  height: width / 1.8,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: whitecolor,
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        blurStyle: BlurStyle.solid,
-                                        color: Colors.black38,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 4),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: AddableWidget(type: 'automobils'),
-                                ),
+                            ? AddableWidget(
+                                width: width,
+                                type: 'automobils',
                               )
                             : SizedBox(),
                         Devider()

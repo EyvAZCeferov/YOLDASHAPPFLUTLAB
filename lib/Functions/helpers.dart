@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Constants/StaticText.dart';
 import '../Theme/ThemeService.dart';
+import '../models/message_groups.dart';
 
 void showToastMSG(bgcolor, text, context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -66,12 +67,15 @@ String differenceintwotimes(DateTime starttime, DateTime endtime) {
   }
 }
 
-Future<PermissionStatus> handlepermissionreq(Permission permission, context) async {
-  final status = await permission.request();
-  if (status.isDenied) {
+Future<PermissionStatus> handlepermissionreq(
+    Permission permission, context) async {
+  try {
+    final status = await permission.request();
+    return status;
+  } catch (e) {
     showToastMSG(errorcolor, "permissiondenied".tr, context);
+    return PermissionStatus.denied;
   }
-  return status;
 }
 
 String? getLocalizedValue(dynamic data, String type) {
@@ -157,5 +161,38 @@ IconData fontawesome(String type) {
     return FontAwesomeIcons.ccAmex;
   } else {
     return FontAwesomeIcons.ccVisa;
+  }
+}
+
+String getimageurl(String type, String clasore, String? path) {
+  try {
+    if (type == "user") {
+      if (path != null && path.length > 0) {
+        return imageurl + clasore + '/' + path;
+      } else {
+        return imageurl + clasore + '/' + 'users/noprofilepicture.webp';
+      }
+    } else {
+      return imageurl + clasore + '/' + path!;
+    }
+  } catch (e) {
+    print(e.toString());
+    return e.toString();
+  }
+}
+
+int countMessageUnread(List<Messages>? messages, int authId) {
+  if (messages != null && messages.isNotEmpty) {
+    int unreadCount = 0;
+
+    for (var message in messages) {
+      if (message.userId != authId && message.status == false) {
+        unreadCount++;
+      }
+    }
+
+    return unreadCount;
+  } else {
+    return 0;
   }
 }

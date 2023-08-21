@@ -22,9 +22,11 @@ import '../Theme/ThemeService.dart';
 import '../models/user_locations.dart';
 import 'CardsController.dart';
 import 'MainController.dart';
+import 'MessagesController.dart';
 
 class GoingController extends GetxController {
-  final MainController _maincontroller = Get.put(MainController());
+  late MainController _maincontroller = Get.put(MainController());
+  late MessagesController _messagescontroller = Get.put(MessagesController());
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<TextEditingController> fromcontroller =
       Rx<TextEditingController>(TextEditingController());
@@ -36,10 +38,10 @@ class GoingController extends GetxController {
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> priceofwaycontroller =
       Rx<TextEditingController>(TextEditingController());
-  final openmodal = false.obs;
+  Rx<bool> openmodal = Rx<bool>(false);
   final data = [].obs;
-  final addedsectionshow = false.obs;
-  final loading = false.obs;
+  Rx<bool> addedsectionshow = Rx<bool>(false);
+  Rx<bool> loading = Rx<bool>(false);
   final selectedindex = 0.obs;
   final Rx<DateTime> selectedTime = DateTime.now().obs;
   final selectedplace = 0.obs;
@@ -48,7 +50,6 @@ class GoingController extends GetxController {
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
   Rx<Position?> currentposition = Rx<Position?>(null);
-  Rx<Geolocator?> geolocator = Rx<Geolocator?>(null);
   RxList<SearchingLocations> searchinglocations = <SearchingLocations>[].obs;
   RxList<UserLocations> goinglocations = <UserLocations>[].obs;
   Rx<DistanceDetails?> directiondetails =
@@ -60,17 +61,29 @@ class GoingController extends GetxController {
   Rx<TextEditingController> editingcontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<String> inptype = Rx<String>('to');
+  Rx<String> authtype = Rx<String>('rider');
+  Rx<int?> auth_id = Rx<int?>(null);
 
   CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(40.409264, 49.867092),
     zoom: 14.4746,
   );
 
+  GoingController() {
+    getAuthId();
+  }
+
+  void getAuthId() async {
+    auth_id.value = await _maincontroller.getstoragedat('auth_id');
+    authtype.value = await _maincontroller.getstoragedat('authtype');
+  }
+
   void getcurrentposition(context) async {
     refreshpage.value = true;
     await handlepermissionreq(Permission.location, context);
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+        forceAndroidLocationManager: true);
     currentposition.value = position;
     LatLng latLngPos = LatLng(position.latitude, position.longitude);
     CameraPosition cameraposition =
@@ -78,37 +91,111 @@ class GoingController extends GetxController {
     String language = await _maincontroller.getstoragedat('language');
 
     kGooglePlex = cameraposition;
-    var response = await GetAndPost.fetcOtherhData(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$mapsApiKey&language=$language',
-        context, {});
+    Map gettednameandplace_id = await getnameviacoords(
+        position.latitude, position.longitude, language, context);
+    UserLocations userlocation = await addlocationtodb(
+        gettednameandplace_id['nameaddress'] as String,
+        gettednameandplace_id['place_id'] as String,
+        latLngPos as LatLng,
+        'currentposition' as String,
+        context as BuildContext);
+    fetchlocations(context);
     refreshpage.value = false;
 
     newgooglemapcontroller.value
         ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
-    if (response != null) {
-      var nameaddress = response['results'][0]["address_components"][3]
-              ['long_name'] +
-          ", " +
-          response['results'][0]["address_components"][2]['long_name'] +
-          ", " +
-          response['results'][0]["address_components"][1]['long_name'];
-      fromcontroller.value.text = nameaddress;
-      goinglocations.value.add(UserLocations(
-          id: 1,
-          coordinates: Coordinates(
-              latitude: position.latitude, longitude: position.longitude),
-          name: Name(
-              azName: nameaddress,
-              ruName: nameaddress,
-              enName: nameaddress,
-              trName: nameaddress),
-          status: true,
-          type: "first"));
+    if (gettednameandplace_id['nameaddress'] != null &&
+        gettednameandplace_id['nameaddress'] != ' ' &&
+        gettednameandplace_id['nameaddress'] != '' &&
+        userlocation != null) {
+      fromcontroller.value.text =
+          getLocalizedValue(userlocation.name, 'name') as String;
+
+      goinglocations.value.add(userlocation);
+
+      markers.value.add(Marker(
+          markerId: MarkerId(userlocation.type as String),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: InfoWindow(
+            title: getLocalizedValue(userlocation.name, 'name'),
+            snippet: 'mylocation'.tr,
+          ),
+          position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+              userlocation.coordinates!.longitude!.toDouble()),
+          draggable: true,
+          onDragEnd: ((value) => print(value)),
+          onDrag: (value) => print(value),
+          onDragStart: (value) => print(value)));
+      circles.value.add(Circle(
+        circleId: CircleId(userlocation.type as String),
+        fillColor: secondarycolor,
+        center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+            userlocation.coordinates!.longitude!.toDouble()),
+        radius: 15,
+        strokeWidth: 4,
+        strokeColor: secondarycolor,
+      ));
     }
   }
 
   void addsections() {
     addedsectionshow.value = !addedsectionshow.value;
+  }
+
+  Future<UserLocations> addlocationtodb(String nameaddress, String place_id,
+      LatLng latlng, String type, BuildContext context) async {
+    var body = {
+      'auth_id': auth_id.value,
+      'place_id': place_id,
+      'name': nameaddress,
+      'latitude': latlng.latitude,
+      'longitude': latlng.longitude,
+      'type': type,
+    };
+    var response = await GetAndPost.postData("locations", body, context);
+
+    if (response != null) {
+      String status = response['status'];
+      String message = "";
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        UserLocations userlocation = UserLocations(
+            id: 1,
+            userId: auth_id.value as int,
+            coordinates: Coordinates(
+                latitude: latlng.latitude, longitude: latlng.longitude),
+            name: Name.fromMap(response['data']['name']),
+            status: true,
+            type: response['data']['type']);
+        return userlocation;
+      } else {
+        return UserLocations();
+      }
+    } else {
+      return UserLocations();
+    }
+  }
+
+  Future<Map> getnameviacoords(double latitude, double longitude,
+      String language, BuildContext context) async {
+    var response = await GetAndPost.fetcOtherhData(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$mapsApiKey&language=$language',
+        context, {});
+    Map data = {};
+    if (response != null) {
+      data['nameaddress'] = response['results'][0]["address_components"][3]
+              ['long_name'] +
+          ", " +
+          response['results'][0]["address_components"][2]['long_name'] +
+          ", " +
+          response['results'][0]["address_components"][1]['long_name'];
+
+      data['place_id'] = response['results'][0]['place_id'];
+      return data;
+    } else {
+      return data;
+    }
   }
 
   void changeindex(index) {
@@ -159,14 +246,26 @@ class GoingController extends GetxController {
       String type, context) async {
     if (placename != null && placename.length > 1) {
       searchinglocations.value = [];
+      var language = await _maincontroller.getstoragedat('language');
+      searchinglocations.value = userlocations.value
+          .where(
+              (element) => element.type == 'recent' || element.type == 'others')
+          .map((element) => SearchingLocations(
+              secondary_text: '' as String,
+              main_text: getLocalizedValue(element.name, 'name') as String,
+              place_id: element.placeId,
+              type: type))
+          .toList();
+
       var url =
-          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&location=40.409264%2C-49.867092&key=$mapsApiKey&components=country:az";
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&location=40.409264%2C-49.867092&key=$mapsApiKey&components=country:az&language=$language";
       var response = await GetAndPost.fetcOtherhData(url, context, {});
       if (response['status'] == "OK") {
-        var listelements = (response['predictions'] as List)
-            .map((e) => SearchingLocations.fromJson(e))
-            .toList();
-        searchinglocations.value = listelements;
+        var listelements = (response['predictions'] as List).map((e) {
+          e['type'] = type;
+          SearchingLocations.fromJson(e);
+        }).toList();
+        searchinglocations.value = listelements.cast<SearchingLocations>();
         editingcontroller.value = controller;
         inptype.value = type;
       }
@@ -213,19 +312,19 @@ class GoingController extends GetxController {
 
         latLngBounds = LatLngBounds(southwest: latlng, northeast: latlng);
         markers.value.add(Marker(
-          markerId: MarkerId("pickup"),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-              title: getLocalizedValue(
-                  goinglocations.where((p0) => p0.type == "first").first.name,
-                  'name'),
-              snippet: 'mylocation'.tr),
-          position: latlng,
-          onDragEnd: ((value) => print(value)),
-          onDrag: (value) => print(value),
-          onDragStart: (value)=>print(value)
-        ));
+            markerId: MarkerId("pickup"),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure),
+            infoWindow: InfoWindow(
+                title: getLocalizedValue(
+                    goinglocations.where((p0) => p0.type == "first").first.name,
+                    'name'),
+                snippet: 'mylocation'.tr),
+            position: latlng,
+            draggable: true,
+            onDragEnd: ((value) => print(value)),
+            onDrag: (value) => print(value),
+            onDragStart: (value) => print(value)));
 
         circles.value.add(Circle(
           circleId: CircleId("pickup"),
@@ -378,27 +477,26 @@ class GoingController extends GetxController {
       circles.clear();
 
       markers.value.add(Marker(
-        markerId: MarkerId("pickup"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        infoWindow: InfoWindow(
-            title: getLocalizedValue(goinglocations[0].name, 'name'),
-            snippet: 'mylocation'.tr),
-        position: originCoordinates,
-        onDragEnd: ((value) => print(value)),
+          markerId: MarkerId("pickup"),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: InfoWindow(
+              title: getLocalizedValue(goinglocations[0].name, 'name'),
+              snippet: 'mylocation'.tr),
+          position: originCoordinates,
+          onDragEnd: ((value) => print(value)),
           onDrag: (value) => print(value),
-          onDragStart: (value)=>print(value)
-      ));
+          onDragStart: (value) => print(value)));
       markers.value.add(Marker(
-        markerId: MarkerId("destination"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        infoWindow: InfoWindow(
-            title: getLocalizedValue(goinglocations[1].name, 'name'),
-            snippet: 'destinationlocation'.tr),
-        position: destinationCoordinates,
-        onDragEnd: ((value) => print(value)),
+          markerId: MarkerId("destination"),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: InfoWindow(
+              title: getLocalizedValue(goinglocations[1].name, 'name'),
+              snippet: 'destinationlocation'.tr),
+          position: destinationCoordinates,
+          onDragEnd: ((value) => print(value)),
           onDrag: (value) => print(value),
-          onDragStart: (value)=>print(value)
-      ));
+          onDragStart: (value) => print(value)));
       circles.value.add(Circle(
         circleId: CircleId("pickup"),
         fillColor: secondarycolor,
@@ -521,7 +619,21 @@ class GoingController extends GetxController {
                           width: 50,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () => callpageredirect('call', context),
+                            onPressed: () =>
+                                _messagescontroller.callpageredirect(
+                                    'call',
+                                    authtype == 'rider'
+                                        ? _messagescontroller
+                                                .selectedMessageGroup
+                                                .value!
+                                                .receiverImage ??
+                                            null
+                                        : _messagescontroller
+                                                .selectedMessageGroup
+                                                .value!
+                                                .senderImage ??
+                                            null,
+                                    context),
                             style: ElevatedButton.styleFrom(
                               primary: primarycolor,
                               onPrimary: whitecolor,
@@ -660,22 +772,6 @@ class GoingController extends GetxController {
         ],
       ),
     ));
-  }
-
-  void callpageredirect(type, context) async {
-    // try {
-    //   if (type == "video") {
-    //     _handlecameraandmic(Permission.camera, context);
-    //   } else {
-    //     print("calling");
-    //   }
-
-    //   _handlecameraandmic(Permission.microphone, context);
-
-    //   Get.toNamed('/callpage/${type}', arguments: {type: type});
-    // } catch (error) {
-    //   showToastMSG(errorcolor, error, context);
-    // }
   }
 
   void changemethod(context) {

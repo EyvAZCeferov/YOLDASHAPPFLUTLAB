@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // _controller.fetchlocations(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -107,28 +106,12 @@ class _HomePageState extends State<HomePage> {
                                         icon: FeatherIcons.arrowLeft,
                                         onPressed: () {
                                           _controller.refreshpage.value = false;
-                                          _controller.markers.value = {};
                                           _controller.searchinglocations.value =
                                               [];
                                           _controller.tocontroller.value.text =
                                               "";
-                                          _controller
-                                              .weightcontroller.value.text = "";
-                                          _controller
-                                              .minimumpriceofwaycontroller
-                                              .value
-                                              .text = "";
-                                          _controller.priceofwaycontroller.value
-                                              .text = "";
                                           _controller..openmodal.value = true;
-                                          _controller.data.value = [];
                                           _controller.loading.value = false;
-                                          _controller.goinglocations.value = [];
-                                          _controller.directiondetails.value =
-                                              null;
-                                          _controller.latlngs.value = [];
-                                          _controller.polyline.value = {};
-                                          _controller.circles.value = {};
                                         },
                                         bgColor: whitecolor,
                                         color: errorcolor,

@@ -8,6 +8,8 @@ class MessageGroups {
     this.count,
     this.receiverName,
     this.senderName,
+    this.receiverPhone,
+    this.senderPhone,
     this.receiverImage,
     this.senderImage,
     this.messages,
@@ -53,6 +55,8 @@ class MessageGroups {
   final int? count;
   final String? receiverName;
   final String? senderName;
+  final String? receiverPhone;
+  final String? senderPhone;
   final dynamic receiverImage;
   final dynamic senderImage;
   final List<Messages>? messages;
@@ -64,6 +68,8 @@ class MessageGroups {
         "count": count,
         "receiver_name": receiverName,
         "sender_name": senderName,
+        "receiver_phone": receiverPhone,
+        "sender_phone": senderPhone,
         "receiver_image": receiverImage,
         "sender_image": senderImage,
         "messages": messages?.map((e) => e?.toMap()).toList(),
@@ -78,6 +84,8 @@ class MessageGroups {
     int? count,
     String? receiverName,
     String? senderName,
+    String? receiverPhone,
+    String? senderPhone,
     dynamic? receiverImage,
     dynamic? senderImage,
     List<Messages>? messages,
@@ -89,19 +97,20 @@ class MessageGroups {
         count: count ?? this.count,
         receiverName: receiverName ?? this.receiverName,
         senderName: senderName ?? this.senderName,
+        receiverPhone: receiverPhone ?? this.receiverPhone,
+        senderPhone: senderPhone ?? this.senderPhone,
         receiverImage: receiverImage ?? this.receiverImage,
         senderImage: senderImage ?? this.senderImage,
         messages: messages ?? this.messages,
       );
 
-  @override
-  String toString() =>
-      "MessageGroups(id: $id, receiverId: $receiverId, senderId: $senderId, count: $count, receiverName: $receiverName, senderName: $senderName, receiverImage: $receiverImage, senderImage: $senderImage, messages: $messages)";
+  
 }
 
 class Messages {
   const Messages(
       {this.messageGroupId,
+      this.messageId,
       this.message,
       this.userId,
       this.messageelementtype,
@@ -110,6 +119,7 @@ class Messages {
 
   factory Messages.fromMap(Map<String, dynamic> map) => Messages(
       messageGroupId: map["message_group_id"],
+      messageId: map["message_id"],
       message: map["message"],
       userId: map["user_id"],
       messageelementtype: map["messageelementtype"],
@@ -118,6 +128,7 @@ class Messages {
 
   factory Messages.fromJson(Map<String, dynamic> map) => Messages(
       messageGroupId: map["message_group_id"],
+      messageId: map["message_id"],
       message: map["message"],
       userId: map["user_id"],
       messageelementtype: map["messageelementtype"],
@@ -125,7 +136,8 @@ class Messages {
       createdAt: map['createdAt']);
 
   final int? messageGroupId;
-  final String? message;
+  final int? messageId;
+  final dynamic? message;
   final int? userId;
   final String? messageelementtype;
   final bool? status;
@@ -133,6 +145,7 @@ class Messages {
 
   Map<String, dynamic> toMap() => {
         "message_group_id": messageGroupId,
+        "message_id": messageId,
         "message": message,
         "user_id": userId,
         "messageelementtype": messageelementtype,
@@ -141,23 +154,4 @@ class Messages {
       };
 
   String toJson() => json.encode(toMap());
-
-  Messages copyWith(
-          {int? messageGroupId,
-          String? message,
-          int? userId,
-          String? messageelementtype,
-          bool? status,
-          String? createdAt}) =>
-      Messages(
-          messageGroupId: messageGroupId ?? this.messageGroupId,
-          message: message ?? this.message,
-          userId: userId ?? this.userId,
-          messageelementtype: messageelementtype ?? this.messageelementtype,
-          status: status ?? this.status,
-          createdAt: createdAt ?? this.createdAt);
-
-  @override
-  String toString() =>
-      "Messages(messageGroupId: $messageGroupId, message: $message, userId: $userId, messageelementtype: $messageelementtype, status: $status, createdAt:$createdAt)";
 }

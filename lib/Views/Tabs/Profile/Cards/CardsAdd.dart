@@ -18,7 +18,7 @@ class CardsAdd extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
           backbutton: true,
@@ -119,7 +119,7 @@ class CardsAdd extends StatelessWidget {
                 height: 50,
                 width: width - 100,
                 borderRadius: BorderRadius.circular(45),
-                onPressed: () => print("Add CardNow")),
+                onPressed: () => _controller.addcard(context)),
           ),
         ));
   }

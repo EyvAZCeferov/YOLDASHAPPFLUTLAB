@@ -28,8 +28,7 @@ class AuthController extends GetxController {
   Rx<String> authType = 'rider'.obs;
   Rx<List<String>> selectedlang = Rx<List<String>>([]);
   Rx<bool> refreshpage = Rx<bool>(false);
-  Rx<TextEditingController> pincontroller =
-      Rx<TextEditingController>(TextEditingController());
+  Rx<Users?> userdatas = Rx<Users?>(null);
 
   AuthController() {
     init();
@@ -40,27 +39,66 @@ class AuthController extends GetxController {
     authType.value = newval;
   }
 
-  @override
-  void dispose() {
-    pincontroller.value.dispose();
-    super.dispose();
+  void getalldataoncache(context) async {
+    try {
+      refreshpage.value = true;
+      var body = {};
+      var response = await GetAndPost.postData("auth/me", body, context);
+
+      if (response != null) {
+        String status = response['status'];
+        refreshpage.value = false;
+        if (response['message'] != null) String message = response['message'];
+        var data = Users.fromMap(response['data']);
+        userdatas.value = data;
+
+        namesurnamecontroller.value.text = data.nameSurname!;
+        emailcontroller.value.text = data.email ?? '';
+        phonecontroller.value.text = data.phone!;
+      }
+      refreshpage.value = false;
+    } catch (e) {
+      refreshpage.value = false;
+      print("Prof information error: $e");
+    }
   }
 
   void pickImage(context) async {
-    final status = handlepermissionreq(Permission.photos, context);
+    await handlepermissionreq(Permission.photos, context);
+    final picker = ImagePicker();
+    final source = ImageSource.gallery;
+    final pickedFile = await picker.pickImage(source: source);
 
-    if (await status.isGranted) {
-      final picker = ImagePicker();
-      final source = ImageSource.gallery;
-      // final pickedFile = await picker.getImage(source: source);
-      // if (pickedFile != null) {
-      //   imageFile.value = File(pickedFile.path);
-      // }
-    } else {
-      if (await status.isDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
-      } else if (await status.isPermanentlyDenied) {
-        showToastMSG(errorcolor, 'permissiondenied'.tr, context);
+    if (pickedFile != null) {
+      final image = File(pickedFile.path);
+      refreshpage.value = true;
+      var response = await GetAndPost.uploadfile(
+          "auth/updateprofilephoto", image, context);
+      if (response['status'] == "success") {
+        refreshpage.value = false;
+        var data = Users.fromMap(response['data']);
+        userdatas.value = data;
+        CacheManager.setvaluetoprefences('language', 'az');
+
+        CacheManager.setvaluetoprefences('auth_id', data.id);
+
+        CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
+
+        CacheManager.setvaluetoprefences('phone', data.phone);
+
+        CacheManager.setvaluetoprefences('authtype', data.type);
+
+        CacheManager.setvaluetoprefences(
+            'profilepicture', data.additionalinfo?.image ?? '');
+
+        namesurnamecontroller.value.text = data.nameSurname!;
+        emailcontroller.value.text = data.email ?? '';
+        phonecontroller.value.text = data.phone!;
+
+        if (data.email != null && data.email != '' && data.email != ' ')
+          CacheManager.setvaluetoprefences('email', data.email);
+      } else {
+        refreshpage.value = false;
       }
     }
   }
@@ -68,8 +106,6 @@ class AuthController extends GetxController {
   void updateprofiledata(context) async {
     if (phonecontroller.value.text != null &&
         phonecontroller.value.text.length > 0 &&
-        emailcontroller.value.text != null &&
-        emailcontroller.value.text.length > 0 &&
         namesurnamecontroller.value.text != null &&
         namesurnamecontroller.value.text.length > 0) {
       refreshpage.value = true;
@@ -162,12 +198,7 @@ class AuthController extends GetxController {
         String message = response['message'];
         if (status == "success") {
           var data = Users.fromMap(response['data']);
-          var cachedModel =
-              await CacheManager.getCachedModel<Users>('authenticated');
-          if (cachedModel == null) {
-            await CacheManager.cacheModel('authenticated', data);
-          }
-
+          userdatas.value = data;
           CacheManager.setvaluetoprefences('language', 'az');
 
           CacheManager.setvaluetoprefences('auth_id', data.id);
@@ -213,11 +244,7 @@ class AuthController extends GetxController {
         String message = response['message'];
         if (status == "success") {
           var data = Users.fromMap(response['data']);
-          var cachedModel =
-              await CacheManager.getCachedModel<Users>('authenticated');
-          if (cachedModel == null) {
-            await CacheManager.cacheModel('authenticated', data);
-          }
+          userdatas.value = data;
 
           CacheManager.setvaluetoprefences('auth_id', data.id);
           CacheManager.setvaluetoprefences('name_surname', data.nameSurname);

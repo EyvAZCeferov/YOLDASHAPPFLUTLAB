@@ -4,10 +4,12 @@ class UserLocations {
   const UserLocations({
       this.id,
       this.userId,
+      this.placeId,
       this.name,
       this.coordinates,
       this.type,
       this.status,
+      this.orderNumber,
       this.createdAt,
       this.updatedAt,
       this.deletedAt,
@@ -16,10 +18,12 @@ class UserLocations {
   factory UserLocations.fromMap(Map<String, dynamic> map) => UserLocations(
       id: map['id'],
       userId: map['user_id'],
+      placeId: map['place_id'],
       name: map['name'] == null ? null : Name.fromMap(map['name']),
       coordinates: map['coordinates'] == null ? null : Coordinates.fromMap(map['coordinates']),
       type: map['type'],
       status: map['status'],
+      orderNumber:map['order_number'],
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],
       deletedAt: map['deleted_at'],
@@ -29,10 +33,12 @@ class UserLocations {
     return UserLocations(
       id: map['id'],
       userId: map['user_id'],
+      placeId: map['place_id'],
       name: map['name'] == null ? null : Name.fromMap(map['name']),
       coordinates: map['coordinates'] == null ? null : Coordinates.fromMap(map['coordinates']),
       type: map['type'],
       status: map['status'],
+      orderNumber:map['order_number'],
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],
       deletedAt: map['deleted_at'],
@@ -41,10 +47,12 @@ class UserLocations {
   
   final int? id;
   final int? userId;
+  final String? placeId;
   final Name? name;
   final Coordinates? coordinates;
   final String? type;
   final bool? status;
+  final int? orderNumber;
   final String? createdAt;
   final String? updatedAt;
   final dynamic deletedAt;
@@ -52,41 +60,18 @@ class UserLocations {
   Map<String, dynamic> toMap() => {
       'id': id,
       'user_id': userId,
+      'place_id': placeId,
       'name': name?.toMap(),
       'coordinates': coordinates?.toMap(),
       'type': type,
       'status': status,
+      'order_number':orderNumber,
       'created_at': createdAt,
       'updated_at': updatedAt,
       'deleted_at': deletedAt,
   };
   
   String toJson() => json.encode(toMap());
-  
-  UserLocations copyWith({
-      int? id,
-      int? userId,
-      Name? name,
-      Coordinates? coordinates,
-      String? type,
-      bool? status,
-      String? createdAt,
-      String? updatedAt,
-      dynamic? deletedAt,
-  }) => UserLocations(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      coordinates: coordinates ?? this.coordinates,
-      type: type ?? this.type,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-  );
-  
-  @override
-  String toString() => 'UserLocations(id: $id, userId: $userId, name: $name, coordinates: $coordinates, type: $type, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   
 }
 
@@ -109,14 +94,6 @@ class Coordinates {
   };
   
   String toJson() => json.encode(toMap());
-  
-  Coordinates copyWith({double? latitude, double? longitude}) => Coordinates(
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-  );
-  
-  @override
-  String toString() => 'Coordinates(latitude: $latitude, longitude: $longitude)';
   
 }
 
@@ -150,21 +127,6 @@ class Name {
   };
   
   String toJson() => json.encode(toMap());
-  
-  Name copyWith({
-      String? azName,
-      String? ruName,
-      String? enName,
-      String? trName,
-  }) => Name(
-      azName: azName ?? this.azName,
-      ruName: ruName ?? this.ruName,
-      enName: enName ?? this.enName,
-      trName: trName ?? this.trName,
-  );
-  
-  @override
-  String toString() => 'Name(azName: $azName, ruName: $ruName, enName: $enName, trName: $trName)';
   
 }
 

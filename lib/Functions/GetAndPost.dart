@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
@@ -89,6 +90,7 @@ class GetAndPost {
   ) async {
     try {
       var apiUrl = Uri.parse('$baseapiurl/$url');
+      print(apiUrl);
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
       var token = await _maincontroller.getstoragedat('token');
@@ -134,6 +136,34 @@ class GetAndPost {
         showToastMSG(errorcolor, jsonData['message'], context);
       }
     } catch (e) {
+      showToastMSG(errorcolor, e.toString(), context);
+    }
+  }
+
+  static Future<dynamic> uploadfile(
+    String url,
+    File file,
+    context,
+  ) async {
+    try {
+      var apiUrl = Uri.parse('$baseapiurl/$url');
+      var headers = {'Content-Type': 'multipart/form-data'};
+      var token = await _maincontroller.getstoragedat('token');
+
+      if (token != null && token.length > 0) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      var request = await http.MultipartRequest('POST', apiUrl);
+      request.headers.addAll(headers);
+      var multipartFile = await http.MultipartFile.fromPath('image', file.path);
+      request.files.add(multipartFile);
+      var response = await request.send();
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      var jsonData = jsonDecode(responseString);
+      return jsonData;
+    } catch (e) {
+      print(e.toString());
       showToastMSG(errorcolor, e.toString(), context);
     }
   }
