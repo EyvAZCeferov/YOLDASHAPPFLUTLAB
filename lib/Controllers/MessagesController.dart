@@ -17,7 +17,6 @@ import 'MainController.dart';
 class MessagesController extends GetxController {
   var showattachmenu = false.obs;
   Rx<bool> refreshpage = Rx<bool>(false);
-  Rx<File?> imageFile = Rx<File?>(null);
   Rx<TextEditingController> messagetextcontroller =
       Rx<TextEditingController>(TextEditingController());
   RxList<MessageGroups> data = <MessageGroups>[].obs;
@@ -118,7 +117,6 @@ class MessagesController extends GetxController {
             if (selectedGroupId != null && selectedGroupId > 0) {
               selectedMessageGroup.value =
                   MessageGroups.fromJson(response['data']);
-              print(selectedMessageGroup.value);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
             } else {

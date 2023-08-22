@@ -31,6 +31,7 @@ class GetAndPost {
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
+
       var response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
@@ -90,17 +91,19 @@ class GetAndPost {
   ) async {
     try {
       var apiUrl = Uri.parse('$baseapiurl/$url');
-      print(apiUrl);
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
+
       var token = await _maincontroller.getstoragedat('token');
 
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
+
       var response = await http.post(apiUrl, headers: headers, body: jsonBody);
 
       var jsonData = jsonDecode(response.body);
+      print(jsonData);
       var status = jsonData['status'];
 
       if (status == 'success') {
@@ -110,6 +113,7 @@ class GetAndPost {
       }
     } catch (e) {
       showToastMSG(errorcolor, e.toString(), context);
+      print(e.toString());
     }
   }
 

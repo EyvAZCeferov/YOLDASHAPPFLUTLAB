@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,7 +46,7 @@ class _AddableWidgetState extends State<AddableWidget> {
     }
 
     setState(() {
-      data=dat;
+      data = dat;
     });
   }
 
@@ -203,21 +204,30 @@ class _AddableWidgetState extends State<AddableWidget> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                            width: 80,
-                            height: 60,
-                            margin: EdgeInsets.only(right: 10),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Color(0xffF4F5F6),
-                              borderRadius: BorderRadius.circular(10),
+                          width: 80,
+                          height: 60,
+                          margin: EdgeInsets.only(right: 10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Color(0xffF4F5F6),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: getimageurl(
+                                "models", 'automobils/models', item.automodels.icon),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
+                              backgroundColor: primarycolor,
+                              foregroundColor: whitecolor,
+                              radius: 35,
+                              backgroundImage: imageProvider,
                             ),
-                            child: ImageClass(
-                              type: true,
-                              boxfit: BoxFit.contain,
-                              url: imageurl +
-                                  'automobils/models/' +
-                                  item.automodels!.icon! as String,
-                            )),
+                          ),
+                        ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,

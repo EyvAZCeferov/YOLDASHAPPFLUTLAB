@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 import '../Functions/GetAndPost.dart';
@@ -11,55 +13,40 @@ class AutomobilsController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   RxList<Automobils> data = RxList<Automobils>();
   Rx<Automobils?> selectedAutomobil = Rx<Automobils?>(null);
-
-  Rx<File?> suruculukvesiqesi = Rx<File?>(null);
-  Rx<File?> idcard = Rx<File?>(null);
-  Rx<File?> autotexpasport = Rx<File?>(null);
+  Rx<String?> driving_licence = Rx<String?>(null);
+  Rx<String?> id_card = Rx<String?>(null);
+  Rx<String?> technical_passport = Rx<String?>(null);
   Rx<TextEditingController> licensePlateController =
       Rx<TextEditingController>(TextEditingController());
+  RxList<Automodels?> automodels = <Automodels>[].obs;
+  RxList<Autocolors?> autocolors = <Autocolors?>[].obs;
+  RxList<Automark?> automarks = <Automark?>[].obs;
+  Rx<Automodels?> selectedAutomodel = Rx<Automodels?>(null);
+  Rx<Automark?> selectedAutomark = Rx<Automark?>(null);
+  Rx<Autocolors?> selectedAutocolor = Rx<Autocolors?>(null);
 
   Future<void> fetchDatas(context) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
+
     var response = await GetAndPost.fetchData("automobils", context, body);
     if (response != null) {
       String status = response['status'];
-      String message = response['message'];
+      String message = "";
+      if (response['message'] != null) message = response['message'];
       if (status == "success") {
-        data.value = (response['data'] as List).map((dat) {
-          return Automobils(
-              id: dat["id"],
-              userId: dat["user_id"],
-              drivingLicence: dat["driving_licence"],
-              idCard: dat["id_card"],
-              technicalPassport: dat["technical_passport"],
-              autoSerialNumber: dat["auto_serial_number"],
-              selected: dat["selected"],
-              autoMarkId: dat["auto_mark_id"],
-              autoModelId: dat["auto_model_id"],
-              autoColorId: dat["auto_color_id"],
-              createdAt: dat["created_at"],
-              updatedAt: dat["updated_at"],
-              deletedAt: dat["deleted_at"],
-              automark: dat["automark"] == null
-                  ? null
-                  : Automark.fromMap(dat["automark"]),
-              automodels: dat["automodels"] == null
-                  ? null
-                  : Automodels.fromMap(dat["automodels"]),
-              autocolors: dat["autocolors"] == null
-                  ? null
-                  : Autocolors.fromMap(dat["autocolors"]),
-              images: dat["images"].length == 0
-                  ? null
-                  : List<Images>.from(
-                      dat["images"].map((e) => Images.fromMap(e))));
-        }).toList();
+        if (response['data'] != null) {
+          data.value = (response['data'] as List).map((dat) {
+            return Automobils.fromMap(dat);
+          }).toList();
 
-        selectedAutomobil.value = data.firstWhere(
-            (automobil) => automobil.selected == true,
-            orElse: () => Automobils());
+          selectedAutomobil.value = data.firstWhere(
+              (automobil) => automobil.selected == true,
+              orElse: () => Automobils());
+        }
+        refreshpage.value = false;
       } else {
+        refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
       refreshpage.value = false;
@@ -68,6 +55,42 @@ class AutomobilsController extends GetxController {
       data.value = [];
       selectedAutomobil.value = Automobils();
       showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  void fetchModels(BuildContext context, String type) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response =
+        await GetAndPost.fetchData("automobils_data/" + type, context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = "";
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        refreshpage.value = true;
+        if (response['data'] != null) {
+          if (type == "marks") {
+            automarks.value = (response['data'] as List).map((dat) {
+              return Automark.fromMap(dat);
+            }).toList();
+          } else if (type == "models") {
+            automodels.value = (response['data'] as List).map((dat) {
+              return Automodels.fromMap(dat);
+            }).toList();
+          } else if (type == "colors") {
+            autocolors.value = (response['data'] as List).map((dat) {
+              return Autocolors.fromMap(dat);
+            }).toList();
+          }
+          refreshpage.value = false;
+        } else {
+          refreshpage.value = false;
+        }
+      } else {
+        refreshpage.value = true;
+        showToastMSG(errorcolor, message, context);
+      }
     }
   }
 
@@ -99,70 +122,74 @@ class AutomobilsController extends GetxController {
   }
 
   void pickImage(type, context) async {
-    // final galleryStatus = await Permission.photos.request();
-    // final cameraStatus = await Permission.camera.request();
+    await handlepermissionreq(Permission.photos, context);
+    final picker = ImagePicker();
+    final source = ImageSource.gallery;
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      final image = File(pickedFile.path);
+      var response = await GetAndPost.uploadfile(
+          "automobils/sendphoto/{$type}", image, context);
+      if (type == "id_card") {
+        id_card.value = response['data'];
+      } else if (type == "driving_licence") {
+        driving_licence.value = response['data'];
+      } else if (type == "technical_passport") {
+        technical_passport.value = response['data'];
+      }
+    }
+  }
 
-    // if (galleryStatus.isGranted && cameraStatus.isGranted) {
-    //   final picker = ImagePicker();
-    //   final source = await showDialog<ImageSource>(
-    //     context: context,
-    //     builder: (BuildContext context) {
-    //       return AlertDialog(
-    //         title: StaticText(
-    //             text: "uploadimage".tr,
-    //             color: darkcolor,
-    //             size: buttontextSize,
-    //             weight: FontWeight.w500,
-    //             align: TextAlign.center),
-    //         actions: [
-    //           TextButton(
-    //             onPressed: () {
-    //               Navigator.pop(context, ImageSource.gallery);
-    //             },
-    //             child: StaticText(
-    //                 text: "gallery".tr,
-    //                 color: darkcolor,
-    //                 size: normaltextSize,
-    //                 weight: FontWeight.w500,
-    //                 align: TextAlign.center),
-    //           ),
-    //           TextButton(
-    //             onPressed: () {
-    //               Navigator.pop(context, ImageSource.camera);
-    //             },
-    //             child: StaticText(
-    //                 text: "camera".tr,
-    //                 color: darkcolor,
-    //                 size: normaltextSize,
-    //                 weight: FontWeight.w500,
-    //                 align: TextAlign.center),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   );
-
-    //   if (source != null) {
-    //     final pickedFile = await picker.getImage(source: source);
-    //     if (pickedFile != null) {
-    //       final file = File(pickedFile.path);
-    //       if (type == "suruculuk") {
-    //         suruculukvesiqesi.value = file;
-    //       } else if (type == "idcard") {
-    //         idcard.value = file;
-    //       } else if (type == "autotexpasport") {
-    //         autotexpasport.value = file;
-    //       }
-    //       showToastMSG(primarycolor, 'imageuploaded'.tr, context);
-    //     }
-    //   }
-    // } else {
-    //   if (galleryStatus.isDenied || cameraStatus.isDenied) {
-    //     showToastMSG(errorcolor, 'permissiondenied'.tr, context);
-    //   } else if (galleryStatus.isPermanentlyDenied ||
-    //       cameraStatus.isPermanentlyDenied) {
-    //     showToastMSG(errorcolor, 'permissiondenied'.tr, context);
-    //   }
-    // }
+  void addCar(context) async {
+    refreshpage.value = true;
+    if ((driving_licence.value != null &&
+            driving_licence.value != '' &&
+            driving_licence.value != ' ') &&
+        (id_card.value != null &&
+            id_card.value != '' &&
+            id_card.value != ' ') &&
+        (technical_passport.value != null &&
+            technical_passport.value != '' &&
+            technical_passport.value != ' ') &&
+        (licensePlateController.value.text != null &&
+            licensePlateController.value.text != '' &&
+            licensePlateController.value.text != ' ') &&
+        selectedAutocolor.value != null &&
+        selectedAutomark.value != null &&
+        selectedAutomodel.value != null) {
+      Map<String, dynamic> body = {
+        'driving_licence': driving_licence.value,
+        'id_card': id_card.value,
+        'technical_passport': technical_passport.value,
+        'auto_serial_number': licensePlateController.value.text,
+        'auto_mark_id': selectedAutomark.value!.id,
+        'auto_model_id': selectedAutomodel.value!.id,
+        'auto_color_id': selectedAutocolor.value!.id,
+      };
+      print(body);
+      var response = await GetAndPost.postData("automobils", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          refreshpage.value = false;
+          fetchDatas(context);
+          Get.offAllNamed('/mainscreen');
+        } else {
+          refreshpage.value = false;
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
+        data.value = [];
+        selectedAutomobil.value = Automobils();
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
+    } else {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, "fillthefield".tr, context);
+    }
   }
 }

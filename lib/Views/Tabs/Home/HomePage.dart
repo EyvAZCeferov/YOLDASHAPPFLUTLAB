@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldashapp/Constants/SearchedLocationItems.dart';
+import 'package:yoldashapp/models/searchionglocations.dart';
 
 import '../../../Constants/ButtonElement.dart';
 import '../../../Constants/Devider.dart';
@@ -16,6 +17,7 @@ import '../../../Constants/StaticText.dart';
 import '../../../Controllers/AuthController.dart';
 import '../../../Controllers/GoingController.dart';
 import '../../../Theme/ThemeService.dart';
+import '../../../models/rides.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -105,11 +107,33 @@ class _HomePageState extends State<HomePage> {
                                       IconButtonElement(
                                         icon: FeatherIcons.arrowLeft,
                                         onPressed: () {
-                                          _controller.refreshpage.value = false;
+                                          _controller.refreshpage.value = true;
                                           _controller.searchinglocations.value =
                                               [];
-                                          _controller.tocontroller.value.text =
-                                              "";
+                                          // _controller.tocontroller.value.text =
+                                          //     "";
+                                          // print("Markers Length");
+                                          // print(
+                                          //     _controller.markers.value.length);
+                                          // _controller.markers.value.removeWhere(
+                                          //     (marker) =>
+                                          //         marker?.markerId.value ==
+                                          //         'destinationposition');
+
+                                          // print("Markers Length");
+                                          // print(
+                                          //     _controller.markers.value.length);
+
+                                          // _controller.circles.value.removeWhere(
+                                          //     (element) =>
+                                          //         element?.circleId.value ==
+                                          //         'destinationposition');
+                                          // _controller.goinglocations.value
+                                          //     .removeWhere((element) =>
+                                          //         element?.type ==
+                                          //         'destinationposition');
+                                          // _controller.polyline.value = {};
+                                          _controller.refreshpage.value = false;
                                           _controller..openmodal.value = true;
                                           _controller.loading.value = false;
                                         },
@@ -146,22 +170,14 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Center(
                                         child: StaticText(
-                                          color: darkcolor,
-                                          size: buttontextSize,
-                                          weight: FontWeight.w600,
-                                          align: TextAlign.center,
-                                          textOverflow: TextOverflow.ellipsis,
-                                          text: "inMinutes".trParams({
-                                            'timevar': ((_controller
-                                                            .directiondetails
-                                                            .value!
-                                                            .durationValue! /
-                                                        60) *
-                                                    2)
-                                                .toString()
-                                                .substring(0, 2)
-                                          }),
-                                        ),
+                                            color: darkcolor,
+                                            size: buttontextSize,
+                                            weight: FontWeight.w600,
+                                            align: TextAlign.center,
+                                            textOverflow: TextOverflow.ellipsis,
+                                            text: _controller.directiondetails
+                                                .value!.durationText!
+                                                .toString()),
                                       ),
                                     ],
                                   ),
@@ -484,7 +500,7 @@ class _HomePageState extends State<HomePage> {
                                           _controller.findplaces(
                                               val,
                                               _controller.fromcontroller.value,
-                                              'from',
+                                              'currentposition',
                                               context),
                                     ),
                                   ),
@@ -515,7 +531,7 @@ class _HomePageState extends State<HomePage> {
                                                   val,
                                                   _controller
                                                       .tocontroller.value,
-                                                  'to',
+                                                  'destinationposition',
                                                   context),
                                         ),
                                       ),
@@ -1057,11 +1073,17 @@ class _HomePageState extends State<HomePage> {
                                               size: 5,
                                             ),
                                         itemBuilder: (context, index) {
-                                          var searchedlocationitem = _controller
-                                              .searchinglocations.value[index];
-                                          return SearchedLocationItems(
-                                              searchedlocation:
-                                                  searchedlocationitem);
+                                          SearchingLocations
+                                              searchedlocationitem = _controller
+                                                  .searchinglocations
+                                                  .value[index];
+                                          if (searchedlocationitem != null) {
+                                            print(searchedlocationitem);
+
+                                            return SearchedLocationItems(
+                                                searchedlocation:
+                                                    searchedlocationitem);
+                                          }
                                         },
                                         itemCount: _controller
                                             .searchinglocations.value.length),
@@ -1110,17 +1132,19 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               )
-                            : _controller.data.length > 0
+                            : _controller.data.length > 0 &&
+                                    _controller.authtype == "rider"
                                 ? Center(
                                     child: SizedBox(
                                     width: width - 40,
                                     height: width,
                                     child: ListView.builder(
-                                      itemCount: 5,
+                                      itemCount: _controller.data.length,
                                       itemBuilder: (context, index) {
+                                        Rides ride = _controller.data[index];
                                         return GestureDetector(
                                           onTap: () => Get.toNamed(
-                                              '/roadinfo/$index',
+                                              '/roadinfo/${ride.id}',
                                               arguments: index),
                                           child: Center(
                                               child: Container(

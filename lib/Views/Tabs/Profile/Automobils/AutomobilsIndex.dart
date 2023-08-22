@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,7 @@ class AutomobilsIndex extends StatelessWidget {
         if (_controller.refreshpage.value == true) {
           return LoaderScreen();
         } else {
-          final dat = _controller.data;
+          final dat = _controller.data.value;
           if (dat.isEmpty) {
             return Center(
               child: StaticText(
@@ -50,12 +51,18 @@ class AutomobilsIndex extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ListTile(
-                      leading: ImageClass(
-                        type: true,
-                        boxfit: BoxFit.contain,
-                        url: imageurl +
-                            'automobils/models/' +
-                            item.automodels!.icon! as String,
+                      leading: CachedNetworkImage(
+                        imageUrl: getimageurl("models", 'automobils/models',
+                            item.automodels!.icon),
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        imageBuilder: (context, imageProvider) => CircleAvatar(
+                          backgroundColor: primarycolor,
+                          foregroundColor: whitecolor,
+                          radius: 35,
+                          backgroundImage: imageProvider,
+                        ),
                       ),
                       title: StaticText(
                         color: darkcolor,

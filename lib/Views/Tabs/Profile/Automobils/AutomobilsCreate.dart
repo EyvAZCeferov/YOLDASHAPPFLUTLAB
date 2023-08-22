@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Constants/LoaderScreen.dart';
 
 import '../../../../Constants/AccordionTemplate.dart';
 import '../../../../Constants/BaseAppBar.dart';
@@ -16,6 +17,10 @@ class AutomobilsCreate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _controller.fetchModels(context, 'models');
+    _controller.fetchModels(context, 'marks');
+    _controller.fetchModels(context, 'colors');
+
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -31,33 +36,6 @@ class AutomobilsCreate extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Devider(),
-            DocumentRow(
-              title: "drivinglicence".tr,
-              subtitle: "uploadimage".tr,
-              completed: false,
-              onPressed: () => _controller.pickImage("suruculuk", context),
-            ),
-            Devider(),
-            DocumentRow(
-              title: "idcard".tr,
-              subtitle: "uploadimage".tr,
-              completed: false,
-              onPressed: () => _controller.pickImage("idcard", context),
-            ),
-            Devider(),
-            DocumentRow(
-              title: "autotexpasport".tr,
-              subtitle: "uploadimage".tr,
-              completed: false,
-              onPressed: () => _controller.pickImage("autotexpasport", context),
-            ),
-            Devider(),
-            AccordionTemplate(title: "automodel".tr, type: "model"),
-            Devider(),
-            AccordionTemplate(title: "automarka".tr, type: "marka"),
-            Devider(),
-            AccordionTemplate(title: "autocolor".tr, type: "color"),
             Devider(),
             Center(
                 child: Container(
@@ -101,6 +79,69 @@ class AutomobilsCreate extends StatelessWidget {
                       ],
                     ))),
             Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : DocumentRow(
+                      title: "drivinglicence".tr,
+                      subtitle: "uploadimage".tr,
+                      onPressed: () =>
+                          _controller.pickImage("driving_licence", context),
+                      data: _controller.driving_licence.value,
+                    ),
+            ),
+            Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : DocumentRow(
+                      title: "idcard".tr,
+                      subtitle: "uploadimage".tr,
+                      onPressed: () =>
+                          _controller.pickImage("id_card", context),
+                      data: _controller.id_card.value,
+                    ),
+            ),
+            Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : DocumentRow(
+                      title: "autotexpasport".tr,
+                      subtitle: "uploadimage".tr,
+                      onPressed: () =>
+                          _controller.pickImage("technical_passport", context),
+                      data: _controller.technical_passport.value,
+                    ),
+            ),
+            Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : AccordionTemplate(
+                      title: "automarka".tr,
+                      type: "marks",
+                      data: _controller.automarks.value,
+                    ),
+            ),
+            Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : AccordionTemplate(
+                      title: "automodel".tr,
+                      type: "models",
+                      data: _controller.automodels.value),
+            ),
+            Devider(),
+            Obx(
+              () => _controller.refreshpage.value == true
+                  ? LoaderScreen()
+                  : AccordionTemplate(
+                      title: "autocolor".tr,
+                      type: "colors",
+                      data: _controller.autocolors.value),
+            ),
             Devider(),
           ],
         ),
@@ -115,7 +156,7 @@ class AutomobilsCreate extends StatelessWidget {
               height: 50,
               width: width - 100,
               borderRadius: BorderRadius.circular(45),
-              onPressed: () => print("Logout")),
+              onPressed: () => _controller.addCar(context)),
         ),
       ),
     );
@@ -134,18 +175,11 @@ class LicensePlateInputFormatter extends TextInputFormatter {
       String formattedText = '';
 
       if (newText.isNotEmpty) {
-        // İlk iki karakteri sayıya dönüştürme
-        final firstTwoDigits = int.tryParse(newText.substring(0, 2));
-        final firstTwo = firstTwoDigits != null ? '$firstTwoDigits-' : '';
+        var firstTwo = newText.substring(0, 2);
+        var lastThree = newText.substring(4, 7).toUpperCase();
+        var middleTwo = newText.substring(2, 4);
 
-        // Son iki karakteri büyük harfle tutma
-        final lastTwo = newText.substring(5, 7);
-
-        // Orta üç karakteri büyük harfle tutma
-        final middleThree = newText.substring(2, 5).toUpperCase();
-
-        // Formatlı metni oluşturma
-        formattedText = '$firstTwo$middleThree-$lastTwo';
+        formattedText = '$firstTwo-$middleTwo-$lastThree';
       }
 
       return TextEditingValue(
@@ -153,7 +187,6 @@ class LicensePlateInputFormatter extends TextInputFormatter {
         selection: TextSelection.collapsed(offset: formattedText.length),
       );
     }
-
     return oldValue;
   }
 }

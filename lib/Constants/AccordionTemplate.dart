@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Controllers/AutomobilsController.dart';
+import 'package:yoldashapp/Functions/helpers.dart';
 
 import '../Theme/ThemeService.dart';
+import '../models/automobils.dart';
 import 'Devider.dart';
 import 'ImageClass.dart';
 import 'StaticText.dart';
@@ -10,10 +14,12 @@ import 'StaticText.dart';
 class AccordionTemplate extends StatefulWidget {
   final String title;
   final String type;
+  final List? data;
 
   const AccordionTemplate({
     required this.title,
     this.type = "model",
+    this.data,
   });
 
   @override
@@ -22,7 +28,9 @@ class AccordionTemplate extends StatefulWidget {
 
 class _AccordionTemplateState extends State<AccordionTemplate> {
   bool expanding = false;
-  int selected = 0;
+  int selected = -1;
+  final AutomobilsController automobilscontroller =
+      Get.put(AutomobilsController());
 
   @override
   Widget build(BuildContext context) {
@@ -105,11 +113,19 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 4, // Öğe sayısı
+                  itemCount: widget.data?.length,
                   itemBuilder: (context, index) {
+                    var dat = widget.data?[index];
                     return GestureDetector(
                       onTap: () => setState(() {
                         selected = index;
+                        if (widget.type == "models") {
+                          automobilscontroller.selectedAutomodel.value = dat;
+                        } else if (widget.type == "colors") {
+                          automobilscontroller.selectedAutocolor.value = dat;
+                        } else if (widget.type == "marks") {
+                          automobilscontroller.selectedAutomark.value = dat;
+                        }
                       }),
                       child: Center(
                         child: Container(
@@ -125,7 +141,7 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
                                         : iconcolor,
                                     width: 1,
                                     style: BorderStyle.solid)),
-                            child: _buildColumnContent(widget.type)),
+                            child: _buildColumnContent(widget.type, dat)),
                       ),
                     );
                   },
@@ -137,51 +153,59 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
   }
 }
 
-_buildColumnContent(type) {
-  if (type == 'model') {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      verticalDirection: VerticalDirection.down,
-      children: [
-        SizedBox(
-          height: 60,
-          child: ImageClass(
-              url: "https://static.thenounproject.com/png/3914609-200.png",
-              type: true),
-        ),
-        Devider(
-          size: 5,
-        ),
-        StaticText(
-            text: "Sedan",
-            weight: FontWeight.w400,
-            size: smalltextSize,
-            color: iconcolor)
-      ],
-    );
-  } else if (type == "color") {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      verticalDirection: VerticalDirection.down,
-      children: [
-        SizedBox(
-          height: 60,
-          child: ImageClass(
-              url:
-                  "https://htmlcolorcodes.com/assets/images/colors/red-color-solid-background-1920x1080.png",
-              type: true),
-        ),
-        Devider(
-          size: 5,
-        ),
-        StaticText(
-            text: "Qırmızı",
-            weight: FontWeight.w400,
-            size: smalltextSize,
-            color: iconcolor)
-      ],
-    );
+_buildColumnContent(type, data) {
+  if (data != null) {
+    if (type == 'models' || type == "marks") {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        children: [
+          SizedBox(
+            height: 60,
+            child: CachedNetworkImage(
+              imageUrl: getimageurl(type, 'automobils/' + type, data.icon),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                backgroundColor: primarycolor,
+                foregroundColor: whitecolor,
+                radius: 35,
+                backgroundImage: imageProvider,
+              ),
+            ),
+          ),
+          Devider(
+            size: 5,
+          ),
+          StaticText(
+              text: getLocalizedValue(data.name as Name, 'name').toString(),
+              weight: FontWeight.w400,
+              size: smalltextSize,
+              color: iconcolor)
+        ],
+      );
+    } else if (type == "colors") {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        children: [
+          Container(
+            height: 60,
+            width: 60,
+            color: fromHex(data.hex),
+          ),
+          Devider(
+            size: 5,
+          ),
+          StaticText(
+              text: getLocalizedValue(data.name as Name, 'name').toString(),
+              weight: FontWeight.w400,
+              size: smalltextSize,
+              color: iconcolor)
+        ],
+      );
+    }
   }
 }

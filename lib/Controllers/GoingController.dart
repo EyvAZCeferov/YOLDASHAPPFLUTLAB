@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -8,7 +9,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yoldashapp/Controllers/AutomobilsController.dart';
 import 'package:yoldashapp/models/distancedetails.dart';
+import 'package:yoldashapp/models/rides.dart';
 import 'package:yoldashapp/models/searchionglocations.dart';
 
 import '../Constants/ButtonElement.dart';
@@ -27,6 +30,8 @@ import 'MessagesController.dart';
 class GoingController extends GetxController {
   late MainController _maincontroller = Get.put(MainController());
   late MessagesController _messagescontroller = Get.put(MessagesController());
+  late AutomobilsController _automobilscontroller =
+      Get.put(AutomobilsController());
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<TextEditingController> fromcontroller =
       Rx<TextEditingController>(TextEditingController());
@@ -145,34 +150,39 @@ class GoingController extends GetxController {
 
   Future<UserLocations> addlocationtodb(String nameaddress, String place_id,
       LatLng latlng, String type, BuildContext context) async {
-    var body = {
-      'auth_id': auth_id.value,
-      'place_id': place_id,
-      'name': nameaddress,
-      'latitude': latlng.latitude,
-      'longitude': latlng.longitude,
-      'type': type,
-    };
-    var response = await GetAndPost.postData("locations", body, context);
+    try {
+      var body = {
+        'auth_id': auth_id.value,
+        'place_id': place_id,
+        'name': nameaddress,
+        'latitude': latlng.latitude,
+        'longitude': latlng.longitude,
+        'type': type,
+      };
+      var response = await GetAndPost.postData("locations", body, context);
 
-    if (response != null) {
-      String status = response['status'];
-      String message = "";
-      if (response['message'] != null) message = response['message'];
-      if (status == "success") {
-        UserLocations userlocation = UserLocations(
-            id: 1,
-            userId: auth_id.value as int,
-            coordinates: Coordinates(
-                latitude: latlng.latitude, longitude: latlng.longitude),
-            name: Name.fromMap(response['data']['name']),
-            status: true,
-            type: response['data']['type']);
-        return userlocation;
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          UserLocations userlocation = UserLocations(
+              id: 1,
+              userId: auth_id.value as int,
+              coordinates: Coordinates(
+                  latitude: latlng.latitude, longitude: latlng.longitude),
+              name: Name.fromMap(response['data']['name']),
+              status: true,
+              type: response['data']['type']);
+          return userlocation;
+        } else {
+          return UserLocations();
+        }
       } else {
         return UserLocations();
       }
-    } else {
+    } catch (e) {
+      print(e.toString());
       return UserLocations();
     }
   }
@@ -251,21 +261,22 @@ class GoingController extends GetxController {
           .where(
               (element) => element.type == 'recent' || element.type == 'others')
           .map((element) => SearchingLocations(
-              secondary_text: '' as String,
-              main_text: getLocalizedValue(element.name, 'name') as String,
-              place_id: element.placeId,
-              type: type))
+                secondary_text: '' as String,
+                main_text: getLocalizedValue(element.name, 'name') as String,
+                place_id: element.placeId,
+              ))
           .toList();
 
       var url =
           "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&location=40.409264%2C-49.867092&key=$mapsApiKey&components=country:az&language=$language";
       var response = await GetAndPost.fetcOtherhData(url, context, {});
       if (response['status'] == "OK") {
-        var listelements = (response['predictions'] as List).map((e) {
-          e['type'] = type;
-          SearchingLocations.fromJson(e);
-        }).toList();
-        searchinglocations.value = listelements.cast<SearchingLocations>();
+        List<SearchingLocations> listelements =
+            (response['predictions'] as List)
+                .map((e) => SearchingLocations.fromJson(e))
+                .cast<SearchingLocations>()
+                .toList();
+        searchinglocations.value = listelements;
         editingcontroller.value = controller;
         inptype.value = type;
       }
@@ -274,72 +285,84 @@ class GoingController extends GetxController {
     }
   }
 
-  void selectsearchedloc(String place_id, context) async {
-    refreshpage.value = true;
-    var language = await _maincontroller.getstoragedat('language');
-    var url =
-        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$place_id&key=$mapsApiKey&language=$language";
-    var response = await GetAndPost.fetcOtherhData(url, context, {});
-    if (response['status'] == "OK") {
-      refreshpage.value = false;
-      editingcontroller.value.text = response['result']['formatted_address'];
-      editingcontroller.value = TextEditingController();
-      searchinglocations.value = [];
+  void selectsearchedloc(String place_id, BuildContext context) async {
+    if (place_id != null) {
+      refreshpage.value = true;
+      var language = await _maincontroller.getstoragedat('language');
+      var url =
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$place_id&key=$mapsApiKey&language=$language";
+      var response = await GetAndPost.fetcOtherhData(url, context, {});
+      if (response['status'] == "OK") {
+        editingcontroller.value.text = response['result']['formatted_address'];
+        editingcontroller.value = TextEditingController();
+        searchinglocations.value = [];
+        UserLocations userlocation = await addlocationtodb(
+            response['result']['formatted_address'],
+            place_id,
+            LatLng(response['result']['geometry']['location']['lat'],
+                response['result']['geometry']['location']['lng']),
+            inptype.value,
+            context);
+        if (goinglocations.value.length > 0) {
+          goinglocations.value
+              .removeWhere((element) => element.type == inptype.value);
+        }
+        goinglocations.value.add(userlocation);
 
-      goinglocations.value.add(UserLocations(
-        id: 1,
-        coordinates: Coordinates(
-            latitude: response['result']['geometry']['location']['lat'],
-            longitude: response['result']['geometry']['location']['lng']),
-        name: Name(
-            azName: response['result']['formatted_address'],
-            ruName: response['result']['formatted_address'],
-            enName: response['result']['formatted_address'],
-            trName: response['result']['formatted_address']),
-        status: true,
-        type: inptype.value == "from" ? "first" : 'second',
-      ));
+        if (markers.value.length > 0) {
+          markers.value.removeWhere((marker) =>
+              marker?.markerId.value == userlocation.type as String);
+        }
 
-      if (goinglocations.value.length == 2) {
-        createroute(context);
-      } else {
-        openmodal.value = false;
-        refreshpage.value = false;
-        LatLngBounds latLngBounds;
-        LatLng latlng = LatLng(
-            response['result']['geometry']['location']['lat'],
-            response['result']['geometry']['location']['lng']);
+        if (circles.value.length > 0) {
+          circles.value.removeWhere((circle) =>
+              circle?.circleId.value == userlocation.type as String);
+        }
 
-        latLngBounds = LatLngBounds(southwest: latlng, northeast: latlng);
         markers.value.add(Marker(
-            markerId: MarkerId("pickup"),
+            markerId: MarkerId(userlocation.type as String),
             icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueAzure),
+                userlocation.type == "currentposition"
+                    ? BitmapDescriptor.hueAzure
+                    : BitmapDescriptor.hueRed),
             infoWindow: InfoWindow(
-                title: getLocalizedValue(
-                    goinglocations.where((p0) => p0.type == "first").first.name,
-                    'name'),
-                snippet: 'mylocation'.tr),
-            position: latlng,
+              title: getLocalizedValue(userlocation.name, 'name'),
+              snippet: 'mylocation'.tr,
+            ),
+            position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+                userlocation.coordinates!.longitude!.toDouble()),
             draggable: true,
             onDragEnd: ((value) => print(value)),
             onDrag: (value) => print(value),
             onDragStart: (value) => print(value)));
-
         circles.value.add(Circle(
-          circleId: CircleId("pickup"),
+          circleId: CircleId(userlocation.type as String),
           fillColor: secondarycolor,
-          center: latlng,
-          radius: 12,
+          center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+              userlocation.coordinates!.longitude!.toDouble()),
+          radius: 15,
           strokeWidth: 4,
-          strokeColor: secondarycolor,
+          strokeColor: userlocation.type == "currentposition"
+              ? secondarycolor
+              : errorcolor,
         ));
 
-        newgooglemapcontroller.value!
-            .animateCamera(CameraUpdate.newLatLng(latlng));
+        if (goinglocations.value.length == 2) {
+          createroute(context);
+        } else {
+          refreshpage.value = false;
+          openmodal.value = false;
+          CameraPosition cameraposition = new CameraPosition(
+              target: LatLng(response['result']['geometry']['location']['lat'],
+                  response['result']['geometry']['location']['lng']),
+              zoom: 14);
+          kGooglePlex = cameraposition;
+          newgooglemapcontroller.value
+              ?.animateCamera(cameraposition as CameraUpdate);
+        }
+      } else {
+        refreshpage.value = false;
       }
-    } else {
-      refreshpage.value = false;
     }
   }
 
@@ -394,11 +417,13 @@ class GoingController extends GetxController {
   void createroute(context) async {
     openmodal.value = false;
     refreshpage.value = true;
+    var language = await _maincontroller.getstoragedat('language');
     var url =
-        "https://maps.googleapis.com/maps/api/directions/json?key=$mapsApiKey";
+        "https://maps.googleapis.com/maps/api/directions/json?key=$mapsApiKey&language=$language";
     LatLng? originCoordinates, destinationCoordinates;
+
     for (var location in goinglocations.value) {
-      if (location.type == "first") {
+      if (location.type == "currentposition") {
         originCoordinates = LatLng(location.coordinates!.latitude as double,
             location.coordinates!.longitude as double);
       } else {
@@ -424,6 +449,8 @@ class GoingController extends GetxController {
         durationText: response['routes'][0]['legs'][0]['duration']['text'],
         durationValue: response['routes'][0]['legs'][0]['duration']['value'],
       );
+      print(response['routes'][0]['legs'][0]['duration']['text']);
+      print(response['routes'][0]['legs'][0]['duration']['value']);
       latlngs.clear();
 
       PolylinePoints polylinePoints = PolylinePoints();
@@ -437,7 +464,7 @@ class GoingController extends GetxController {
 
       polyline.clear();
       Polyline polylinenew = Polyline(
-          polylineId: PolylineId("token"),
+          polylineId: PolylineId("current_destination"),
           color: primarycolor,
           points: latlngs.value,
           jointType: JointType.mitered,
@@ -448,6 +475,7 @@ class GoingController extends GetxController {
       polyline.add(polylinenew);
 
       LatLngBounds latLngBounds;
+
       if (originCoordinates!.latitude > destinationCoordinates!.latitude &&
           originCoordinates.longitude > destinationCoordinates.longitude) {
         latLngBounds = LatLngBounds(
@@ -470,61 +498,135 @@ class GoingController extends GetxController {
             southwest: originCoordinates, northeast: destinationCoordinates);
       }
 
-      newgooglemapcontroller.value
-          ?.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+      if (latLngBounds.contains(originCoordinates!) &&
+          latLngBounds.contains(destinationCoordinates!)) {
+        newgooglemapcontroller.value
+            ?.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+      } else {
+        newgooglemapcontroller.value?.animateCamera(CameraUpdate.newLatLngZoom(
+            LatLng(
+                (originCoordinates.latitude + destinationCoordinates.latitude) /
+                    2,
+                (originCoordinates.longitude +
+                        destinationCoordinates.longitude) /
+                    2),
+            10));
+      }
 
-      markers.clear();
-      circles.clear();
-
-      markers.value.add(Marker(
-          markerId: MarkerId("pickup"),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-              title: getLocalizedValue(goinglocations[0].name, 'name'),
-              snippet: 'mylocation'.tr),
-          position: originCoordinates,
-          onDragEnd: ((value) => print(value)),
-          onDrag: (value) => print(value),
-          onDragStart: (value) => print(value)));
-      markers.value.add(Marker(
-          markerId: MarkerId("destination"),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          infoWindow: InfoWindow(
-              title: getLocalizedValue(goinglocations[1].name, 'name'),
-              snippet: 'destinationlocation'.tr),
-          position: destinationCoordinates,
-          onDragEnd: ((value) => print(value)),
-          onDrag: (value) => print(value),
-          onDragStart: (value) => print(value)));
-      circles.value.add(Circle(
-        circleId: CircleId("pickup"),
-        fillColor: secondarycolor,
-        center: originCoordinates,
-        radius: 12,
-        strokeWidth: 4,
-        strokeColor: secondarycolor,
-      ));
-
-      circles.value.add(Circle(
-        circleId: CircleId("destination"),
-        fillColor: errorcolor,
-        center: destinationCoordinates,
-        radius: 12,
-        strokeWidth: 4,
-        strokeColor: errorcolor,
-      ));
       refreshpage.value = false;
     } else {
       refreshpage.value = false;
     }
   }
 
-  void togglesearch(String type, context) {
-    if (type == "onmap") {
-      openmodal.value = true;
+  void togglesearch(String type, context) async {
+    try {
+      if (type == "onmap") {
+        openmodal.value = true;
+      }
+
+      var nextprocess = false;
+
+      if (authtype.value == "driver") {
+        _automobilscontroller.fetchDatas(context);
+        if (_automobilscontroller.data.length == 0) {
+          nextprocess = false;
+          showToastMSG(errorcolor, "add_automobil".tr, context);
+          Get.toNamed('/automobils');
+        } else {
+          nextprocess = true;
+        }
+      } else {
+        nextprocess = true;
+      }
+
+      if (nextprocess == true) {
+        refreshpage.value = true;
+
+        var body = {
+          'auth_id': auth_id.value,
+          'latitudefrom': markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .position!
+              .latitude
+              .toString(),
+          'longitudefrom': markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .position!
+              .longitude
+              .toString(),
+          "wayfrom": markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .infoWindow
+              .title,
+          'latitudeto': markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value != "destinationposition")!
+              .position!
+              .latitude
+              .toString(),
+          'longitudeto': markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value != "destinationposition")!
+              .position!
+              .longitude
+              .toString(),
+          "wayto": markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value == "destinationposition")!
+              .infoWindow
+              .title,
+          'start_time': selectedTime.value.toString() ?? null,
+          'kmofway': directiondetails.value!.distanceValue ?? 0,
+          'minimal_price_of_way':
+              minimumpriceofwaycontroller.value.text != null &&
+                      minimumpriceofwaycontroller.value.text != '' &&
+                      minimumpriceofwaycontroller.value.text != ' '
+                  ? minimumpriceofwaycontroller.value.text
+                  : 0,
+          'price_of_way': priceofwaycontroller.value.text != null &&
+                  priceofwaycontroller.value.text != '' &&
+                  priceofwaycontroller.value.text != ' '
+              ? priceofwaycontroller.value.text
+              : 0,
+          'payment_method': 'nagd',
+          'status': 'waiting',
+          'weight': weightcontroller.value.text != null &&
+                  weightcontroller.value.text != '' &&
+                  weightcontroller.value.text != ' '
+              ? weightcontroller.value.text
+              : 0,
+          'place_id': null,
+        };
+        var response = await GetAndPost.postData("rides", body, context);
+        if (response != null) {
+          String status = response['status'];
+          String message = "";
+          if (response['message'] != null) message = response['message'];
+          if (status == "success") {
+            data.value = (response['data'] as List).map((dat) {
+              return Rides.fromMap(dat);
+            }).toList();
+
+            print(data.value);
+            refreshpage.value = false;
+          } else {
+            refreshpage.value = false;
+          }
+        } else {
+          refreshpage.value = false;
+        }
+
+        loading.value = !loading.value;
+      }
+    } catch (e) {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, e.toString(), context);
+      print(e.toString());
     }
-    loading.value = !loading.value;
   }
 
   void fetchdata() {
@@ -776,7 +878,7 @@ class GoingController extends GetxController {
 
   void changemethod(context) {
     final CardsController cardscontroller = Get.put(CardsController());
-
+    cardscontroller.fetchDatas(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {

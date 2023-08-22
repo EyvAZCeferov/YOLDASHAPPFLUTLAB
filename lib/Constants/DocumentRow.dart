@@ -9,15 +9,15 @@ class DocumentRow extends StatelessWidget {
   final String type;
   final String title;
   final String? subtitle;
-  final bool completed;
   final Function? onPressed;
+  final String? data;
 
   const DocumentRow({
     this.type = "file",
     required this.title,
     this.subtitle,
-    this.completed = false,
     this.onPressed,
+    this.data,
   });
 
   @override
@@ -72,7 +72,10 @@ class DocumentRow extends StatelessWidget {
               width: 50,
               height: 100,
               alignment: Alignment.center,
-              child: completed == true
+              child: data != null &&
+                      data != '' &&
+                      data != ' ' &&
+                      data!.length > 0
                   ? Icon(
                       FeatherIcons.check,
                       color: secondarycolor,

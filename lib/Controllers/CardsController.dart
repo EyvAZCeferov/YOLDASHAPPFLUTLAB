@@ -12,7 +12,6 @@ class CardsController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   RxList<Cards> data = RxList<Cards>();
   Rx<Cards?> selectedCards = Rx<Cards?>(null);
-
   Rx<TextEditingController> cardNumberController =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> validityDateController =

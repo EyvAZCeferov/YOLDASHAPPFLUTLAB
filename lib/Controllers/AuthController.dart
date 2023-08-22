@@ -276,33 +276,36 @@ class AuthController extends GetxController {
   }
 
   void logout(context) async {
-    refreshpage.value = true;
-    var body = {};
-    var response = await GetAndPost.postData("auth/logout", body, context);
-    if (response != null) {
-      String status = response['status'];
-      String message = response['message'];
-      if (status == "success") {
-        await CacheManager.cacheModel('authenticated', '');
-        CacheManager.setvaluetoprefences('auth_id', '');
-
-        CacheManager.setvaluetoprefences('name_surname', '');
-        CacheManager.setvaluetoprefences('email', '');
-        CacheManager.setvaluetoprefences('phone', '');
-        CacheManager.setvaluetoprefences('authtype', '');
-        CacheManager.setvaluetoprefences('profilepicture', '');
-        authType.value = '';
-        Get.offAllNamed(
-          'login',
-        );
-        showToastMSG(primarycolor, message, context);
+    try {
+      refreshpage.value = true;
+      var body = {};
+      var response = await GetAndPost.postData("auth/logout", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = response['message'];
+        if (status == "success") {
+          CacheManager.setvaluetoprefences('auth_id', '');
+          CacheManager.setvaluetoprefences('name_surname', '');
+          CacheManager.setvaluetoprefences('email', '');
+          CacheManager.setvaluetoprefences('phone', '');
+          CacheManager.setvaluetoprefences('authtype', '');
+          CacheManager.setvaluetoprefences('profilepicture', '');
+          authType.value = '';
+          Get.offAllNamed(
+            'login',
+          );
+          showToastMSG(primarycolor, message, context);
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
       } else {
-        showToastMSG(errorcolor, message, context);
+        refreshpage.value = false;
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
+    } catch (e) {
       refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      print(e.toString());
     }
   }
 

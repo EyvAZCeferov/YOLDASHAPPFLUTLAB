@@ -75,8 +75,6 @@ class MainController extends GetxController {
         data = profilepicture.value;
       }
 
-      print("PAGEEEEEEEE : $type");
-      print(data);
       return data ?? null;
     } catch (e) {
       print("Main controller error: $e");

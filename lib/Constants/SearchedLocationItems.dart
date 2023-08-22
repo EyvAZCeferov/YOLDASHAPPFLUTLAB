@@ -49,11 +49,11 @@ class _SearchedLocationItemsState extends State<SearchedLocationItems> {
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 StaticText(
                   color: darkcolor,
-                  size: normaltextSize,
+                  size: smalltextSize + 2,
                   weight: FontWeight.w600,
                   text: widget.searchedlocation.main_text.toString(),
                   align: TextAlign.left,
@@ -61,9 +61,15 @@ class _SearchedLocationItemsState extends State<SearchedLocationItems> {
                 ),
                 StaticText(
                   color: secondarycolor,
-                  size: smalltextSize,
+                  size: smalltextSize - 1,
                   weight: FontWeight.w400,
-                  text: widget.searchedlocation.main_text.toString(),
+                  text:
+                      widget.searchedlocation.secondary_text.toString().length >
+                              40
+                          ? widget.searchedlocation.secondary_text
+                              .toString()
+                              .substring(0, 40) + '...'
+                          : widget.searchedlocation.secondary_text.toString(),
                   align: TextAlign.left,
                   textOverflow: TextOverflow.ellipsis,
                 ),
