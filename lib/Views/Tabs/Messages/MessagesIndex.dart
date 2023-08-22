@@ -158,8 +158,7 @@ class MessagesIndex extends StatelessWidget {
                                     item.messages != null &&
                                             item.messages!.length > 0 &&
                                             countMessageUnread(
-                                                    item.messages
-                                                        as List<Messages>,
+                                                    item.messages ?? [],
                                                     _controller.auth_id.value
                                                         as int) >
                                                 0

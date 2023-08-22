@@ -9,7 +9,6 @@ import '../Controllers/CardsController.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import 'IconButtonElement.dart';
-import 'ImageClass.dart';
 import 'LoaderScreen.dart';
 import 'StaticText.dart';
 
@@ -146,46 +145,50 @@ class _AddableWidgetState extends State<AddableWidget> {
                   itemCount: _cardscontroller.data.length,
                   itemBuilder: (context, index) {
                     final item = _cardscontroller.data[index];
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                            width: 80,
-                            height: 60,
-                            margin: EdgeInsets.only(right: 10),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Color(0xffF4F5F6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                                fontawesome(item.cardtype ?? 'visa')
-                                    as IconData?,
-                                color: secondarycolor,
-                                size: headingSize)),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            StaticText(
-                              text: maskLastFourDigits(item.cardnumber ?? ''),
-                              color: darkcolor,
-                              size: buttontextSize,
-                              weight: FontWeight.w500,
-                              align: TextAlign.left,
-                            ),
-                            StaticText(
-                              text:
-                                  item.selected == true ? "mainaccount".tr : '',
-                              color: Colors.grey,
-                              size: smalltextSize,
-                              weight: FontWeight.w400,
-                              align: TextAlign.left,
-                            ),
-                          ],
-                        )
-                      ],
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                              width: 80,
+                              height: 60,
+                              margin: EdgeInsets.only(right: 10),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Color(0xffF4F5F6),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                  fontawesome(item.cardtype ?? 'visa')
+                                      as IconData?,
+                                  color: secondarycolor,
+                                  size: headingSize)),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              StaticText(
+                                text: maskLastFourDigits(item.cardnumber ?? ''),
+                                color: darkcolor,
+                                size: buttontextSize,
+                                weight: FontWeight.w500,
+                                align: TextAlign.left,
+                              ),
+                              StaticText(
+                                text: item.selected == true
+                                    ? "mainaccount".tr
+                                    : '',
+                                color: Colors.grey,
+                                size: smalltextSize,
+                                weight: FontWeight.w400,
+                                align: TextAlign.left,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }),
         ),
@@ -199,57 +202,60 @@ class _AddableWidgetState extends State<AddableWidget> {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final item = data[index];
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 60,
-                          margin: EdgeInsets.only(right: 10),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Color(0xffF4F5F6),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: getimageurl(
-                                "models", 'automobils/models', item.automodels.icon),
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                              backgroundColor: primarycolor,
-                              foregroundColor: whitecolor,
-                              radius: 35,
-                              backgroundImage: imageProvider,
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 60,
+                            margin: EdgeInsets.only(right: 10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Color(0xffF4F5F6),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: getimageurl("models",
+                                  'automobils/models', item.automodels.icon),
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                backgroundColor: primarycolor,
+                                foregroundColor: whitecolor,
+                                radius: 35,
+                                backgroundImage: imageProvider,
+                              ),
                             ),
                           ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            StaticText(
-                              text: getLocalizedValue(
-                                  item.automodels!.name, 'name') as String,
-                              color: darkcolor,
-                              size: buttontextSize,
-                              weight: FontWeight.w500,
-                              align: TextAlign.left,
-                            ),
-                            StaticText(
-                              text: item.autoSerialNumber as String,
-                              color: Colors.grey,
-                              size: smalltextSize,
-                              weight: FontWeight.w400,
-                              align: TextAlign.left,
-                            ),
-                          ],
-                        )
-                      ],
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              StaticText(
+                                text: getLocalizedValue(
+                                    item.automodels!.name, 'name') as String,
+                                color: darkcolor,
+                                size: buttontextSize,
+                                weight: FontWeight.w500,
+                                align: TextAlign.left,
+                              ),
+                              StaticText(
+                                text: item.autoSerialNumber as String,
+                                color: Colors.grey,
+                                size: smalltextSize,
+                                weight: FontWeight.w400,
+                                align: TextAlign.left,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }),
         ),

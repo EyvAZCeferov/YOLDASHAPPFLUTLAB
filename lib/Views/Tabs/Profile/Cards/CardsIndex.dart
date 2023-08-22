@@ -71,7 +71,7 @@ class CardsIndex extends StatelessWidget {
                         toggleable: true,
                         visualDensity: VisualDensity.adaptivePlatformDensity,
                         onChanged: (value) {
-                          _controller.updateSelection(index, true, context);
+                          _controller.updateSelection(item.id!, true, context);
                         },
                       ),
                     ),

@@ -13,7 +13,6 @@ import '../../../Constants/StaticText.dart';
 import '../../../Controllers/AuthController.dart';
 import '../../../Controllers/AutomobilsController.dart';
 import '../../../Controllers/BalanceController.dart';
-import '../../../Controllers/MainController.dart';
 import '../../../Functions/helpers.dart';
 import '../../../Theme/ThemeService.dart';
 import 'build_menu_items.dart';
@@ -42,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
             changeprof: true,
             titlebg: false,
             authtype: _controller.authType.value,
-            changeprofpage: () => _controller.changeprofpage()),
+            changeprofpage: () => _controller.changeprofpage(context)),
         body: Obx(() => _controller.refreshpage.value == true
             ? LoaderScreen()
             : SingleChildScrollView(

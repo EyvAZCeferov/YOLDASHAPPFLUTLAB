@@ -7,8 +7,10 @@ import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/cards.dart';
+import 'MainController.dart';
 
 class CardsController extends GetxController {
+  late MainController _maincontroller = Get.put(MainController());
   Rx<bool> refreshpage = Rx<bool>(false);
   RxList<Cards> data = RxList<Cards>();
   Rx<Cards?> selectedCards = Rx<Cards?>(null);
@@ -20,6 +22,13 @@ class CardsController extends GetxController {
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> holderNameController =
       Rx<TextEditingController>(TextEditingController());
+  Rx<int?> auth_id = Rx<int?>(null);
+  Rx<String> authtype = Rx<String>('rider');
+
+  void getAuthId() async {
+    auth_id.value = await _maincontroller.getstoragedat('auth_id');
+    authtype.value = await _maincontroller.getstoragedat('authtype');
+  }
 
   void addcard(BuildContext context) async {
     try {
@@ -62,6 +71,7 @@ class CardsController extends GetxController {
 
   Future<void> fetchDatas(context) async {
     try {
+      getAuthId();
       refreshpage.value = true;
       Map<String, dynamic> body = {};
       var response = await GetAndPost.fetchData("cards", context, body);
@@ -92,8 +102,23 @@ class CardsController extends GetxController {
         selectedCards.value = Cards();
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
+
+      data.value.add(Cards(
+        id: 0,
+        cardholdername: "nagd".tr,
+        cardnumber: "nagd".tr,
+        cardtype: "nagd",
+        selected: data.value.every((element) {
+          if (element.id != 0) {
+            return !element.selected!;
+          } else {
+            return false;
+          }
+        }),
+        userId: auth_id.value,
+      ));
     } catch (e) {
-      refreshpage.value=false;
+      refreshpage.value = false;
       print(e.toString());
     }
   }
@@ -101,27 +126,41 @@ class CardsController extends GetxController {
   Future<void> updateSelection(int index, bool value, context) async {
     refreshpage.value = true;
     var selectedelement;
+    if (index != 0) {
+      selectedelement = data.firstWhere((element) => element.id == index,
+          orElse: () => Cards());
 
-    selectedelement = data.firstWhere((automobil) => automobil.id == index,
-        orElse: () => Cards());
-
-    var body = {};
-    var response = await GetAndPost.patchData(
-        "cards/${selectedelement.id}", body, context);
-    if (response != null) {
-      String status = response['status'];
-      String message = response['message'];
-      if (status == "success") {
-        fetchDatas(context);
+      var body = {};
+      var response = await GetAndPost.patchData(
+          "cards/${selectedelement.id}", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          refreshpage.value = false;
+          fetchDatas(context);
+        } else {
+          refreshpage.value = false;
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
       } else {
-        showToastMSG(errorcolor, message, context);
+        refreshpage.value = false;
+        data.value = [];
+        selectedCards.value = Cards();
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
+    } else {
+      if (data.value != null && data.value.length > 1) {
+        for (var element in data.value) {
+          if (element.id != 0) {
+            updateSelection(element.id!, false, context);
+          }
+        }
+        fetchDatas(context);
       }
       refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-      data.value = [];
-      selectedCards.value = Cards();
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
   }
 

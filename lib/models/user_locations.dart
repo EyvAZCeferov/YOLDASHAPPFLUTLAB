@@ -85,8 +85,8 @@ class Coordinates {
   
   factory Coordinates.fromJson(String str) => Coordinates.fromMap(json.decode(str));
   
-  final double? latitude;
-  final double? longitude;
+  final dynamic? latitude;
+  final dynamic? longitude;
   
   Map<String, dynamic> toMap() => {
       'latitude': latitude,

@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
+import 'package:yoldashapp/Controllers/AuthController.dart';
 
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
@@ -28,6 +29,7 @@ class MessagesController extends GetxController {
     'replies.iamwaiting'.tr
   ];
   late MainController _maincontroller = Get.put(MainController());
+  final AuthController _authcontroller = Get.put(AuthController());
   Rx<ScrollController> scrollController =
       Rx<ScrollController>(ScrollController());
   Rx<int?> auth_id = Rx<int?>(null);
@@ -76,7 +78,7 @@ class MessagesController extends GetxController {
           response['results'][0]["address_components"][1]['long_name'];
 
       markers.value.add(Marker(
-          markerId: MarkerId("pickup"),
+          markerId: MarkerId("currentposition"),
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           infoWindow: InfoWindow(title: nameaddress, snippet: 'mylocation'.tr),
@@ -121,23 +123,7 @@ class MessagesController extends GetxController {
                   selectedMessageGroup.value?.messages! ?? [];
             } else {
               data.value = (response['data'] as List).map((dat) {
-                List<Messages> messages = (dat['messages'] as List)
-                    .map((messageData) => Messages.fromJson(messageData))
-                    .toList();
-
-                return MessageGroups(
-                  id: dat["id"],
-                  receiverId: dat["receiver_id"],
-                  senderId: dat["sender_id"],
-                  count: dat["count"],
-                  receiverName: dat["receiver_name"],
-                  senderName: dat["sender_name"],
-                  receiverPhone: dat["receiver_phone"],
-                  senderPhone: dat["sender_phone"],
-                  receiverImage: dat["receiver_image"],
-                  senderImage: dat["sender_image"],
-                  messages: messages,
-                );
+                return MessageGroups.fromMap(dat);
               }).toList();
             }
           }
@@ -164,7 +150,7 @@ class MessagesController extends GetxController {
     markers.value = {};
     latLngPos.value = latlng;
     markers.value.add(Marker(
-        markerId: MarkerId("pickup"),
+        markerId: MarkerId("currentposition"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow:
             InfoWindow(title: "mylocation".tr, snippet: 'mylocation'.tr),
@@ -325,18 +311,24 @@ class MessagesController extends GetxController {
     }
   }
 
-  void callpageredirect(type, String? val, context) async {
+  void callpageredirect(type, context) async {
     try {
       if (type == "video") {
         var status = await handlepermissionreq(Permission.camera, context);
-        print("status");
+        if (status.isGranted) {
+          Get.toNamed('/callpage/${type}', arguments: {type: type});
+        }
       } else {
-        launchUrlTOSITE("tel:$val");
+        var phone;
+        if (authtype.value == "driver") {
+          phone = selectedMessageGroup.value?.senderPhone;
+        } else {
+          phone = selectedMessageGroup.value?.receiverPhone;
+        }
+        launchUrlTOSITE("tel:$phone");
       }
-
-      Get.toNamed('/callpage/${type}', arguments: {type: type});
     } catch (error) {
-      showToastMSG(errorcolor, error, context);
+      showToastMSG(errorcolor, error.toString(), context);
     }
   }
 

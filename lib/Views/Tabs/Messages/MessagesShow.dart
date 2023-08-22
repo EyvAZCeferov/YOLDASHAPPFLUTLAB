@@ -39,13 +39,7 @@ class MessagesShow extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => _controller.callpageredirect(
                       'call',
-                      _controller.authtype == 'rider'
-                          ? _controller
-                                  .selectedMessageGroup.value!.receiverImage ??
-                              null
-                          : _controller
-                                  .selectedMessageGroup.value!.senderImage ??
-                              null,
+                     
                       context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
@@ -63,7 +57,7 @@ class MessagesShow extends StatelessWidget {
                 width: 50,
                 child: ElevatedButton(
                   onPressed: () =>
-                      _controller.callpageredirect('video', null, context),
+                      _controller.callpageredirect('video', context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
                     onPrimary: whitecolor,

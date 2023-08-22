@@ -135,7 +135,8 @@ class TranslationAdditionals extends Translations {
           "paynow": "Ödəniş et",
           "mylocation":"Mənim məkanım",
           "destinationlocation":"Gedəcəyim məkan",
-          "checknetworkconnection":"İnternet statusunuzu yoxlayın."
+          "checknetworkconnection":"İnternet statusunuzu yoxlayın.",
+          "addroute":"Gediş yarat"
         }
       };
 }

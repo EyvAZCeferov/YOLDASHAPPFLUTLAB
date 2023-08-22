@@ -51,10 +51,21 @@ class AuthController extends GetxController {
         if (response['message'] != null) String message = response['message'];
         var data = Users.fromMap(response['data']);
         userdatas.value = data;
-
+        authType.value = data.type!;
         namesurnamecontroller.value.text = data.nameSurname!;
         emailcontroller.value.text = data.email ?? '';
         phonecontroller.value.text = data.phone!;
+
+        CacheManager.setvaluetoprefences('auth_id', data.id);
+
+        CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
+
+        CacheManager.setvaluetoprefences('phone', data.phone);
+
+        CacheManager.setvaluetoprefences('authtype', data.type);
+
+        CacheManager.setvaluetoprefences(
+            'profilepicture', data.additionalinfo?.image ?? '');
       }
       refreshpage.value = false;
     } catch (e) {
@@ -78,7 +89,6 @@ class AuthController extends GetxController {
         refreshpage.value = false;
         var data = Users.fromMap(response['data']);
         userdatas.value = data;
-        CacheManager.setvaluetoprefences('language', 'az');
 
         CacheManager.setvaluetoprefences('auth_id', data.id);
 
@@ -152,12 +162,32 @@ class AuthController extends GetxController {
     }
   }
 
-  void changeprofpage() {
-    print(authType.value);
+  void changeprofpage(context) async {
+    refreshpage.value = true;
+
+    var body = {};
     if (authType.value == "rider") {
-      Get.toNamed('/verificationcode');
+      body['type'] = "driver";
     } else {
-      authType.value = 'rider';
+      body['type'] = "rider";
+    }
+    var response = await GetAndPost.postData("auth/change_type", body, context);
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null &&
+          response['message'] != '' &&
+          response['message'] != ' ') message = response['message'];
+      if (status == "success") {
+        getalldataoncache(context);
+        Get.offAllNamed('/mainscreen');
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
     }
   }
 
@@ -189,13 +219,18 @@ class AuthController extends GetxController {
       };
 
       if (emailcontroller.value.text != null &&
-          emailcontroller.value.text.trim().isNotEmpty) {
+          emailcontroller.value.text.trim().isNotEmpty &&
+          emailcontroller.value.text != '' &&
+          emailcontroller.value.text != ' ') {
         body['email'] = emailcontroller.value.text;
       }
       var response = await GetAndPost.postData("auth/register", body, context);
       if (response != null) {
         String status = response['status'];
-        String message = response['message'];
+        String message = '';
+        if (response['message'] != null &&
+            response['message'] != '' &&
+            response['message'] != ' ') message = response['message'];
         if (status == "success") {
           var data = Users.fromMap(response['data']);
           userdatas.value = data;
@@ -284,12 +319,13 @@ class AuthController extends GetxController {
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
-          CacheManager.setvaluetoprefences('auth_id', '');
-          CacheManager.setvaluetoprefences('name_surname', '');
-          CacheManager.setvaluetoprefences('email', '');
-          CacheManager.setvaluetoprefences('phone', '');
-          CacheManager.setvaluetoprefences('authtype', '');
-          CacheManager.setvaluetoprefences('profilepicture', '');
+          CacheManager.setvaluetoprefences('auth_id', null);
+          CacheManager.setvaluetoprefences('token', null);
+          CacheManager.setvaluetoprefences('name_surname', null);
+          CacheManager.setvaluetoprefences('email', null);
+          CacheManager.setvaluetoprefences('phone', null);
+          CacheManager.setvaluetoprefences('authtype', null);
+          CacheManager.setvaluetoprefences('profilepicture', null);
           authType.value = '';
           Get.offAllNamed(
             'login',
@@ -323,7 +359,6 @@ class AuthController extends GetxController {
       };
 
       var response = await GetAndPost.postData("auth/verifysms", body, context);
-      print(response);
       if (response != null) {
         String status = response['status'];
         String message = response['message'];

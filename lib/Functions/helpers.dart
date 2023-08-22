@@ -159,6 +159,8 @@ IconData fontawesome(String type) {
     return FontAwesomeIcons.ccMastercard;
   } else if (type == "american express") {
     return FontAwesomeIcons.ccAmex;
+  } else if (type == "nagd") {
+    return FontAwesomeIcons.moneyBill;
   } else {
     return FontAwesomeIcons.ccVisa;
   }
@@ -166,8 +168,9 @@ IconData fontawesome(String type) {
 
 String getimageurl(String type, String clasore, String? path) {
   try {
+    print("Path: $path");
     if (type == "user") {
-      if (path != null && path.length > 0) {
+      if (path != null && path != '' && path != ' ' && path.length > 0) {
         return imageurl + clasore + '/' + path;
       } else {
         return imageurl + clasore + '/' + 'users/noprofilepicture.webp';
@@ -196,7 +199,6 @@ int countMessageUnread(List<Messages>? messages, int authId) {
     return 0;
   }
 }
-
 
 Color fromHex(String hexColor) {
   hexColor = hexColor.replaceAll("#", "");

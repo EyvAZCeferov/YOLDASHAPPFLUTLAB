@@ -30,7 +30,7 @@ class AutomobilsController extends GetxController {
     Map<String, dynamic> body = {};
 
     var response = await GetAndPost.fetchData("automobils", context, body);
-    if (response != null) {
+     if (response != null) {
       String status = response['status'];
       String message = "";
       if (response['message'] != null) message = response['message'];
@@ -59,22 +59,23 @@ class AutomobilsController extends GetxController {
   }
 
   void fetchModels(BuildContext context, String type) async {
-    refreshpage.value = true;
+    
     Map<String, dynamic> body = {};
     var response =
         await GetAndPost.fetchData("automobils_data/" + type, context, body);
+        print(response);
     if (response != null) {
       String status = response['status'];
       String message = "";
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
-        refreshpage.value = true;
+        
         if (response['data'] != null) {
           if (type == "marks") {
             automarks.value = (response['data'] as List).map((dat) {
               return Automark.fromMap(dat);
             }).toList();
-          } else if (type == "models") {
+          } else if (type == "models" || type.contains("models")) {
             automodels.value = (response['data'] as List).map((dat) {
               return Automodels.fromMap(dat);
             }).toList();
@@ -83,12 +84,12 @@ class AutomobilsController extends GetxController {
               return Autocolors.fromMap(dat);
             }).toList();
           }
-          refreshpage.value = false;
+          
         } else {
-          refreshpage.value = false;
+          
         }
       } else {
-        refreshpage.value = true;
+        
         showToastMSG(errorcolor, message, context);
       }
     }

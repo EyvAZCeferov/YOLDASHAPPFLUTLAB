@@ -68,6 +68,8 @@ class GoingController extends GetxController {
   Rx<String> inptype = Rx<String>('to');
   Rx<String> authtype = Rx<String>('rider');
   Rx<int?> auth_id = Rx<int?>(null);
+  Rx<LatLng?> latLngPos = Rx<LatLng?>(null);
+  RxMap? mapped = RxMap();
 
   CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(40.409264, 49.867092),
@@ -90,9 +92,9 @@ class GoingController extends GetxController {
         desiredAccuracy: LocationAccuracy.high,
         forceAndroidLocationManager: true);
     currentposition.value = position;
-    LatLng latLngPos = LatLng(position.latitude, position.longitude);
+    LatLng latLngPosn = LatLng(position.latitude, position.longitude);
     CameraPosition cameraposition =
-        new CameraPosition(target: latLngPos, zoom: 14);
+        new CameraPosition(target: latLngPosn, zoom: 14);
     String language = await _maincontroller.getstoragedat('language');
 
     kGooglePlex = cameraposition;
@@ -101,7 +103,7 @@ class GoingController extends GetxController {
     UserLocations userlocation = await addlocationtodb(
         gettednameandplace_id['nameaddress'] as String,
         gettednameandplace_id['place_id'] as String,
-        latLngPos as LatLng,
+        latLngPosn as LatLng,
         'currentposition' as String,
         context as BuildContext);
     fetchlocations(context);
@@ -286,83 +288,91 @@ class GoingController extends GetxController {
   }
 
   void selectsearchedloc(String place_id, BuildContext context) async {
-    if (place_id != null) {
-      refreshpage.value = true;
-      var language = await _maincontroller.getstoragedat('language');
-      var url =
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$place_id&key=$mapsApiKey&language=$language";
-      var response = await GetAndPost.fetcOtherhData(url, context, {});
-      if (response['status'] == "OK") {
-        editingcontroller.value.text = response['result']['formatted_address'];
-        editingcontroller.value = TextEditingController();
-        searchinglocations.value = [];
-        UserLocations userlocation = await addlocationtodb(
-            response['result']['formatted_address'],
-            place_id,
-            LatLng(response['result']['geometry']['location']['lat'],
-                response['result']['geometry']['location']['lng']),
-            inptype.value,
-            context);
-        if (goinglocations.value.length > 0) {
-          goinglocations.value
-              .removeWhere((element) => element.type == inptype.value);
-        }
-        goinglocations.value.add(userlocation);
+    try {
+      if (place_id != null) {
+        refreshpage.value = true;
+        var language = await _maincontroller.getstoragedat('language');
+        var url =
+            "https://maps.googleapis.com/maps/api/place/details/json?place_id=$place_id&key=$mapsApiKey&language=$language";
+        var response = await GetAndPost.fetcOtherhData(url, context, {});
+        if (response['status'] == "OK") {
+          editingcontroller.value.text =
+              response['result']['formatted_address'];
+          editingcontroller.value = TextEditingController();
+          searchinglocations.value = [];
+          UserLocations userlocation = await addlocationtodb(
+              response['result']['formatted_address'],
+              place_id,
+              LatLng(response['result']['geometry']['location']['lat'],
+                  response['result']['geometry']['location']['lng']),
+              inptype.value,
+              context);
+          if (goinglocations.value.length > 0) {
+            goinglocations.value
+                .removeWhere((element) => element.type == inptype.value);
+          }
+          goinglocations.value.add(userlocation);
 
-        if (markers.value.length > 0) {
-          markers.value.removeWhere((marker) =>
-              marker?.markerId.value == userlocation.type as String);
-        }
+          if (markers.value.length > 0) {
+            markers.value.removeWhere((marker) =>
+                marker?.markerId.value == userlocation.type as String);
+          }
 
-        if (circles.value.length > 0) {
-          circles.value.removeWhere((circle) =>
-              circle?.circleId.value == userlocation.type as String);
-        }
+          if (circles.value.length > 0) {
+            circles.value.removeWhere((circle) =>
+                circle?.circleId.value == userlocation.type as String);
+          }
 
-        markers.value.add(Marker(
-            markerId: MarkerId(userlocation.type as String),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                userlocation.type == "currentposition"
-                    ? BitmapDescriptor.hueAzure
-                    : BitmapDescriptor.hueRed),
-            infoWindow: InfoWindow(
-              title: getLocalizedValue(userlocation.name, 'name'),
-              snippet: 'mylocation'.tr,
-            ),
-            position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+          markers.value.add(Marker(
+              markerId: MarkerId(userlocation.type as String),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  userlocation.type == "currentposition"
+                      ? BitmapDescriptor.hueAzure
+                      : BitmapDescriptor.hueRed),
+              infoWindow: InfoWindow(
+                title: getLocalizedValue(userlocation.name, 'name'),
+                snippet: 'mylocation'.tr,
+              ),
+              position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+                  userlocation.coordinates!.longitude!.toDouble()),
+              draggable: true,
+              onDragEnd: ((value) => print(value)),
+              onDrag: (value) => print(value),
+              onDragStart: (value) => print(value)));
+
+          circles.value.add(Circle(
+            circleId: CircleId(userlocation.type as String),
+            fillColor: secondarycolor,
+            center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
                 userlocation.coordinates!.longitude!.toDouble()),
-            draggable: true,
-            onDragEnd: ((value) => print(value)),
-            onDrag: (value) => print(value),
-            onDragStart: (value) => print(value)));
-        circles.value.add(Circle(
-          circleId: CircleId(userlocation.type as String),
-          fillColor: secondarycolor,
-          center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-              userlocation.coordinates!.longitude!.toDouble()),
-          radius: 15,
-          strokeWidth: 4,
-          strokeColor: userlocation.type == "currentposition"
-              ? secondarycolor
-              : errorcolor,
-        ));
+            radius: 15,
+            strokeWidth: 4,
+            strokeColor: userlocation.type == "currentposition"
+                ? secondarycolor
+                : errorcolor,
+          ));
 
-        if (goinglocations.value.length == 2) {
-          createroute(context);
+
+          if (goinglocations.value.length == 2) {
+            createroute(context);
+          } else {
+            refreshpage.value = false;
+            openmodal.value = false;
+            CameraPosition cameraposition = new CameraPosition(
+                target: LatLng(
+                    response['result']['geometry']['location']['lat'],
+                    response['result']['geometry']['location']['lng']),
+                zoom: 14);
+            kGooglePlex = cameraposition;
+            newgooglemapcontroller.value
+                ?.animateCamera(cameraposition as CameraUpdate);
+          }
         } else {
           refreshpage.value = false;
-          openmodal.value = false;
-          CameraPosition cameraposition = new CameraPosition(
-              target: LatLng(response['result']['geometry']['location']['lat'],
-                  response['result']['geometry']['location']['lng']),
-              zoom: 14);
-          kGooglePlex = cameraposition;
-          newgooglemapcontroller.value
-              ?.animateCamera(cameraposition as CameraUpdate);
         }
-      } else {
-        refreshpage.value = false;
       }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -721,21 +731,8 @@ class GoingController extends GetxController {
                           width: 50,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () =>
-                                _messagescontroller.callpageredirect(
-                                    'call',
-                                    authtype == 'rider'
-                                        ? _messagescontroller
-                                                .selectedMessageGroup
-                                                .value!
-                                                .receiverImage ??
-                                            null
-                                        : _messagescontroller
-                                                .selectedMessageGroup
-                                                .value!
-                                                .senderImage ??
-                                            null,
-                                    context),
+                            onPressed: () => _messagescontroller
+                                .callpageredirect('call', context),
                             style: ElevatedButton.styleFrom(
                               primary: primarycolor,
                               onPrimary: whitecolor,
@@ -878,7 +875,7 @@ class GoingController extends GetxController {
 
   void changemethod(context) {
     final CardsController cardscontroller = Get.put(CardsController());
-    cardscontroller.fetchDatas(context);
+    // cardscontroller.fetchDatas(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -905,14 +902,15 @@ class GoingController extends GetxController {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ListTile(
-                        leading: Icon(FontAwesomeIcons.ccVisa,
+                        leading: Icon(
+                            fontawesome(item.cardtype ?? 'visa') as IconData?,
                             color: secondarycolor,
                             size: headingSize,
                             textDirection: TextDirection.ltr),
                         title: StaticText(
                           color: darkcolor,
                           size: normaltextSize,
-                          text: "***0049",
+                          text: maskLastFourDigits(item.cardnumber ?? ''),
                           weight: FontWeight.w500,
                           align: TextAlign.left,
                         ),
@@ -926,7 +924,7 @@ class GoingController extends GetxController {
                           visualDensity: VisualDensity.adaptivePlatformDensity,
                           onChanged: (value) {
                             cardscontroller.updateSelection(
-                                index, true, context);
+                                item.id!, true, context);
                           },
                         ),
                       ),
@@ -960,46 +958,139 @@ class GoingController extends GetxController {
 
   void selectplacing() {}
 
-  Future<void> fetchlocations(context) async {
-    refreshpage.value = true;
-    Map<String, dynamic> body = {};
-    var response = await GetAndPost.fetchData("locations", context, body);
-    if (response != null) {
-      String status = response['status'];
-      String message = response['message'];
-      if (status == "success") {
-        userlocations.value = (response['data'] as List).map((dat) {
-          var data = UserLocations.fromMap(dat);
-          return data;
-        }).toList();
+  void fetchlocations(context) async {
+    try {
+      refreshpage.value = true;
+      Map<String, dynamic> body = {};
+      userlocations.value = [];
+      var response = await GetAndPost.fetchData("locations", context, body);
+      if (response != null) {
+        String status = response['status'];
+        String message = '';
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          userlocations.value = (response['data'] as List).map((dat) {
+            return UserLocations.fromMap(dat);
+          }).toList();
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
       } else {
-        showToastMSG(errorcolor, message, context);
+        refreshpage.value = false;
+        userlocations.value = [];
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-      data.value = [];
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    } catch (e) {
+      print("FEtch Location errors");
+      print(e.toString());
     }
   }
 
-  void createorselectlocation(String type) {
-    if (userlocations.value != null) {
+  void getnewmark(LatLng latlng, context) async {
+    markers.value = {};
+    Map mappeda = await getnameviacoords(
+        latlng.latitude, latlng.longitude, 'az', context);
+    mapped?.value = mappeda;
+    latLngPos.value = latlng;
+    markers.value.add(Marker(
+        markerId: MarkerId("currentposition"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow:
+            InfoWindow(title: "mylocation".tr, snippet: 'mylocation'.tr),
+        position: latlng,
+        draggable: true,
+        onDrag: (newPosition) {
+          currentposition.value = newPosition as Position?;
+        },
+        onDragEnd: ((newPosition) {
+          currentposition.value = newPosition as Position?;
+        })));
+  }
+
+  Future<void> createorselectlocation(String type, context) async {
+    var locationData = await gettypeoflocationaddress(type, context);
+
+    if (locationData != null && locationData['name'] != null) {
+      tocontroller.value.text = locationData['name'] as String;
+      inptype.value = "destinationposition";
+      selectsearchedloc(locationData['place_id'], context);
     } else {
-      //create
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 300,
+            child: Column(
+              children: [
+                Obx(
+                  () => Expanded(
+                    child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: GoogleMap(
+                          mapType: MapType.terrain,
+                          myLocationButtonEnabled: true,
+                          initialCameraPosition: kGooglePlex,
+                          zoomGesturesEnabled: true,
+                          zoomControlsEnabled: true,
+                          mapToolbarEnabled: true,
+                          myLocationEnabled: true,
+                          markers: markers.isNotEmpty
+                              ? Set<Marker>.from(markers)
+                              : {},
+                          onMapCreated: (GoogleMapController controller) {
+                            googlemapcontroller.complete(controller);
+                            newgooglemapcontroller.value = controller;
+                            getcurrentposition(context);
+                          },
+                          onCameraMove: (cameraPosition) {
+                            getnewmark(cameraPosition.target, context);
+                          },
+                          onLongPress: (LatLng latlng) {
+                            getnewmark(latlng, context);
+                          },
+                        )),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    addlocationtodb(
+                        mapped?.value['nameaddress'],
+                        mapped?.value['place_id'],
+                        latLngPos.value!,
+                        type,
+                        context);
+                    markers.value = {};
+                    getcurrentposition(context);
+                    fetchlocations(context);
+                    Get.back();
+                  },
+                  child: StaticText(
+                      color: secondarycolor,
+                      size: normaltextSize,
+                      weight: FontWeight.w500,
+                      align: TextAlign.center,
+                      text: "choise".tr),
+                ),
+              ],
+            ),
+          );
+        },
+      );
     }
   }
 
-  String? gettypeoflocationaddress(String type) {
+  Map<String, dynamic>? gettypeoflocationaddress(String type, context) {
     if (userlocations.value != null) {
       for (UserLocations location in userlocations.value) {
         if (location.type == type) {
-          return getLocalizedValue(location.name, 'name');
-          break;
+          return {
+            "name": getLocalizedValue(location.name, 'name'),
+            "place_id": location.placeId,
+          };
         }
       }
-    } else {
-      return null;
     }
+    return null;
   }
 }

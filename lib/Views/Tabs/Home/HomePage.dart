@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldashapp/Constants/SearchedLocationItems.dart';
+import 'package:yoldashapp/Controllers/CardsController.dart';
 import 'package:yoldashapp/models/searchionglocations.dart';
 
 import '../../../Constants/ButtonElement.dart';
@@ -27,9 +28,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
   late AuthController _authcontroller = Get.put(AuthController());
+  late CardsController _cardscontroller = Get.put(CardsController());
 
   @override
   Widget build(BuildContext context) {
+    _cardscontroller.fetchDatas(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -204,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                                                 spreadRadius: 0,
                                               )
                                             ]),
-                                        child: Row(
+                                        child:  Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           crossAxisAlignment:
@@ -274,8 +277,8 @@ class _HomePageState extends State<HomePage> {
                                             ? "stopsearching".tr
                                             : _authcontroller.authType ==
                                                     'rider'
-                                                ? "search".tr
-                                                : "reservation".tr,
+                                                ? "reservation".tr
+                                                : "addroute".tr,
                                         width: width - 70,
                                         onPressed: () => _controller
                                             .togglesearch("onmap", context)),
@@ -562,7 +565,8 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         GestureDetector(
                                           onTap: () => _controller
-                                              .createorselectlocation('home'),
+                                              .createorselectlocation(
+                                                  'home', context),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -592,18 +596,39 @@ class _HomePageState extends State<HomePage> {
                                                       size: smalltextSize,
                                                       weight: FontWeight.w400,
                                                       align: TextAlign.center,
-                                                      text: _controller
-                                                                  .gettypeoflocationaddress(
-                                                                      'home') !=
-                                                              null
-                                                          ? _controller
-                                                                  .gettypeoflocationaddress(
-                                                                      'home')
-                                                                  .toString()
-                                                                  .substring(
-                                                                      0, 8) +
-                                                              '...'
-                                                          : 'add'.tr),
+                                                      text: () {
+                                                        var locationData =
+                                                            _controller
+                                                                .gettypeoflocationaddress(
+                                                                    'home',
+                                                                    context);
+                                                        if (locationData !=
+                                                                null &&
+                                                            locationData[
+                                                                    'name'] !=
+                                                                null) {
+                                                          String locationName =
+                                                              locationData[
+                                                                      'name']
+                                                                  as String;
+                                                          if (locationName
+                                                                  .length >
+                                                              8) {
+                                                            String
+                                                                shortenedLocationName =
+                                                                locationName
+                                                                        .substring(
+                                                                            0,
+                                                                            8) +
+                                                                    '...';
+                                                            return shortenedLocationName;
+                                                          } else {
+                                                            return locationName;
+                                                          }
+                                                        } else {
+                                                          return 'add'.tr;
+                                                        }
+                                                      }()),
                                                 ],
                                               ),
                                             ],
@@ -612,7 +637,8 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(width: 7),
                                         GestureDetector(
                                           onTap: () => _controller
-                                              .createorselectlocation('work'),
+                                              .createorselectlocation(
+                                                  'work', context),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -642,18 +668,39 @@ class _HomePageState extends State<HomePage> {
                                                       size: smalltextSize,
                                                       weight: FontWeight.w400,
                                                       align: TextAlign.center,
-                                                      text: _controller
-                                                                  .gettypeoflocationaddress(
-                                                                      'work') !=
-                                                              null
-                                                          ? _controller
-                                                                  .gettypeoflocationaddress(
-                                                                      'work')
-                                                                  .toString()
-                                                                  .substring(
-                                                                      0, 8) +
-                                                              '...'
-                                                          : 'add'.tr),
+                                                      text: () {
+                                                        var locationData =
+                                                            _controller
+                                                                .gettypeoflocationaddress(
+                                                                    'work',
+                                                                    context);
+                                                        if (locationData !=
+                                                                null &&
+                                                            locationData[
+                                                                    'name'] !=
+                                                                null) {
+                                                          String locationName =
+                                                              locationData[
+                                                                      'name']
+                                                                  as String;
+                                                          if (locationName
+                                                                  .length >
+                                                              8) {
+                                                            String
+                                                                shortenedLocationName =
+                                                                locationName
+                                                                        .substring(
+                                                                            0,
+                                                                            8) +
+                                                                    '...';
+                                                            return shortenedLocationName;
+                                                          } else {
+                                                            return locationName;
+                                                          }
+                                                        } else {
+                                                          return 'add'.tr;
+                                                        }
+                                                      }()),
                                                 ],
                                               ),
                                             ],

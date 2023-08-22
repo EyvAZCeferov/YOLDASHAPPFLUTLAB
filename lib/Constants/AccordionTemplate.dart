@@ -125,6 +125,7 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
                           automobilscontroller.selectedAutocolor.value = dat;
                         } else if (widget.type == "marks") {
                           automobilscontroller.selectedAutomark.value = dat;
+                          automobilscontroller.fetchModels(context, "models_${dat.id}");
                         }
                       }),
                       child: Center(

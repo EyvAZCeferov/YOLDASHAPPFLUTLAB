@@ -22,6 +22,8 @@ class MessageGroups {
         count: map["count"],
         receiverName: map["receiver_name"],
         senderName: map["sender_name"],
+        receiverPhone: map["receiver_phone"],
+        senderPhone: map["sender_phone"],
         receiverImage: map["receiver_image"],
         senderImage: map["sender_image"],
         messages: map["messages"] == null
@@ -38,6 +40,8 @@ class MessageGroups {
       count: map["count"],
       receiverName: map["receiver_name"],
       senderName: map["sender_name"],
+      receiverPhone: map["receiver_phone"],
+      senderPhone: map["sender_phone"],
       receiverImage: map["receiver_image"],
       senderImage: map["sender_image"],
       messages: map["messages"] != null
@@ -86,8 +90,8 @@ class MessageGroups {
     String? senderName,
     String? receiverPhone,
     String? senderPhone,
-    dynamic? receiverImage,
-    dynamic? senderImage,
+    String? receiverImage,
+    String? senderImage,
     List<Messages>? messages,
   }) =>
       MessageGroups(
@@ -103,8 +107,6 @@ class MessageGroups {
         senderImage: senderImage ?? this.senderImage,
         messages: messages ?? this.messages,
       );
-
-  
 }
 
 class Messages {
