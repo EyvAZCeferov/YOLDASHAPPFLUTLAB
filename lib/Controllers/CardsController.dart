@@ -75,19 +75,20 @@ class CardsController extends GetxController {
       refreshpage.value = true;
       Map<String, dynamic> body = {};
       var response = await GetAndPost.fetchData("cards", context, body);
-
+      selectedCards.value = Cards();
       if (response != null) {
         String status = response['status'];
         String message = "";
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
           if (response['data'] != null) {
+            data.value=[];
             data.value = (response['data'] as List).map((dat) {
               return Cards.fromMap(dat);
             }).toList();
 
             selectedCards.value = data.firstWhere(
-                (automobil) => automobil.selected == true,
+                (card) => card.selected == true,
                 orElse: () => Cards());
           }
           refreshpage.value = false;
@@ -102,8 +103,7 @@ class CardsController extends GetxController {
         selectedCards.value = Cards();
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
-
-      data.value.add(Cards(
+      Cards cashmethod = Cards(
         id: 0,
         cardholdername: "nagd".tr,
         cardnumber: "nagd".tr,
@@ -116,7 +116,23 @@ class CardsController extends GetxController {
           }
         }),
         userId: auth_id.value,
-      ));
+      );
+
+      data.value.add(cashmethod);
+
+      if (selectedCards.value == null &&
+          selectedCards.value!.id == null &&
+          selectedCards.value!.id == '' &&
+          selectedCards.value!.id == ' ' &&
+          selectedCards.value!.cardholdername == null &&
+          selectedCards.value!.cardholdername == '' &&
+          selectedCards.value!.cardholdername == ' ' &&
+          selectedCards.value!.cardholdername!.length == 0) {
+        print(cashmethod);
+        selectedCards.value = cashmethod;
+      }
+
+      print(selectedCards.value?.cardholdername);
     } catch (e) {
       refreshpage.value = false;
       print(e.toString());

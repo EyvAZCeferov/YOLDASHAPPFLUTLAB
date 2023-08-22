@@ -875,7 +875,6 @@ class GoingController extends GetxController {
 
   void changemethod(context) {
     final CardsController cardscontroller = Get.put(CardsController());
-    // cardscontroller.fetchDatas(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1061,8 +1060,8 @@ class GoingController extends GetxController {
                         type,
                         context);
                     markers.value = {};
-                    getcurrentposition(context);
                     fetchlocations(context);
+                    getcurrentposition(context);
                     Get.back();
                   },
                   child: StaticText(

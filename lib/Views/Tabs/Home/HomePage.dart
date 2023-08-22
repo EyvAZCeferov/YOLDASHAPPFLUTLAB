@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldashapp/Constants/SearchedLocationItems.dart';
 import 'package:yoldashapp/Controllers/CardsController.dart';
+import 'package:yoldashapp/Functions/helpers.dart';
 import 'package:yoldashapp/models/searchionglocations.dart';
 
 import '../../../Constants/ButtonElement.dart';
@@ -113,29 +114,6 @@ class _HomePageState extends State<HomePage> {
                                           _controller.refreshpage.value = true;
                                           _controller.searchinglocations.value =
                                               [];
-                                          // _controller.tocontroller.value.text =
-                                          //     "";
-                                          // print("Markers Length");
-                                          // print(
-                                          //     _controller.markers.value.length);
-                                          // _controller.markers.value.removeWhere(
-                                          //     (marker) =>
-                                          //         marker?.markerId.value ==
-                                          //         'destinationposition');
-
-                                          // print("Markers Length");
-                                          // print(
-                                          //     _controller.markers.value.length);
-
-                                          // _controller.circles.value.removeWhere(
-                                          //     (element) =>
-                                          //         element?.circleId.value ==
-                                          //         'destinationposition');
-                                          // _controller.goinglocations.value
-                                          //     .removeWhere((element) =>
-                                          //         element?.type ==
-                                          //         'destinationposition');
-                                          // _controller.polyline.value = {};
                                           _controller.refreshpage.value = false;
                                           _controller..openmodal.value = true;
                                           _controller.loading.value = false;
@@ -207,59 +185,106 @@ class _HomePageState extends State<HomePage> {
                                                 spreadRadius: 0,
                                               )
                                             ]),
-                                        child:  Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SizedBox(width: 15),
-                                            Container(
-                                              width: 70,
-                                              height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 0),
-                                              decoration: BoxDecoration(
-                                                  color: whitecolor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20)),
-                                              child: Icon(
-                                                FontAwesomeIcons.moneyBill,
-                                                color: primarycolor,
-                                                size: headingSize,
-                                              ),
-                                            ),
-                                            SizedBox(width: 15),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                StaticText(
-                                                  color: darkcolor,
-                                                  size: normaltextSize,
-                                                  align: TextAlign.left,
-                                                  weight: FontWeight.w500,
-                                                  text: "nagd".tr,
-                                                ),
-                                                StaticText(
-                                                  color: iconcolor,
-                                                  size: smalltextSize,
-                                                  align: TextAlign.left,
-                                                  weight: FontWeight.w400,
-                                                  text:
-                                                      "changepaymentmethod".tr,
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(width: 15),
-                                            Icon(FeatherIcons.chevronRight,
-                                                color: iconcolor,
-                                                size: buttontextSize),
-                                          ],
-                                        ),
+                                        child: _cardscontroller.selectedCards.value != null &&
+                                                _cardscontroller
+                                                        .selectedCards.value?.id !=
+                                                    null &&
+                                                _cardscontroller
+                                                        .selectedCards.value?.id !=
+                                                    0 &&
+                                                _cardscontroller.selectedCards
+                                                        .value?.id !=
+                                                    '0' &&
+                                                _cardscontroller.selectedCards
+                                                        .value?.id !=
+                                                    '' &&
+                                                _cardscontroller.selectedCards
+                                                        .value?.id !=
+                                                    ' ' &&
+                                                _cardscontroller
+                                                        .selectedCards
+                                                        .value
+                                                        ?.cardholdername !=
+                                                    null &&
+                                                _cardscontroller
+                                                        .selectedCards
+                                                        .value
+                                                        ?.cardholdername !=
+                                                    '' &&
+                                                _cardscontroller
+                                                        .selectedCards
+                                                        .value
+                                                        ?.cardholdername !=
+                                                    ' '
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(width: 15),
+                                                  Container(
+                                                    width: 70,
+                                                    height: 40,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 15,
+                                                            vertical: 0),
+                                                    decoration: BoxDecoration(
+                                                        color: whitecolor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20)),
+                                                    child: Icon(
+                                                      fontawesome(
+                                                          _cardscontroller
+                                                                  .selectedCards
+                                                                  .value
+                                                                  ?.cardtype
+                                                              as String),
+                                                      color: primarycolor,
+                                                      size: headingSize,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 15),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      StaticText(
+                                                        color: darkcolor,
+                                                        size: normaltextSize,
+                                                        align: TextAlign.left,
+                                                        weight: FontWeight.w500,
+                                                        text: _cardscontroller
+                                                                .selectedCards
+                                                                .value!
+                                                                .cardholdername
+                                                            as String,
+                                                      ),
+                                                      StaticText(
+                                                        color: iconcolor,
+                                                        size: smalltextSize,
+                                                        align: TextAlign.left,
+                                                        weight: FontWeight.w400,
+                                                        text:
+                                                            "changepaymentmethod"
+                                                                .tr,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 15),
+                                                  Icon(
+                                                      FeatherIcons.chevronRight,
+                                                      color: iconcolor,
+                                                      size: buttontextSize),
+                                                ],
+                                              )
+                                            : SizedBox(),
                                       ),
                                     ),
                                   ),
@@ -613,13 +638,13 @@ class _HomePageState extends State<HomePage> {
                                                                   as String;
                                                           if (locationName
                                                                   .length >
-                                                              8) {
+                                                              15) {
                                                             String
                                                                 shortenedLocationName =
                                                                 locationName
                                                                         .substring(
                                                                             0,
-                                                                            8) +
+                                                                            15) +
                                                                     '...';
                                                             return shortenedLocationName;
                                                           } else {
@@ -685,13 +710,13 @@ class _HomePageState extends State<HomePage> {
                                                                   as String;
                                                           if (locationName
                                                                   .length >
-                                                              8) {
+                                                              15) {
                                                             String
                                                                 shortenedLocationName =
                                                                 locationName
                                                                         .substring(
                                                                             0,
-                                                                            8) +
+                                                                            15) +
                                                                     '...';
                                                             return shortenedLocationName;
                                                           } else {

@@ -20,12 +20,12 @@ class Splash extends StatelessWidget {
     await Future.delayed(Duration(seconds: 3));
     if (token != null) {
       if (token.isNotEmpty) {
-        Get.toNamed('/mainscreen');
+        Get.offAllNamed('/mainscreen');
       } else {
-        Get.toNamed('/login');
+        Get.offAllNamed('/login');
       }
     } else {
-      Get.toNamed('/login');
+      Get.offAllNamed('/login');
     }
   }
 
@@ -48,7 +48,7 @@ class Splash extends StatelessWidget {
                 Devider(),
                 Center(
                   child: SizedBox(
-                    width: width - 50,
+                    width: width - 20,
                     height: width / 2,
                     child: ImageClass(
                       type: false,

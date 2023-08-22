@@ -79,8 +79,8 @@ class MessagesIndex extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   CachedNetworkImage(
-                                    imageUrl: _authcontroller.authType.value ==
-                                            'rider'
+                                    imageUrl: _controller.auth_id.value !=
+                                                      item.receiverId
                                         ? imageurl +
                                             (item.receiverImage ??
                                                 'users/noprofilepicture.webp')
@@ -107,8 +107,8 @@ class MessagesIndex extends StatelessWidget {
                                     children: [
                                       StaticText(
                                           text:
-                                              _authcontroller.authType.value ==
-                                                      'rider'
+                                              _controller.auth_id.value !=
+                                                      item.receiverId
                                                   ? item.receiverName
                                                               .toString()
                                                               .length >

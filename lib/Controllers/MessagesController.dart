@@ -320,7 +320,8 @@ class MessagesController extends GetxController {
         }
       } else {
         var phone;
-        if (authtype.value == "driver") {
+        
+        if (auth_id.value != selectedMessageGroup.value?.senderId) {
           phone = selectedMessageGroup.value?.senderPhone;
         } else {
           phone = selectedMessageGroup.value?.receiverPhone;
