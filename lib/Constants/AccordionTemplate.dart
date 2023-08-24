@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
@@ -113,19 +114,18 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: widget.data?.length,
+                  itemCount: widget.type == "types" ? widget.data?.length : 5,
                   itemBuilder: (context, index) {
                     var dat = widget.data?[index];
                     return GestureDetector(
                       onTap: () => setState(() {
                         selected = index;
-                        if (widget.type == "models") {
-                          automobilscontroller.selectedAutomodel.value = dat;
-                        } else if (widget.type == "colors") {
-                          automobilscontroller.selectedAutocolor.value = dat;
-                        } else if (widget.type == "marks") {
-                          automobilscontroller.selectedAutomark.value = dat;
-                          automobilscontroller.fetchModels(context, "models_${dat.id}");
+                        if (widget.type == "types") {
+                          automobilscontroller.selectedAutotype.value = dat;
+                        } else if (widget.type == "images") {
+                          if (dat == '' || dat == ' ')
+                            automobilscontroller.pickImage(
+                                "types_$index", context);
                         }
                       }),
                       child: Center(
@@ -156,7 +156,7 @@ class _AccordionTemplateState extends State<AccordionTemplate> {
 
 _buildColumnContent(type, data) {
   if (data != null) {
-    if (type == 'models' || type == "marks") {
+    if (type == "types") {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,7 +165,7 @@ _buildColumnContent(type, data) {
           SizedBox(
             height: 60,
             child: CachedNetworkImage(
-              imageUrl: getimageurl(type, 'automobils/' + type, data.icon),
+              imageUrl: getimageurl(type, 'automobils/types', data.icon),
               placeholder: (context, url) => CircularProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error),
               imageBuilder: (context, imageProvider) => CircleAvatar(
@@ -186,26 +186,35 @@ _buildColumnContent(type, data) {
               color: iconcolor)
         ],
       );
-    } else if (type == "colors") {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        verticalDirection: VerticalDirection.down,
-        children: [
-          Container(
-            height: 60,
-            width: 60,
-            color: fromHex(data.hex),
-          ),
-          Devider(
-            size: 5,
-          ),
-          StaticText(
-              text: getLocalizedValue(data.name as Name, 'name').toString(),
-              weight: FontWeight.w400,
-              size: smalltextSize,
-              color: iconcolor)
-        ],
+    } else if (type == "images") {
+      return Container(
+        width: 50,
+        height: 100,
+        decoration: BoxDecoration(
+            color: whitecolor,
+            borderRadius: BorderRadius.circular(15),
+            shape: BoxShape.rectangle,
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                blurStyle: BlurStyle.solid,
+                color: Colors.black38,
+                blurRadius: 10,
+                offset: Offset(0, 4),
+                spreadRadius: 0,
+              )
+            ]),
+        alignment: Alignment.center,
+        child: data != ' ' && data != '' && data.length > 1
+            ? Icon(
+                FeatherIcons.check,
+                color: secondarycolor,
+                size: buttontextSize,
+              )
+            : Icon(
+                FeatherIcons.upload,
+                color: secondarycolor,
+                size: normaltextSize,
+              ),
       );
     }
   }

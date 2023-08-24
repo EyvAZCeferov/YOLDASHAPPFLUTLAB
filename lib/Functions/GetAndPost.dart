@@ -96,12 +96,13 @@ class GetAndPost {
 
       var token = await _maincontroller.getstoragedat('token');
 
-      if (token != null && token.length > 0) {
+      if (token != null && token != '' && token != ' ' && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
 
-      var response = await http.post(apiUrl, headers: headers, body: jsonBody);
+      print(token);
 
+      var response = await http.post(apiUrl, headers: headers, body: jsonBody);
       var jsonData = jsonDecode(response.body);
       print(jsonData);
       var status = jsonData['status'];

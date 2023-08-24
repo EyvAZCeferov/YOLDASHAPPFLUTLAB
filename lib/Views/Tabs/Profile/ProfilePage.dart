@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
             title: "myaccount".tr,
             changeprof: true,
             titlebg: false,
-            authtype: _controller.authType.value,
+            authtype: _controller.authType.value ?? 'rider',
             changeprofpage: () => _controller.changeprofpage(context)),
         body: Obx(() => _controller.refreshpage.value == true
             ? LoaderScreen()

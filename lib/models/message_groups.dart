@@ -80,33 +80,6 @@ class MessageGroups {
       };
 
   String toJson() => json.encode(toMap());
-
-  MessageGroups copyWith({
-    int? id,
-    int? receiverId,
-    int? senderId,
-    int? count,
-    String? receiverName,
-    String? senderName,
-    String? receiverPhone,
-    String? senderPhone,
-    String? receiverImage,
-    String? senderImage,
-    List<Messages>? messages,
-  }) =>
-      MessageGroups(
-        id: id ?? this.id,
-        receiverId: receiverId ?? this.receiverId,
-        senderId: senderId ?? this.senderId,
-        count: count ?? this.count,
-        receiverName: receiverName ?? this.receiverName,
-        senderName: senderName ?? this.senderName,
-        receiverPhone: receiverPhone ?? this.receiverPhone,
-        senderPhone: senderPhone ?? this.senderPhone,
-        receiverImage: receiverImage ?? this.receiverImage,
-        senderImage: senderImage ?? this.senderImage,
-        messages: messages ?? this.messages,
-      );
 }
 
 class Messages {

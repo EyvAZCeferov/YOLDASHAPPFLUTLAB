@@ -10,6 +10,7 @@ class Cards {
       this.validdate,
       this.cvv,
       this.selected,
+      this.verified,
       this.createdAt,
       this.updatedAt,
       this.deletedAt,
@@ -24,6 +25,7 @@ class Cards {
       validdate: map["validdate"],
       cvv: map["cvv"],
       selected: map["selected"],
+      verified: map["verified"],
       createdAt: map["created_at"],
       updatedAt: map["updated_at"],
       deletedAt: map["deleted_at"],
@@ -39,6 +41,7 @@ class Cards {
   final String? validdate;
   final String? cvv;
   final bool? selected;
+  final bool? verified;
   final String? createdAt;
   final String? updatedAt;
   final dynamic deletedAt;
@@ -52,6 +55,7 @@ class Cards {
       "validdate": validdate,
       "cvv": cvv,
       "selected": selected,
+      "verified": verified,
       "created_at": createdAt,
       "updated_at": updatedAt,
       "deleted_at": deletedAt,

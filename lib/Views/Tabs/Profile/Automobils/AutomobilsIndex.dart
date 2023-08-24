@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/models/automobils.dart';
+import 'package:yoldashapp/models/cards.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
 import '../../../../Constants/Devider.dart';
-import '../../../../Constants/ImageClass.dart';
 import '../../../../Constants/LoaderScreen.dart';
 import '../../../../Constants/StaticText.dart';
 import '../../../../Controllers/AutomobilsController.dart';
@@ -13,7 +14,8 @@ import '../../../../Functions/helpers.dart';
 import '../../../../Theme/ThemeService.dart';
 
 class AutomobilsIndex extends StatelessWidget {
-  final AutomobilsController _controller = Get.find<AutomobilsController>();
+  final AutomobilsController _controller = Get.put(AutomobilsController());
+
   @override
   Widget build(BuildContext context) {
     _controller.fetchDatas(context);
@@ -45,15 +47,15 @@ class AutomobilsIndex extends StatelessWidget {
             return ListView.builder(
               itemCount: _controller.data.length,
               itemBuilder: (context, index) {
-                final item = _controller.data[index];
+                Automobils item = _controller.data[index] as Automobils;
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ListTile(
                       leading: CachedNetworkImage(
-                        imageUrl: getimageurl("models", 'automobils/models',
-                            item.automodels!.icon),
+                        imageUrl: getimageurl(
+                            "models", 'automobils/types', item.autotype!.icon),
                         placeholder: (context, url) =>
                             CircularProgressIndicator(),
                         errorWidget: (context, url, error) => Icon(Icons.error),
@@ -67,7 +69,7 @@ class AutomobilsIndex extends StatelessWidget {
                       title: StaticText(
                         color: darkcolor,
                         size: normaltextSize,
-                        text: getLocalizedValue(item.automodels!.name, 'name')
+                        text: getLocalizedValue(item.autotype!.name, 'name')
                             as String,
                         weight: FontWeight.w500,
                         align: TextAlign.left,
@@ -79,19 +81,29 @@ class AutomobilsIndex extends StatelessWidget {
                         weight: FontWeight.w400,
                         align: TextAlign.left,
                       ),
-                      trailing: Radio<bool>(
-                        value: true,
-                        groupValue: item.selected as bool,
-                        activeColor: primarycolor,
-                        focusColor: primarycolor,
-                        hoverColor: primarycolor,
-                        toggleable: true,
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                        onChanged: (value) {
-                          _controller.updateSelection(
-                              item.id as int, true, context);
-                        },
-                      ),
+                      trailing: item.verified == true
+                          ? Radio<bool>(
+                              value: true,
+                              groupValue: item.selected as bool,
+                              activeColor: primarycolor,
+                              focusColor: primarycolor,
+                              hoverColor: primarycolor,
+                              toggleable: true,
+                              visualDensity:
+                                  VisualDensity.adaptivePlatformDensity,
+                              onChanged: (value) {
+                                _controller.updateSelection(
+                                    item.id as int, true, context);
+                              },
+                            )
+                          : StaticText(
+                            color: errorcolor,
+                            size: normaltextSize,
+                            text: "waiting".tr,
+                            align: TextAlign.center,
+                            weight: FontWeight.w500,
+                            
+                          ),
                     ),
                     Devider(),
                   ],

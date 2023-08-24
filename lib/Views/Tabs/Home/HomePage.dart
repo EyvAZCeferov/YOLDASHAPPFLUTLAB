@@ -185,106 +185,113 @@ class _HomePageState extends State<HomePage> {
                                                 spreadRadius: 0,
                                               )
                                             ]),
-                                        child: _cardscontroller.selectedCards.value != null &&
-                                                _cardscontroller
-                                                        .selectedCards.value?.id !=
-                                                    null &&
-                                                _cardscontroller
-                                                        .selectedCards.value?.id !=
-                                                    0 &&
-                                                _cardscontroller.selectedCards
-                                                        .value?.id !=
-                                                    '0' &&
-                                                _cardscontroller.selectedCards
-                                                        .value?.id !=
-                                                    '' &&
-                                                _cardscontroller.selectedCards
-                                                        .value?.id !=
-                                                    ' ' &&
-                                                _cardscontroller
-                                                        .selectedCards
-                                                        .value
-                                                        ?.cardholdername !=
-                                                    null &&
-                                                _cardscontroller
-                                                        .selectedCards
-                                                        .value
-                                                        ?.cardholdername !=
-                                                    '' &&
-                                                _cardscontroller
-                                                        .selectedCards
-                                                        .value
-                                                        ?.cardholdername !=
-                                                    ' '
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(width: 15),
-                                                  Container(
-                                                    width: 70,
-                                                    height: 40,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 15,
-                                                            vertical: 0),
-                                                    decoration: BoxDecoration(
-                                                        color: whitecolor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20)),
-                                                    child: Icon(
-                                                      fontawesome(
-                                                          _cardscontroller
-                                                                  .selectedCards
-                                                                  .value
-                                                                  ?.cardtype
-                                                              as String),
-                                                      color: primarycolor,
-                                                      size: headingSize,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 15),
-                                                  Column(
+                                        child:
+                                            _cardscontroller.selectedCards
+                                                            .value !=
+                                                        null &&
+                                                    _cardscontroller
+                                                            .selectedCards.value?.id !=
+                                                        null &&
+                                                    _cardscontroller.selectedCards
+                                                            .value?.id !=
+                                                        '' &&
+                                                    _cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.id !=
+                                                        ' ' &&
+                                                    _cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.cardholdername !=
+                                                        null &&
+                                                    _cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.cardholdername !=
+                                                        '' &&
+                                                    _cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.cardholdername !=
+                                                        ' '
+                                                ? Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                        MainAxisAlignment.start,
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
-                                                            .start,
+                                                            .center,
                                                     children: [
-                                                      StaticText(
-                                                        color: darkcolor,
-                                                        size: normaltextSize,
-                                                        align: TextAlign.left,
-                                                        weight: FontWeight.w500,
-                                                        text: _cardscontroller
-                                                                .selectedCards
-                                                                .value!
-                                                                .cardholdername
-                                                            as String,
+                                                      SizedBox(width: 15),
+                                                      Container(
+                                                        width: 70,
+                                                        height: 40,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 15,
+                                                                vertical: 0),
+                                                        decoration: BoxDecoration(
+                                                            color: whitecolor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20)),
+                                                        child: Icon(
+                                                          fontawesome(
+                                                              _cardscontroller
+                                                                      .selectedCards
+                                                                      .value
+                                                                      ?.cardtype
+                                                                  as String),
+                                                          color: primarycolor,
+                                                          size: headingSize,
+                                                        ),
                                                       ),
-                                                      StaticText(
-                                                        color: iconcolor,
-                                                        size: smalltextSize,
-                                                        align: TextAlign.left,
-                                                        weight: FontWeight.w400,
-                                                        text:
-                                                            "changepaymentmethod"
-                                                                .tr,
+                                                      SizedBox(width: 15),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          StaticText(
+                                                            color: darkcolor,
+                                                            size:
+                                                                normaltextSize,
+                                                            align:
+                                                                TextAlign.left,
+                                                            weight:
+                                                                FontWeight.w500,
+                                                            text: _cardscontroller
+                                                                    .selectedCards
+                                                                    .value!
+                                                                    .cardholdername
+                                                                as String,
+                                                          ),
+                                                          StaticText(
+                                                            color: iconcolor,
+                                                            size: smalltextSize,
+                                                            align:
+                                                                TextAlign.left,
+                                                            weight:
+                                                                FontWeight.w400,
+                                                            text:
+                                                                "changepaymentmethod"
+                                                                    .tr,
+                                                          ),
+                                                        ],
                                                       ),
+                                                      SizedBox(width: 15),
+                                                      Icon(
+                                                          FeatherIcons
+                                                              .chevronRight,
+                                                          color: iconcolor,
+                                                          size: buttontextSize),
                                                     ],
-                                                  ),
-                                                  SizedBox(width: 15),
-                                                  Icon(
-                                                      FeatherIcons.chevronRight,
-                                                      color: iconcolor,
-                                                      size: buttontextSize),
-                                                ],
-                                              )
-                                            : SizedBox(),
+                                                  )
+                                                : SizedBox(),
                                       ),
                                     ),
                                   ),
@@ -766,11 +773,11 @@ class _HomePageState extends State<HomePage> {
                                           accentColor: iconcolor,
                                           controller: _controller
                                               .weightcontroller.value,
-                                          placeholder: "weight".tr,
+                                          placeholder: "weight".tr + ", kg",
                                           textColor: iconcolor,
                                           cornerradius:
                                               BorderRadius.circular(40),
-                                          inputType: TextInputType.number,
+                                          inputType: TextInputType.text,
                                         ),
                                       ),
                                     ],
@@ -855,202 +862,52 @@ class _HomePageState extends State<HomePage> {
                                       Center(
                                         child: SizedBox(
                                           width: width - 70,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () =>
-                                                    _controller.changeindex(1),
-                                                child: Container(
-                                                  width: 90,
-                                                  height: 35,
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: primarycolor,
-                                                          style:
-                                                              BorderStyle.solid,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      color: _controller
-                                                                      .selectedindex
-                                                                      .value !=
-                                                                  null &&
-                                                              _controller
-                                                                      .selectedindex
-                                                                      .value ==
-                                                                  1
-                                                          ? primarycolor
-                                                          : whitecolor),
-                                                  child: StaticText(
-                                                      color: _controller
-                                                                      .selectedindex
-                                                                      .value !=
-                                                                  null &&
-                                                              _controller
-                                                                      .selectedindex
-                                                                      .value ==
-                                                                  1
-                                                          ? whitecolor
-                                                          : darkcolor,
-                                                      size: normaltextSize,
-                                                      weight: FontWeight.w500,
-                                                      align: TextAlign.center,
-                                                      text: "today".tr),
-                                                ),
-                                              ),
-                                              SizedBox(width: 8),
-                                              GestureDetector(
-                                                onTap: () =>
-                                                    _controller.changeindex(2),
-                                                child: Container(
-                                                  width: 90,
-                                                  height: 35,
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: primarycolor,
-                                                          style:
-                                                              BorderStyle.solid,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      color: _controller
-                                                                      .selectedindex
-                                                                      .value !=
-                                                                  null &&
-                                                              _controller
-                                                                      .selectedindex
-                                                                      .value ==
-                                                                  2
-                                                          ? primarycolor
-                                                          : whitecolor),
-                                                  child: StaticText(
-                                                      color: _controller
-                                                                      .selectedindex
-                                                                      .value !=
-                                                                  null &&
-                                                              _controller
-                                                                      .selectedindex
-                                                                      .value ==
-                                                                  2
-                                                          ? whitecolor
-                                                          : darkcolor,
-                                                      size: normaltextSize,
-                                                      weight: FontWeight.w500,
-                                                      align: TextAlign.center,
-                                                      text: "tomorrow".tr),
-                                                ),
-                                              ),
-                                            ],
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                _controller.changeindex(1),
+                                            child: Container(
+                                              width: 90,
+                                              height: 35,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: primarycolor,
+                                                      style: BorderStyle.solid,
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(35),
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              1
+                                                      ? primarycolor
+                                                      : whitecolor),
+                                              child: StaticText(
+                                                  color: _controller
+                                                                  .selectedindex
+                                                                  .value !=
+                                                              null &&
+                                                          _controller
+                                                                  .selectedindex
+                                                                  .value ==
+                                                              1
+                                                      ? whitecolor
+                                                      : darkcolor,
+                                                  size: normaltextSize,
+                                                  weight: FontWeight.w500,
+                                                  align: TextAlign.center,
+                                                  text:
+                                                      '${converttimedayandmonth(_controller.fromTime.value)} - ${converttimedayandmonth(_controller.toTime.value)}'),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Devider(),
-                                  _authcontroller.authType == "driver"
-                                      ? SizedBox()
-                                      : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () =>
-                                                  _controller.selectplace(1),
-                                              child: Container(
-                                                width: 110,
-                                                height: 35,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: primarycolor,
-                                                        style:
-                                                            BorderStyle.solid,
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            35),
-                                                    color: _controller
-                                                                    .selectedplace
-                                                                    .value !=
-                                                                null &&
-                                                            _controller
-                                                                    .selectedplace
-                                                                    .value ==
-                                                                1
-                                                        ? primarycolor
-                                                        : whitecolor),
-                                                child: StaticText(
-                                                    color: _controller
-                                                                    .selectedplace
-                                                                    .value !=
-                                                                null &&
-                                                            _controller
-                                                                    .selectedplace
-                                                                    .value ==
-                                                                1
-                                                        ? whitecolor
-                                                        : darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w500,
-                                                    align: TextAlign.center,
-                                                    text: "choiseplace".tr),
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () =>
-                                                  _controller.selectplace(2),
-                                              child: Container(
-                                                width: 150,
-                                                height: 35,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: primarycolor,
-                                                        style:
-                                                            BorderStyle.solid,
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            35),
-                                                    color: _controller
-                                                                    .selectedplace
-                                                                    .value !=
-                                                                null &&
-                                                            _controller
-                                                                    .selectedplace
-                                                                    .value ==
-                                                                2
-                                                        ? primarycolor
-                                                        : whitecolor),
-                                                child: StaticText(
-                                                    color: _controller
-                                                                    .selectedplace
-                                                                    .value !=
-                                                                null &&
-                                                            _controller
-                                                                    .selectedplace
-                                                                    .value ==
-                                                                2
-                                                        ? whitecolor
-                                                        : darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w500,
-                                                    align: TextAlign.center,
-                                                    text: "fullreservation".tr),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                   Devider(),
                                   _authcontroller.authType == "driver"
                                       ? Column(
@@ -1078,7 +935,7 @@ class _HomePageState extends State<HomePage> {
                                                         type: false,
                                                         boxfit: BoxFit.contain,
                                                         url:
-                                                            "/assets/images/yersayi.png",
+                                                            "./assets/images/yersayi.png",
                                                       ),
                                                     ),
                                                     SizedBox(
@@ -1096,35 +953,6 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                             ),
                                             Devider(),
-                                            GestureDetector(
-                                              onTap: () =>
-                                                  _controller.selectplacing(),
-                                              child: Container(
-                                                width: width / 1.5,
-                                                height: 35,
-                                                alignment: Alignment.center,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(FeatherIcons.briefcase,
-                                                        color: primarycolor,
-                                                        size: subHeadingSize),
-                                                    SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    StaticText(
-                                                        color: darkcolor,
-                                                        size: normaltextSize,
-                                                        weight: FontWeight.w500,
-                                                        align: TextAlign.center,
-                                                        text: "Yük 3/1 boş"),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
                                           ],
                                         )
                                       : SizedBox(),
@@ -1183,8 +1011,8 @@ class _HomePageState extends State<HomePage> {
                                       child: SizedBox(
                                         width: width - 40,
                                         child: LineLoaderWidget(
-                                          function: () =>
-                                              _controller.fetchdata(),
+                                          function: () => _controller
+                                              .togglesearch('onmap', context),
                                           color: primarycolor,
                                           duration:
                                               Duration(milliseconds: 2500),
@@ -1205,7 +1033,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               )
                             : _controller.data.length > 0 &&
-                                    _controller.authtype == "rider"
+                                    _controller.authtype == "rider" &&
+                                    _controller.resulttext.value == null &&
+                                    _controller.resulttext.value!.length == 0
                                 ? Center(
                                     child: SizedBox(
                                     width: width - 40,
@@ -1214,14 +1044,14 @@ class _HomePageState extends State<HomePage> {
                                       itemCount: _controller.data.length,
                                       itemBuilder: (context, index) {
                                         Rides ride = _controller.data[index];
+
                                         return GestureDetector(
-                                          onTap: () => Get.toNamed(
-                                              '/roadinfo/${ride.id}',
-                                              arguments: index),
+                                          onTap: () => _controller.lookmore(
+                                              ride, context),
                                           child: Center(
                                               child: Container(
                                             width: width - 40,
-                                            height: 75,
+                                            height: 100,
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 5),
                                             margin: EdgeInsets.symmetric(
@@ -1247,12 +1077,12 @@ class _HomePageState extends State<HomePage> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    Icon(
-                                                      FontAwesomeIcons.car,
-                                                      color: secondarycolor,
-                                                      size: subHeadingSize,
-                                                    ),
-                                                    SizedBox(width: 11),
+                                                    // Icon(
+                                                    //   FontAwesomeIcons.car,
+                                                    //   color: secondarycolor,
+                                                    //   size: subHeadingSize,
+                                                    // ),
+                                                    // SizedBox(width: 11),
                                                     Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1262,8 +1092,22 @@ class _HomePageState extends State<HomePage> {
                                                               .start,
                                                       children: [
                                                         StaticText(
-                                                            text:
-                                                                "Bakı - Yevlax",
+                                                            maxline: 5,
+                                                            textOverflow:
+                                                                TextOverflow
+                                                                    .clip,
+                                                            text: ride
+                                                                    .fromCoordinates!
+                                                                    .address
+                                                                    .toString()
+                                                                    .substring(
+                                                                        0, 8) +
+                                                                " - " +
+                                                                ride.toCoordinates!
+                                                                    .address
+                                                                    .toString()
+                                                                    .substring(
+                                                                        0, 8),
                                                             weight:
                                                                 FontWeight.w500,
                                                             size:
@@ -1272,8 +1116,9 @@ class _HomePageState extends State<HomePage> {
                                                             align:
                                                                 TextAlign.left),
                                                         StaticText(
-                                                            text:
-                                                                "minimum 3AZN",
+                                                            text: ride
+                                                                .minimalPriceOfWay
+                                                                .toString(),
                                                             weight:
                                                                 FontWeight.w500,
                                                             size: smalltextSize,
@@ -1297,7 +1142,7 @@ class _HomePageState extends State<HomePage> {
                                                     fontsize: normaltextSize,
                                                     onPressed: () =>
                                                         _controller.lookmore(
-                                                            index, context),
+                                                            ride, context),
                                                   ),
                                                 ),
                                               ],
@@ -1311,10 +1156,26 @@ class _HomePageState extends State<HomePage> {
                                     child: SizedBox(
                                       width: width - 40,
                                       height: width / 1.6,
-                                      child: ImageClass(
-                                          type: false,
-                                          boxfit: BoxFit.contain,
-                                          url: "assets/images/findcar.png"),
+                                      child: _controller.resulttext.value !=
+                                                  null &&
+                                              _controller.resulttext.value !=
+                                                  '' &&
+                                              _controller.resulttext.value !=
+                                                  ' '
+                                          ? Center(
+                                              child: StaticText(
+                                                  align: TextAlign.center,
+                                                  text: _controller
+                                                      .resulttext.value
+                                                      .toString(),
+                                                  weight: FontWeight.w700,
+                                                  size: normaltextSize,
+                                                  color: errorcolor),
+                                            )
+                                          : ImageClass(
+                                              type: false,
+                                              boxfit: BoxFit.contain,
+                                              url: "assets/images/findcar.png"),
                                     ),
                                   ),
                         Devider(size: 5),

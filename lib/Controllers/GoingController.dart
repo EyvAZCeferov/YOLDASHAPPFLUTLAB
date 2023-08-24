@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:ffi';
+import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,7 +18,6 @@ import '../Constants/ButtonElement.dart';
 import '../Constants/Devider.dart';
 import '../Constants/ImageClass.dart';
 import '../Constants/StaticText.dart';
-import '../Constants/TimePicker.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
@@ -48,7 +47,8 @@ class GoingController extends GetxController {
   Rx<bool> addedsectionshow = Rx<bool>(false);
   Rx<bool> loading = Rx<bool>(false);
   final selectedindex = 0.obs;
-  final Rx<DateTime> selectedTime = DateTime.now().obs;
+  final Rx<DateTime> fromTime = DateTime.now().obs;
+  final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 4)).obs;
   final selectedplace = 0.obs;
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
   final Completer<GoogleMapController> googlemapcontroller = Completer();
@@ -70,6 +70,7 @@ class GoingController extends GetxController {
   Rx<int?> auth_id = Rx<int?>(null);
   Rx<LatLng?> latLngPos = Rx<LatLng?>(null);
   RxMap? mapped = RxMap();
+  Rx<String?> resulttext = Rx<String?>(null);
 
   CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(40.409264, 49.867092),
@@ -154,7 +155,6 @@ class GoingController extends GetxController {
       LatLng latlng, String type, BuildContext context) async {
     try {
       var body = {
-        'auth_id': auth_id.value,
         'place_id': place_id,
         'name': nameaddress,
         'latitude': latlng.latitude,
@@ -214,42 +214,95 @@ class GoingController extends GetxController {
     selectedindex.value = 0;
     selectedindex.value = index;
     Get.bottomSheet(Container(
-      height: 300,
+      height: 1000,
       color: Colors.white,
-      child: Column(
-        children: [
-          Devider(),
-          StaticText(
-            color: secondarycolor,
-            size: buttontextSize,
-            text: "choisetime".tr,
-            weight: FontWeight.w500,
-            align: TextAlign.center,
-          ),
-          Devider(),
-          Obx(
-            () => Expanded(
-              child: TimePicker(
-                initialTime: selectedTime.value,
-                onTimeSelected: (time) {
-                  selectedTime.value = time;
-                },
+      child: SingleChildScrollView(
+        controller: ScrollController(),
+        physics: const ScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Devider(),
+            StaticText(
+              color: secondarycolor,
+              size: buttontextSize,
+              text: "choisetime".tr,
+              weight: FontWeight.w500,
+              align: TextAlign.center,
+            ),
+            Devider(),
+            Obx(
+              () => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  StaticText(
+                      text: "choisestarttime".tr,
+                      weight: FontWeight.w600,
+                      size: normaltextSize,
+                      color: darkcolor,
+                      align: TextAlign.center,
+                      textOverflow: TextOverflow.ellipsis),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 250,
+                    width: Get.width - 50,
+                    child: CupertinoDatePicker(
+                      use24hFormat: true,
+                      minimumDate: fromTime.value,
+                      mode: CupertinoDatePickerMode.dateAndTime,
+                      backgroundColor: bodycolor,
+                      maximumDate: fromTime.value.add(Duration(days: 5)),
+                      initialDateTime: fromTime.value,
+                      onDateTimeChanged: (DateTime newDate) {
+                        fromTime.value = newDate;
+                      },
+                    ),
+                  ),
+                  StaticText(
+                      text: "choiseendtime".tr,
+                      weight: FontWeight.w600,
+                      size: normaltextSize,
+                      color: darkcolor,
+                      align: TextAlign.center,
+                      textOverflow: TextOverflow.ellipsis),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 250,
+                    width: Get.width - 50,
+                    child: CupertinoDatePicker(
+                      use24hFormat: true,
+                      minimumDate: toTime.value,
+                      mode: CupertinoDatePickerMode.dateAndTime,
+                      backgroundColor: bodycolor,
+                      maximumDate: toTime.value.add(Duration(days: 5)),
+                      initialDateTime: toTime.value,
+                      onDateTimeChanged: (DateTime newDate) {
+                        toTime.value = newDate;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          Devider(),
-          ButtonElement(
-            text: "choise".tr,
-            width: 90,
-            onPressed: () => Get.back(),
-            bgColor: primarycolor,
-            borderRadius: BorderRadius.circular(45),
-            fontsize: normaltextSize,
-            height: 45,
-            textColor: whitecolor,
-          ),
-          Devider(),
-        ],
+            Devider(),
+            ButtonElement(
+              text: "choise".tr,
+              width: 90,
+              onPressed: () => Get.back(),
+              bgColor: primarycolor,
+              borderRadius: BorderRadius.circular(45),
+              fontsize: normaltextSize,
+              height: 45,
+              textColor: whitecolor,
+            ),
+            Devider(),
+          ],
+        ),
       ),
     ));
   }
@@ -351,7 +404,6 @@ class GoingController extends GetxController {
                 ? secondarycolor
                 : errorcolor,
           ));
-
 
           if (goinglocations.value.length == 2) {
             createroute(context);
@@ -459,8 +511,6 @@ class GoingController extends GetxController {
         durationText: response['routes'][0]['legs'][0]['duration']['text'],
         durationValue: response['routes'][0]['legs'][0]['duration']['value'],
       );
-      print(response['routes'][0]['legs'][0]['duration']['text']);
-      print(response['routes'][0]['legs'][0]['duration']['value']);
       latlngs.clear();
 
       PolylinePoints polylinePoints = PolylinePoints();
@@ -531,6 +581,7 @@ class GoingController extends GetxController {
 
   void togglesearch(String type, context) async {
     try {
+      _automobilscontroller.fetchDatas(context);
       if (type == "onmap") {
         openmodal.value = true;
       }
@@ -538,7 +589,6 @@ class GoingController extends GetxController {
       var nextprocess = false;
 
       if (authtype.value == "driver") {
-        _automobilscontroller.fetchDatas(context);
         if (_automobilscontroller.data.length == 0) {
           nextprocess = false;
           showToastMSG(errorcolor, "add_automobil".tr, context);
@@ -554,43 +604,50 @@ class GoingController extends GetxController {
         refreshpage.value = true;
 
         var body = {
-          'auth_id': auth_id.value,
-          'latitudefrom': markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
-              .position!
-              .latitude
-              .toString(),
-          'longitudefrom': markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
-              .position!
-              .longitude
-              .toString(),
-          "wayfrom": markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
-              .infoWindow
-              .title,
-          'latitudeto': markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value != "destinationposition")!
-              .position!
-              .latitude
-              .toString(),
-          'longitudeto': markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value != "destinationposition")!
-              .position!
-              .longitude
-              .toString(),
-          "wayto": markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value == "destinationposition")!
-              .infoWindow
-              .title,
-          'start_time': selectedTime.value.toString() ?? null,
+          "coordinates": [
+            {
+              "latitude": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value == "currentposition")!
+                  .position!
+                  .latitude
+                  .toString(),
+              "longitude": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value == "currentposition")!
+                  .position!
+                  .longitude
+                  .toString(),
+              "address": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value == "currentposition")!
+                  .infoWindow
+                  .title
+            },
+            {
+              "latitude": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value != "destinationposition")!
+                  .position!
+                  .latitude
+                  .toString(),
+              "longitude": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value != "destinationposition")!
+                  .position!
+                  .longitude
+                  .toString(),
+              "address": markers.value
+                  .firstWhere((element) =>
+                      element?.markerId.value == "destinationposition")!
+                  .infoWindow
+                  .title
+            },
+          ],
+          'start_time': fromTime.value.toString() ?? null,
+          'end_time': toTime.value.toString() ?? null,
           'kmofway': directiondetails.value!.distanceValue ?? 0,
+          'durationofway': directiondetails.value!.durationValue ?? 0,
           'minimal_price_of_way':
               minimumpriceofwaycontroller.value.text != null &&
                       minimumpriceofwaycontroller.value.text != '' &&
@@ -611,26 +668,41 @@ class GoingController extends GetxController {
               : 0,
           'place_id': null,
         };
+        resulttext.value = null;
+
         var response = await GetAndPost.postData("rides", body, context);
         if (response != null) {
           String status = response['status'];
           String message = "";
           if (response['message'] != null) message = response['message'];
           if (status == "success") {
-            data.value = (response['data'] as List).map((dat) {
-              return Rides.fromMap(dat);
-            }).toList();
+            data.value = [];
+            if (response['data'] != null) {
+              data.value = (response['data'] as List).map((dat) {
+                return Rides.fromMap(dat);
+              }).toList();
 
-            print(data.value);
+              if (data.value.length == 0) {
+                resulttext.value = "nohasdataforallrides".tr;
+              }
+            } else {
+              resulttext.value = "nohasdataforallrides".tr;
+            }
+            loading.value = false;
+
+            print(resulttext.value);
+
             refreshpage.value = false;
           } else {
+            resulttext.value = "nohasdataforallrides".tr;
+            data.value = [];
             refreshpage.value = false;
+            loading.value = false;
           }
         } else {
           refreshpage.value = false;
+          loading.value = false;
         }
-
-        loading.value = !loading.value;
       }
     } catch (e) {
       refreshpage.value = false;
@@ -639,11 +711,11 @@ class GoingController extends GetxController {
     }
   }
 
-  void fetchdata() {
-    data.add('asb');
-  }
+  void getrideinfo(index, context) {}
 
-  void lookmore(index, context) {
+  void lookmore(Rides ride, context) {
+    print("RIDES");
+    print(ride.fromCoordinates!.address);
     Get.bottomSheet(Container(
       height: 300,
       color: Colors.white,
@@ -676,8 +748,8 @@ class GoingController extends GetxController {
                         backgroundColor: primarycolor,
                         foregroundColor: whitecolor,
                         radius: 25,
-                        backgroundImage: NetworkImage(
-                            "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
+                        backgroundImage: NetworkImage(getimageurl("user",
+                            'users', ride.creator?.additionalinfo?.image)),
                       ),
                     ),
                     SizedBox(width: 5),
@@ -692,7 +764,7 @@ class GoingController extends GetxController {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               StaticText(
-                                  text: "Eyvaz Ceferov",
+                                  text: ride.creator?.nameSurname ?? ' ',
                                   weight: FontWeight.w600,
                                   size: normaltextSize,
                                   color: darkcolor),
@@ -715,7 +787,21 @@ class GoingController extends GetxController {
                                 align: TextAlign.left,
                                 maxline: 2,
                                 textOverflow: TextOverflow.clip,
-                                text: "Ağ Volkswagen CC - 99-DD-556",
+                                text: getLocalizedValue(
+                                        ride.automobil?.automark?.name,
+                                        'name') ??
+                                    " "
+                                            " " +
+                                        getLocalizedValue(
+                                                ride.automobil?.automodels
+                                                    ?.name,
+                                                'name')
+                                            .toString() ??
+                                    " "
+                                            " " +
+                                        ride.automobil!.autoSerialNumber
+                                            .toString() ??
+                                    ' ',
                                 weight: FontWeight.w500,
                                 size: smalltextSize,
                                 color: iconcolor),
@@ -749,7 +835,7 @@ class GoingController extends GetxController {
                           width: 50,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () => Get.toNamed("/messages/1"),
+                            onPressed: () => Get.toNamed("/messages/"),
                             style: ElevatedButton.styleFrom(
                               primary: primarycolor,
                               onPrimary: whitecolor,

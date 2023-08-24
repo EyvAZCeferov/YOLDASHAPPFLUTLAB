@@ -173,7 +173,7 @@ String getimageurl(String type, String clasore, String? path) {
       if (path != null && path != '' && path != ' ' && path.length > 0) {
         return imageurl + clasore + '/' + path;
       } else {
-        return imageurl + clasore + '/' + 'users/noprofilepicture.webp';
+        return imageurl + clasore + '/' + 'noprofilepicture.webp';
       }
     } else {
       return imageurl + clasore + '/' + path!;
@@ -206,4 +206,10 @@ Color fromHex(String hexColor) {
     hexColor = "FF" + hexColor;
   }
   return Color(int.parse(hexColor, radix: 16));
+}
+
+String converttimedayandmonth(DateTime dateTime) {
+  String day = dateTime.day.toString();
+  String month = DateFormat.MMM().format(dateTime);
+  return '$day $month';
 }

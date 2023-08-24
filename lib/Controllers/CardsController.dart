@@ -6,6 +6,7 @@ import 'package:yoldashapp/Functions/CacheManager.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
+import '../Views/Standarts/WebveiwFunctions.dart';
 import '../models/cards.dart';
 import 'MainController.dart';
 
@@ -32,37 +33,56 @@ class CardsController extends GetxController {
 
   void addcard(BuildContext context) async {
     try {
-      if ((cardNumberController.value.text != null &&
-              cardNumberController.value.text != '') &&
-          (validityDateController.value.text != null &&
-              validityDateController.value.text != '') &&
-          (cvvController.value.text != null &&
-              cvvController.value.text != '') &&
-          (holderNameController.value.text != null &&
-              holderNameController.value.text != '')) {
-        refreshpage.value = true;
-        var language =
-            await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
-        var body = {
-          'cardnumber': cardNumberController.value.text,
-          'language': language,
-          'validitydate': validityDateController.value.text,
-          'cvv': cvvController.value.text,
-          'holdername': holderNameController.value.text
-        };
-        var response = await GetAndPost.postData("cards", body, context);
-        if (response['status'] == "success") {
-          refreshpage.value = false;
-          Get.offAllNamed('cards');
-        } else {
-          refreshpage.value = false;
-          showToastMSG(errorcolor, response['message'], context);
+      refreshpage.value = true;
+      var body = {};
+      var response = await GetAndPost.postData("cards", body, context);
+      if (response['status'] == "success") {
+        if (response['redirect_url'] != null &&
+            response['redirect_url'] != '' &&
+            response['redirect_url'] != ' ') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WebviewFunctions(
+                  paymentUrl: response['redirect_url'],
+                  title: 'add_bank_account'.tr),
+            ),
+          );
         }
-      } else {
-        refreshpage.value = true;
-        showToastMSG(errorcolor, "fillthefield".tr, context);
-        refreshpage.value = false;
       }
+
+      // if ((cardNumberController.value.text != null &&
+      //         cardNumberController.value.text != '') &&
+      //     (validityDateController.value.text != null &&
+      //         validityDateController.value.text != '') &&
+      //     (cvvController.value.text != null &&
+      //         cvvController.value.text != '') &&
+      //     (holderNameController.value.text != null &&
+      //         holderNameController.value.text != '')) {
+      //   refreshpage.value = true;
+      //   var language =
+      //       await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
+      //   var body = {
+      //     'cardnumber': cardNumberController.value.text,
+      //     'language': language,
+      //     'validitydate': validityDateController.value.text,
+      //     'cvv': cvvController.value.text,
+      //     'holdername': holderNameController.value.text
+      //   };
+      //   var response = await GetAndPost.postData("cards", body, context);
+      //   if (response['status'] == "success") {
+      //     fetchDatas(context);
+      //     refreshpage.value = false;
+      //     Get.offAllNamed('cards');
+      //   } else {
+      //     refreshpage.value = false;
+      //     showToastMSG(errorcolor, response['message'], context);
+      //   }
+      // } else {
+      //   refreshpage.value = true;
+      //   showToastMSG(errorcolor, "fillthefield".tr, context);
+      //   refreshpage.value = false;
+      // }
     } catch (e) {
       refreshpage.value = false;
       print("Card page error: $e");
@@ -82,7 +102,7 @@ class CardsController extends GetxController {
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
           if (response['data'] != null) {
-            data.value=[];
+            data.value = [];
             data.value = (response['data'] as List).map((dat) {
               return Cards.fromMap(dat);
             }).toList();
@@ -100,7 +120,7 @@ class CardsController extends GetxController {
       } else {
         refreshpage.value = false;
         data.value = [];
-        selectedCards.value = Cards();
+        
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
       Cards cashmethod = Cards(
@@ -120,19 +140,16 @@ class CardsController extends GetxController {
 
       data.value.add(cashmethod);
 
-      if (selectedCards.value == null &&
-          selectedCards.value!.id == null &&
-          selectedCards.value!.id == '' &&
-          selectedCards.value!.id == ' ' &&
-          selectedCards.value!.cardholdername == null &&
-          selectedCards.value!.cardholdername == '' &&
-          selectedCards.value!.cardholdername == ' ' &&
-          selectedCards.value!.cardholdername!.length == 0) {
-        print(cashmethod);
+      if (selectedCards.value!.id == null ||
+          selectedCards.value!.id != '' ||
+          selectedCards.value!.id != ' ') {
+        print("selectedCards.value!.id is empty");
+        print(data.length);
         selectedCards.value = cashmethod;
+      } else {
+        print(
+            "selectedCards.value!.id is not empty: ${selectedCards.value!.id}");
       }
-
-      print(selectedCards.value?.cardholdername);
     } catch (e) {
       refreshpage.value = false;
       print(e.toString());

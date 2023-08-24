@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/CacheManager.dart';
 import '../Functions/GetAndPost.dart';
@@ -13,10 +14,10 @@ import 'MainController.dart';
 
 class AuthController extends GetxController {
   final MainController _maincontroller = Get.put(MainController());
+  final GoingController goingcontroller = Get.put(GoingController());
   Rx<TextEditingController> namesurnamecontroller =
       Rx<TextEditingController>(TextEditingController());
-  Rx<TextEditingController> gendercontroller =
-      Rx<TextEditingController>(TextEditingController());
+  RxInt gender = RxInt(1);
   Rx<String> birthdaycontroller = Rx<String>('');
   Rx<TextEditingController> emailcontroller =
       Rx<TextEditingController>(TextEditingController());
@@ -29,6 +30,7 @@ class AuthController extends GetxController {
   Rx<List<String>> selectedlang = Rx<List<String>>([]);
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<Users?> userdatas = Rx<Users?>(null);
+  RxBool agreeterms = RxBool(false);
 
   AuthController() {
     init();
@@ -51,7 +53,7 @@ class AuthController extends GetxController {
         if (response['message'] != null) String message = response['message'];
         var data = Users.fromMap(response['data']);
         userdatas.value = data;
-        authType.value = data.type!;
+        authType.value = data.statusActions!.first.type!;
         namesurnamecontroller.value.text = data.nameSurname!;
         emailcontroller.value.text = data.email ?? '';
         phonecontroller.value.text = data.phone!;
@@ -62,7 +64,8 @@ class AuthController extends GetxController {
 
         CacheManager.setvaluetoprefences('phone', data.phone);
 
-        CacheManager.setvaluetoprefences('authtype', data.type);
+        CacheManager.setvaluetoprefences(
+            'authtype', data.statusActions?.first.type);
 
         CacheManager.setvaluetoprefences(
             'profilepicture', data.additionalinfo?.image ?? '');
@@ -96,7 +99,8 @@ class AuthController extends GetxController {
 
         CacheManager.setvaluetoprefences('phone', data.phone);
 
-        CacheManager.setvaluetoprefences('authtype', data.type);
+        CacheManager.setvaluetoprefences(
+            'authtype', data.statusActions?.first.type);
 
         CacheManager.setvaluetoprefences(
             'profilepicture', data.additionalinfo?.image ?? '');
@@ -180,7 +184,7 @@ class AuthController extends GetxController {
           response['message'] != ' ') message = response['message'];
       if (status == "success") {
         getalldataoncache(context);
-        Get.offAllNamed('/mainscreen');
+        _maincontroller.restartapp();
       } else {
         showToastMSG(errorcolor, message, context);
       }
@@ -191,79 +195,103 @@ class AuthController extends GetxController {
     }
   }
 
-  void selectlangknowns(lang) {
+  void selectlangknowns(lang, context) {
+    refreshpage.value = true;
     bool exists = selectedlang.value.contains(lang);
     if (exists == true) {
       selectedlang.value.remove(lang);
     } else {
       selectedlang.value.add(lang);
     }
+    refreshpage.value = false;
   }
 
   void register(context) async {
     refreshpage.value = true;
 
-    if ((namesurnamecontroller.value.text != null &&
-            namesurnamecontroller.value.text.length > 0) &&
-        (birthdaycontroller.value != null &&
-            birthdaycontroller.value.length > 0) &&
-        (phonecontroller.value.text != null &&
-            phonecontroller.value.text.length > 0)) {
-      var body = {
-        'phone': phonecontroller.value.text,
-        'name_surname': namesurnamecontroller.value.text,
-        'birthday': birthdaycontroller.value,
-        'type': authType.value,
-        'description': aboutcontroller.value.text.toString(),
-        'language': 'az'
-      };
+    if (agreeterms.value == true) {
+      if ((namesurnamecontroller.value.text != null &&
+              namesurnamecontroller.value.text.length > 0) &&
+          (birthdaycontroller.value != null &&
+              birthdaycontroller.value.length > 0) &&
+          (phonecontroller.value.text != null &&
+              phonecontroller.value.text.length > 0)) {
+        Map<String, dynamic> body = {
+          'phone': phonecontroller.value.text,
+          'name_surname': namesurnamecontroller.value.text,
+          'birthday': birthdaycontroller.value,
+          'type': authType.value,
+          'language': 'az',
+        };
 
-      if (emailcontroller.value.text != null &&
-          emailcontroller.value.text.trim().isNotEmpty &&
-          emailcontroller.value.text != '' &&
-          emailcontroller.value.text != ' ') {
-        body['email'] = emailcontroller.value.text;
-      }
-      var response = await GetAndPost.postData("auth/register", body, context);
-      if (response != null) {
-        String status = response['status'];
-        String message = '';
-        if (response['message'] != null &&
-            response['message'] != '' &&
-            response['message'] != ' ') message = response['message'];
-        if (status == "success") {
-          var data = Users.fromMap(response['data']);
-          userdatas.value = data;
-          CacheManager.setvaluetoprefences('language', 'az');
-
-          CacheManager.setvaluetoprefences('auth_id', data.id);
-
-          CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
-
-          CacheManager.setvaluetoprefences('phone', data.phone);
-
-          CacheManager.setvaluetoprefences('authtype', data.type);
-
-          CacheManager.setvaluetoprefences(
-              'profilepicture', data.additionalinfo?.image ?? '');
-
-          if (data.email != null && data.email != '' && data.email != ' ')
-            CacheManager.setvaluetoprefences('email', data.email);
-
-          authType.value = data.type ?? 'rider';
-          Get.toNamed(
-            'verificationcode',
-            arguments: {'phoneNumber': phonecontroller.value.text},
-          );
-          showToastMSG(primarycolor, message, context);
-        } else {
-          showToastMSG(errorcolor, message, context);
+        if (emailcontroller.value.text != null &&
+            emailcontroller.value.text.trim().isNotEmpty &&
+            emailcontroller.value.text != '' &&
+            emailcontroller.value.text != ' ') {
+          body['email'] = emailcontroller.value.text;
         }
+
+        if (aboutcontroller.value.text != null &&
+            aboutcontroller.value.text.trim().isNotEmpty &&
+            aboutcontroller.value.text != '' &&
+            aboutcontroller.value.text != ' ') {
+          body['description'] = aboutcontroller.value.text;
+        }
+
+        if (selectedlang.value != null && selectedlang.value.length > 0) {
+          body['known_languages'] = selectedlang.value ?? [];
+        }
+
         refreshpage.value = false;
+
+        var response = await GetAndPost.postData("auth/register", body, context);
+        if (response != null) {
+          String status = response['status'];
+          String message = '';
+          if (response['message'] != null &&
+              response['message'] != '' &&
+              response['message'] != ' ') message = response['message'];
+          if (status == "success") {
+            var data = Users.fromMap(response['data']);
+            userdatas.value = data;
+            CacheManager.setvaluetoprefences('language', 'az');
+
+            CacheManager.setvaluetoprefences('auth_id', data.id);
+
+            CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
+
+            CacheManager.setvaluetoprefences('phone', data.phone);
+
+            CacheManager.setvaluetoprefences(
+                'authtype', data.statusActions?.first.type);
+
+            CacheManager.setvaluetoprefences(
+                'profilepicture', data.additionalinfo?.image ?? '');
+
+            if (data.email != null && data.email != '' && data.email != ' ')
+              CacheManager.setvaluetoprefences('email', data.email);
+
+            authType.value = data.statusActions?.first.type ?? 'rider';
+            Get.toNamed(
+              'verificationcode',
+              arguments: {'phoneNumber': phonecontroller.value.text},
+            );
+            showToastMSG(primarycolor, message, context);
+          } else {
+            showToastMSG(errorcolor, message, context);
+          }
+          refreshpage.value = false;
+        } else {
+          showToastMSG(errorcolor, "fillthefield".tr, context);
+          refreshpage.value = false;
+        }
       } else {
-        showToastMSG(errorcolor, "fillthefield".tr, context);
         refreshpage.value = false;
+        showToastMSG(errorcolor, "fillthefield".tr, context);
       }
+    } else {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, "checkagree".tr, context);
     }
   }
 
@@ -285,11 +313,12 @@ class AuthController extends GetxController {
           CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
           CacheManager.setvaluetoprefences('email', data.email);
           CacheManager.setvaluetoprefences('phone', data.phone);
-          CacheManager.setvaluetoprefences('authtype', data.type);
+          CacheManager.setvaluetoprefences(
+              'authtype', data.statusActions?.first.type);
           CacheManager.setvaluetoprefences('language', 'az');
           CacheManager.setvaluetoprefences(
               'profilepicture', data.additionalinfo?.image ?? '');
-          authType.value = data.type ?? 'rider';
+          authType.value = data.statusActions?.first.type ?? 'rider';
           Get.toNamed(
             'verificationcode',
             arguments: {'phoneNumber': phonecontroller.value.text},

@@ -9,16 +9,16 @@ class Automobils {
     this.technicalPassport,
     this.autoSerialNumber,
     this.selected,
-    this.autoMarkId,
-    this.autoModelId,
-    this.autoColorId,
+    this.verified,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
-    this.automark,
-    this.automodels,
-    this.autocolors,
+    this.autotype,
+    this.autoTypeId,
     this.images,
+    this.marka,
+    this.model,
+    this.color,
   });
 
   factory Automobils.fromMap(Map<String, dynamic> map) => Automobils(
@@ -29,20 +29,17 @@ class Automobils {
         technicalPassport: map["technical_passport"],
         autoSerialNumber: map["auto_serial_number"],
         selected: map["selected"],
-        autoMarkId: map["auto_mark_id"],
-        autoModelId: map["auto_model_id"],
-        autoColorId: map["auto_color_id"],
+        verified: map["verified"],
         createdAt: map["created_at"],
         updatedAt: map["updated_at"],
         deletedAt: map["deleted_at"],
-        automark:
-            map["automark"] == null ? null : Automark.fromMap(map["automark"]),
-        automodels: map["automodels"] == null
+        marka: map["marka"],
+        model: map["model"],
+        color: map["color"],
+        autoTypeId: map["auto_type_id"],
+        autotype: map["autotype"] == null
             ? null
-            : Automodels.fromMap(map["automodels"]),
-        autocolors: map["autocolors"] == null
-            ? null
-            : Autocolors.fromMap(map["autocolors"]),
+            : AutoType.fromMap(map["autotype"]),
         images: map["images"] == null
             ? null
             : List<Images>.from(map["images"].map((e) => Images.fromMap(e))),
@@ -57,16 +54,16 @@ class Automobils {
   final String? idCard;
   final String? technicalPassport;
   final String? autoSerialNumber;
+  final String? marka;
+  final String? model;
+  final String? color;
+  final int? autoTypeId;
   final bool? selected;
-  final int? autoMarkId;
-  final int? autoModelId;
-  final int? autoColorId;
+  final bool? verified;
   final String? createdAt;
   final String? updatedAt;
   final dynamic deletedAt;
-  final Automark? automark;
-  final Automodels? automodels;
-  final Autocolors? autocolors;
+  final AutoType? autotype;
   final List<Images>? images;
 
   Map<String, dynamic> toMap() => {
@@ -77,62 +74,19 @@ class Automobils {
         "technical_passport": technicalPassport,
         "auto_serial_number": autoSerialNumber,
         "selected": selected,
-        "auto_mark_id": autoMarkId,
-        "auto_model_id": autoModelId,
-        "auto_color_id": autoColorId,
+        "verified": verified,
+        "marka": marka,
+        "model": model,
+        "color": color,
+        "auto_type_id": autoTypeId,
         "created_at": createdAt,
         "updated_at": updatedAt,
         "deleted_at": deletedAt,
-        "automark": automark?.toMap(),
-        "automodels": automodels?.toMap(),
-        "autocolors": autocolors?.toMap(),
+        "autotype": autotype?.toMap(),
         "images": images?.map((e) => e?.toMap()).toList(),
       };
 
   String toJson() => json.encode(toMap());
-
-  Automobils copyWith({
-    int? id,
-    int? userId,
-    String? drivingLicence,
-    String? idCard,
-    String? technicalPassport,
-    String? autoSerialNumber,
-    bool? selected,
-    int? autoMarkId,
-    int? autoModelId,
-    int? autoColorId,
-    String? createdAt,
-    String? updatedAt,
-    dynamic? deletedAt,
-    Automark? automark,
-    Automodels? automodels,
-    Autocolors? autocolors,
-    List<Images>? images,
-  }) =>
-      Automobils(
-        id: id ?? this.id,
-        userId: userId ?? this.userId,
-        drivingLicence: drivingLicence ?? this.drivingLicence,
-        idCard: idCard ?? this.idCard,
-        technicalPassport: technicalPassport ?? this.technicalPassport,
-        autoSerialNumber: autoSerialNumber ?? this.autoSerialNumber,
-        selected: selected ?? this.selected,
-        autoMarkId: autoMarkId ?? this.autoMarkId,
-        autoModelId: autoModelId ?? this.autoModelId,
-        autoColorId: autoColorId ?? this.autoColorId,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        deletedAt: deletedAt ?? this.deletedAt,
-        automark: automark ?? this.automark,
-        automodels: automodels ?? this.automodels,
-        autocolors: autocolors ?? this.autocolors,
-        images: images ?? this.images,
-      );
-
-  @override
-  String toString() =>
-      "Automobils(id: $id, userId: $userId, drivingLicence: $drivingLicence, idCard: $idCard, technicalPassport: $technicalPassport, autoSerialNumber: $autoSerialNumber, selected: $selected, autoMarkId: $autoMarkId, autoModelId: $autoModelId, autoColorId: $autoColorId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, automark: $automark, automodels: $automodels, autocolors: $autocolors, images: $images)";
 }
 
 class Images {
@@ -173,266 +127,66 @@ class Images {
       };
 
   String toJson() => json.encode(toMap());
-
-  Images copyWith({
-    int? id,
-    int? automobilId,
-    String? image,
-    int? order,
-    String? createdAt,
-    String? updatedAt,
-  }) =>
-      Images(
-        id: id ?? this.id,
-        automobilId: automobilId ?? this.automobilId,
-        image: image ?? this.image,
-        order: order ?? this.order,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
-
-  @override
-  String toString() =>
-      "Images(id: $id, automobilId: $automobilId, image: $image, order: $order, createdAt: $createdAt, updatedAt: $updatedAt)";
 }
 
-class Autocolors {
-  const Autocolors({
+class AutoType {
+  const AutoType({
     this.id,
-    this.name,
-    this.slugs,
-    this.hex,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-  });
-
-  factory Autocolors.fromMap(Map<String, dynamic> map) => Autocolors(
-        id: map["id"],
-        name: map["name"] == null ? null : Name.fromMap(map["name"]),
-        slugs: map["slugs"] == null ? null : Slugs.fromMap(map["slugs"]),
-        hex: map["hex"],
-        createdAt: map["created_at"],
-        updatedAt: map["updated_at"],
-        deletedAt: map["deleted_at"],
-      );
-
-  factory Autocolors.fromJson(String str) =>
-      Autocolors.fromMap(json.decode(str));
-
-  final int? id;
-  final Name? name;
-  final Slugs? slugs;
-  final String? hex;
-  final String? createdAt;
-  final String? updatedAt;
-  final dynamic deletedAt;
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name?.toMap(),
-        "slugs": slugs?.toMap(),
-        "hex": hex,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
-        "deleted_at": deletedAt,
-      };
-
-  String toJson() => json.encode(toMap());
-
-  Autocolors copyWith({
-    int? id,
-    Name? name,
-    Slugs? slugs,
-    String? hex,
-    String? createdAt,
-    String? updatedAt,
-    dynamic? deletedAt,
-  }) =>
-      Autocolors(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        slugs: slugs ?? this.slugs,
-        hex: hex ?? this.hex,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        deletedAt: deletedAt ?? this.deletedAt,
-      );
-
-  @override
-  String toString() =>
-      "Autocolors(id: $id, name: $name, slugs: $slugs, hex: $hex, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)";
-}
-
-class Automodels {
-  const Automodels({
-    this.id,
-    this.autoMarkId,
     this.icon,
     this.name,
-    this.slugs,
+    this.order_number,
     this.places,
-    this.weight,
-    this.liter,
-    this.order,
+    this.weight_kg,
+    this.weight_liter,
+    this.status,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
   });
 
-  factory Automodels.fromMap(Map<String, dynamic> map) => Automodels(
+  factory AutoType.fromMap(Map<String, dynamic> map) => AutoType(
         id: map["id"],
-        autoMarkId: map["auto_mark_id"],
-        icon: map["icon"],
+        icon: map['icon'],
         name: map["name"] == null ? null : Name.fromMap(map["name"]),
-        slugs: map["slugs"] == null ? null : Slugs.fromMap(map["slugs"]),
-        places: map["places"],
-        weight: map["weight"],
-        liter: map["liter"],
-        order: map["order"],
+        order_number: map['order_number'],
+        places: map['places'],
+        weight_kg: map['weight_kg'],
+        weight_liter: map['weight_liter'],
+        status: map['status'],
         createdAt: map["created_at"],
         updatedAt: map["updated_at"],
         deletedAt: map["deleted_at"],
       );
 
-  factory Automodels.fromJson(String str) =>
-      Automodels.fromMap(json.decode(str));
+  factory AutoType.fromJson(String str) => AutoType.fromMap(json.decode(str));
 
   final int? id;
-  final int? autoMarkId;
   final String? icon;
   final Name? name;
-  final Slugs? slugs;
+  final int? order_number;
   final int? places;
-  final String? weight;
-  final String? liter;
-  final int? order;
+  final int? weight_kg;
+  final int? weight_liter;
+  final bool? status;
   final String? createdAt;
   final String? updatedAt;
   final dynamic deletedAt;
 
   Map<String, dynamic> toMap() => {
         "id": id,
-        "auto_mark_id": autoMarkId,
         "icon": icon,
         "name": name?.toMap(),
-        "slugs": slugs?.toMap(),
+        "order_number": order_number,
         "places": places,
-        "weight": weight,
-        "liter": liter,
-        "order": order,
+        "weight_kg": weight_kg,
+        "weight_liter": weight_liter,
+        "status": status,
         "created_at": createdAt,
         "updated_at": updatedAt,
         "deleted_at": deletedAt,
       };
 
   String toJson() => json.encode(toMap());
-
-  Automodels copyWith({
-    int? id,
-    int? autoMarkId,
-    String? icon,
-    Name? name,
-    Slugs? slugs,
-    int? places,
-    String? weight,
-    String? liter,
-    int? order,
-    String? createdAt,
-    String? updatedAt,
-    dynamic? deletedAt,
-  }) =>
-      Automodels(
-        id: id ?? this.id,
-        autoMarkId: autoMarkId ?? this.autoMarkId,
-        icon: icon ?? this.icon,
-        name: name ?? this.name,
-        slugs: slugs ?? this.slugs,
-        places: places ?? this.places,
-        weight: weight ?? this.weight,
-        liter: liter ?? this.liter,
-        order: order ?? this.order,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        deletedAt: deletedAt ?? this.deletedAt,
-      );
-
-  @override
-  String toString() =>
-      "Automodels(id: $id, autoMarkId: $autoMarkId, icon: $icon, name: $name, slugs: $slugs, places: $places, weight: $weight, liter: $liter, order: $order, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)";
-}
-
-class Automark {
-  const Automark({
-    this.id,
-    this.icon,
-    this.name,
-    this.slugs,
-    this.order,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-  });
-
-  factory Automark.fromMap(Map<String, dynamic> map) => Automark(
-        id: map["id"],
-        icon: map["icon"],
-        name: map["name"] == null ? null : Name.fromMap(map["name"]),
-        slugs: map["slugs"] == null ? null : Slugs.fromMap(map["slugs"]),
-        order: map["order"],
-        createdAt: map["created_at"],
-        updatedAt: map["updated_at"],
-        deletedAt: map["deleted_at"],
-      );
-
-  factory Automark.fromJson(String str) => Automark.fromMap(json.decode(str));
-
-  final int? id;
-  final String? icon;
-  final Name? name;
-  final Slugs? slugs;
-  final int? order;
-  final String? createdAt;
-  final String? updatedAt;
-  final dynamic deletedAt;
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "icon": icon,
-        "name": name?.toMap(),
-        "slugs": slugs?.toMap(),
-        "order": order,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
-        "deleted_at": deletedAt,
-      };
-
-  String toJson() => json.encode(toMap());
-
-  Automark copyWith({
-    int? id,
-    String? icon,
-    Name? name,
-    Slugs? slugs,
-    int? order,
-    String? createdAt,
-    String? updatedAt,
-    dynamic? deletedAt,
-  }) =>
-      Automark(
-        id: id ?? this.id,
-        icon: icon ?? this.icon,
-        name: name ?? this.name,
-        slugs: slugs ?? this.slugs,
-        order: order ?? this.order,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        deletedAt: deletedAt ?? this.deletedAt,
-      );
-
-  @override
-  String toString() =>
-      "Automark(id: $id, icon: $icon, name: $name, slugs: $slugs, order: $order, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)";
 }
 
 class Slugs {

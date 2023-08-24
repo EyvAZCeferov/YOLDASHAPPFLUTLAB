@@ -17,9 +17,7 @@ class AutomobilsCreate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _controller.fetchModels(context, 'models');
-    _controller.fetchModels(context, 'marks');
-    _controller.fetchModels(context, 'colors');
+    _controller.fetchModels(context, 'types');
 
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -79,6 +77,123 @@ class AutomobilsCreate extends StatelessWidget {
                       ],
                     ))),
             Devider(),
+            Center(
+                child: Container(
+                    width: Get.width - 40,
+                    height: 150,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.circular(15),
+                        shape: BoxShape.rectangle,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            blurStyle: BlurStyle.solid,
+                            color: Colors.black38,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          )
+                        ]),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        StaticText(
+                            text: "automarka".tr,
+                            weight: FontWeight.w500,
+                            size: normaltextSize,
+                            color: darkcolor),
+                        Devider(size: 5),
+                        TextField(
+                          controller: _controller.marka.value,
+                          autocorrect: false,
+                          autofocus: false,
+                          cursorColor: iconcolor,
+                          style: TextStyle(color: primarycolor),
+                        )
+                      ],
+                    ))),
+            Devider(),
+            Center(
+                child: Container(
+                    width: Get.width - 40,
+                    height: 150,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.circular(15),
+                        shape: BoxShape.rectangle,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            blurStyle: BlurStyle.solid,
+                            color: Colors.black38,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          )
+                        ]),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        StaticText(
+                            text: "automodel".tr,
+                            weight: FontWeight.w500,
+                            size: normaltextSize,
+                            color: darkcolor),
+                        Devider(size: 5),
+                        TextField(
+                          controller: _controller.model.value,
+                          autocorrect: false,
+                          autofocus: false,
+                          cursorColor: iconcolor,
+                          style: TextStyle(color: primarycolor),
+                        )
+                      ],
+                    ))),
+            Devider(),
+            Center(
+                child: Container(
+                    width: Get.width - 40,
+                    height: 150,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.circular(15),
+                        shape: BoxShape.rectangle,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            blurStyle: BlurStyle.solid,
+                            color: Colors.black38,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          )
+                        ]),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        StaticText(
+                            text: "autocolor".tr,
+                            weight: FontWeight.w500,
+                            size: normaltextSize,
+                            color: darkcolor),
+                        Devider(size: 5),
+                        TextField(
+                          controller: _controller.color.value,
+                          autocorrect: false,
+                          autofocus: false,
+                          cursorColor: iconcolor,
+                          style: TextStyle(color: primarycolor),
+                        )
+                      ],
+                    ))),
+            Devider(),
             Obx(
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
@@ -115,32 +230,23 @@ class AutomobilsCreate extends StatelessWidget {
                     ),
             ),
             Devider(),
+            
             Obx(
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
                   : AccordionTemplate(
-                      title: "automarka".tr,
-                      type: "marks",
-                      data: _controller.automarks.value,
-                    ),
+                      title: "autotype".tr,
+                      type: "types",
+                      data: _controller.autotype.value),
             ),
             Devider(),
             Obx(
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
                   : AccordionTemplate(
-                      title: "automodel".tr,
-                      type: "models",
-                      data: _controller.automodels.value),
-            ),
-            Devider(),
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : AccordionTemplate(
-                      title: "autocolor".tr,
-                      type: "colors",
-                      data: _controller.autocolors.value),
+                      title: "autoimages".tr,
+                      type: "images",
+                      data: _controller.autoimages.value),
             ),
             Devider(),
           ],

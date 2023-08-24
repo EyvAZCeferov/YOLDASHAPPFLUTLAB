@@ -134,7 +134,7 @@ class MessagesController extends GetxController {
       } else {
         refreshpage.value = false;
         data.value = [];
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
       refreshpage.value = false;

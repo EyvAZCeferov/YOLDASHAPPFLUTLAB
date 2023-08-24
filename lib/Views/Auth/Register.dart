@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/DateElement.dart';
@@ -14,6 +15,7 @@ import '../../Constants/LoaderScreen.dart';
 import '../../Constants/StaticText.dart';
 import '../../Constants/TextButton.dart';
 import '../../Controllers/AuthController.dart';
+import '../../Functions/helpers.dart';
 import '../../Theme/ThemeService.dart';
 
 class Register extends StatefulWidget {
@@ -23,19 +25,21 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final AuthController _controller = Get.put(AuthController());
-  Map<String, bool> items = {
-    'male': true,
-    'female': false,
+  Map<int, String> items = {
+    1: 'male',
+    2: 'female',
   };
+  var selectedgender;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
-    void _showgendermodal(controller) {
-      print(controller);
+    // setState(() {
+    selectedgender = _controller.gender.value;
+    // });
+    void _showgendermodal(context) {
       Get.bottomSheet(Container(
-        height: 300,
+        height: 240,
         color: Colors.white,
         child: Column(
           children: [
@@ -51,61 +55,53 @@ class _RegisterState extends State<Register> {
             SizedBox(
               width: width,
               height: 120,
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final keysList = items.keys.toList();
-                  final valuesList = items.values.toList();
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    var keysList = items.keys.toList();
+                    var valuesList = items.values.toList();
 
-                  final key = keysList[index];
-                  final value = valuesList[index];
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ListTile(
-                        title: StaticText(
-                          color: darkcolor,
-                          size: normaltextSize,
-                          text: "gender_$key".tr,
-                          weight: FontWeight.w500,
-                          align: TextAlign.left,
-                        ),
-                        trailing: Radio<bool>(
-                          value: true,
-                          activeColor: primarycolor,
-                          focusColor: primarycolor,
-                          hoverColor: primarycolor,
-                          toggleable: true,
-                          visualDensity: VisualDensity.adaptivePlatformDensity,
-                          groupValue: items[key],
-                          onChanged: (value) {
-                            setState(() {
-                              items.forEach((key, value) {
-                                items[key] = false;
+                    var key = keysList[index];
+
+                    var value = valuesList[index];
+
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ListTile(
+                          title: StaticText(
+                            color: darkcolor,
+                            size: normaltextSize,
+                            text: "gender_$value".tr,
+                            weight: FontWeight.w500,
+                            align: TextAlign.left,
+                          ),
+                          trailing: Radio<bool>(
+                            value: true,
+                            activeColor: primarycolor,
+                            focusColor: primarycolor,
+                            hoverColor: primarycolor,
+                            toggleable: true,
+                            visualDensity:
+                                VisualDensity.adaptivePlatformDensity,
+                            groupValue: selectedgender == key ? true : false,
+                            onChanged: (value) {
+                              _controller.gender.value = key;
+                              setState(() {
+                                selectedgender = key;
                               });
-                              items[key] = value!;
-                            });
-                            print(items);
-                          },
+                              Get.back();
+                            },
+                          ),
                         ),
-                      ),
-                      Devider(),
-                    ],
-                  );
-                },
+                        Devider(),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-            Devider(),
-            ButtonElement(
-              text: "choise".tr,
-              width: 90,
-              onPressed: () => Get.back(),
-              bgColor: primarycolor,
-              borderRadius: BorderRadius.circular(45),
-              fontsize: normaltextSize,
-              height: 45,
-              textColor: whitecolor,
             ),
             Devider(),
           ],
@@ -241,8 +237,7 @@ class _RegisterState extends State<Register> {
                           ),
                           Devider(size: 15),
                           GestureDetector(
-                            onTap: () => _showgendermodal(
-                                _controller.gendercontroller.value),
+                            onTap: () => _showgendermodal(context),
                             child: Container(
                               width: width - 40,
                               height: 53,
@@ -257,7 +252,10 @@ class _RegisterState extends State<Register> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50))),
                               child: StaticText(
-                                text: "gender".tr,
+                                text: _controller.gender.value != null &&
+                                        _controller.gender.value == 1
+                                    ? "gender_male".tr
+                                    : "gender_female".tr,
                                 color: iconcolor,
                                 size: normaltextSize,
                                 weight: FontWeight.w400,
@@ -358,7 +356,7 @@ class _RegisterState extends State<Register> {
                               },
                             ),
                           ),
-                          Devider(size: 15),
+                          Devider(size: 10),
                           _controller.authType.value == "rider"
                               ? SizedBox()
                               : Column(
@@ -380,8 +378,9 @@ class _RegisterState extends State<Register> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           GestureDetector(
-                                            onTap: () => _controller
-                                                .selectlangknowns('az'),
+                                            onTap: () =>
+                                                _controller.selectlangknowns(
+                                                    'az', context),
                                             child: SizedBox(
                                               width: 90,
                                               height: 35,
@@ -424,14 +423,22 @@ class _RegisterState extends State<Register> {
                                                       text: "AZE",
                                                       weight: FontWeight.w400,
                                                       size: normaltextSize,
-                                                      color: darkcolor),
+                                                      color: _controller
+                                                                  .selectedlang
+                                                                  .value
+                                                                  .contains(
+                                                                      'az') ==
+                                                              true
+                                                          ? primarycolor
+                                                          : darkcolor),
                                                 ],
                                               ),
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => _controller
-                                                .selectlangknowns('ru'),
+                                            onTap: () =>
+                                                _controller.selectlangknowns(
+                                                    'ru', context),
                                             child: SizedBox(
                                               width: 90,
                                               height: 35,
@@ -474,14 +481,22 @@ class _RegisterState extends State<Register> {
                                                       text: "RU",
                                                       weight: FontWeight.w400,
                                                       size: normaltextSize,
-                                                      color: darkcolor),
+                                                      color: _controller
+                                                                  .selectedlang
+                                                                  .value
+                                                                  .contains(
+                                                                      'ru') ==
+                                                              true
+                                                          ? primarycolor
+                                                          : darkcolor),
                                                 ],
                                               ),
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => _controller
-                                                .selectlangknowns('en'),
+                                            onTap: () =>
+                                                _controller.selectlangknowns(
+                                                    'en', context),
                                             child: SizedBox(
                                               width: 90,
                                               height: 35,
@@ -524,14 +539,22 @@ class _RegisterState extends State<Register> {
                                                       text: "EN",
                                                       weight: FontWeight.w400,
                                                       size: normaltextSize,
-                                                      color: darkcolor),
+                                                      color: _controller
+                                                                  .selectedlang
+                                                                  .value
+                                                                  .contains(
+                                                                      'en') ==
+                                                              true
+                                                          ? primarycolor
+                                                          : darkcolor),
                                                 ],
                                               ),
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => _controller
-                                                .selectlangknowns('tr'),
+                                            onTap: () =>
+                                                _controller.selectlangknowns(
+                                                    'tr', context),
                                             child: SizedBox(
                                               width: 90,
                                               height: 35,
@@ -574,7 +597,14 @@ class _RegisterState extends State<Register> {
                                                       text: "TR",
                                                       weight: FontWeight.w400,
                                                       size: normaltextSize,
-                                                      color: darkcolor),
+                                                      color: _controller
+                                                                  .selectedlang
+                                                                  .value
+                                                                  .contains(
+                                                                      'tr') ==
+                                                              true
+                                                          ? primarycolor
+                                                          : darkcolor),
                                                 ],
                                               ),
                                             ),
@@ -605,6 +635,31 @@ class _RegisterState extends State<Register> {
                                             ),
                                           )),
                                     ]),
+                          Devider(size: 5),
+                          Center(
+                            child: SizedBox(
+                              width: Get.width - 50,
+                              child: Row(
+                                children: [
+                                  Checkbox(
+                                    value: _controller.agreeterms.value,
+                                    onChanged: (newValue) {
+                                      _controller.agreeterms.value = newValue!;
+                                    },
+                                  ),
+                                  TextButton(
+                                      onPressed: () => launchUrlTOSITE(
+                                          "https://yoldash.app/en/pages/termofuse"),
+                                      child: StaticText(
+                                        color: secondarycolor,
+                                        size: normaltextSize,
+                                        text: "agreetermsandconditions".tr,
+                                        weight: FontWeight.bold,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
                           Devider(size: 25),
                           ButtonElement(
                               text: "register".tr,

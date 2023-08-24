@@ -96,7 +96,11 @@ class _AddableWidgetState extends State<AddableWidget> {
             _buildbankorauto(widget.type, context),
             GestureDetector(
               onTap: () {
-                Get.toNamed('/' + widget.type + '/add');
+                if (widget.type == "cards") {
+                  _cardscontroller.addcard(context);
+                } else {
+                  Get.toNamed('/' + widget.type + '/add');
+                }
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -219,7 +223,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                             ),
                             child: CachedNetworkImage(
                               imageUrl: getimageurl("models",
-                                  'automobils/models', item.automodels.icon),
+                                  'automobils/types', item.autotype.icon),
                               placeholder: (context, url) =>
                                   CircularProgressIndicator(),
                               errorWidget: (context, url, error) =>
@@ -239,7 +243,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                             children: [
                               StaticText(
                                 text: getLocalizedValue(
-                                    item.automodels!.name, 'name') as String,
+                                    item.autotype!.name, 'name') as String,
                                 color: darkcolor,
                                 size: buttontextSize,
                                 weight: FontWeight.w500,

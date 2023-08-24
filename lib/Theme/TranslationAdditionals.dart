@@ -90,6 +90,9 @@ class TranslationAdditionals extends Translations {
           "tomorrow": "Sabah",
           "close": "Bağla",
           "choisetime": "Zamanı seç",
+          "choisestarttime": "Başlanğıc tarixi seç",
+          "choiseendtime": "Son tarixi seç",
+          "choiseavaragetime": "Zaman aralığı seç",
           "choiseplace": "Yer seçin",
           "fullreservation": "Tam rezerv",
           "pleaseselectplaceandclick":
@@ -133,10 +136,16 @@ class TranslationAdditionals extends Translations {
           "time": "Zaman",
           "nothavepaymentlink": "Ödəniş linki mövcud deyil.",
           "paynow": "Ödəniş et",
-          "mylocation":"Mənim məkanım",
-          "destinationlocation":"Gedəcəyim məkan",
-          "checknetworkconnection":"İnternet statusunuzu yoxlayın.",
-          "addroute":"Gediş yarat"
+          "mylocation": "Mənim məkanım",
+          "destinationlocation": "Gedəcəyim məkan",
+          "checknetworkconnection": "İnternet statusunuzu yoxlayın.",
+          "addroute": "Gediş yarat",
+          "agreetermsandconditions": "İstifadəçi sözləşməsi",
+          "checkagree": "İstifadəçi sözləşməsini təsdiq edin.",
+          "autotype": "Avtomobil tipi",
+          "autoimages": "Avtomobil şəkilləri",
+          "waiting": "Gözləmədə",
+          "nohasdataforallrides": "Axtardığınız parametrlərdə gediş tapılmadı."
         }
       };
 }

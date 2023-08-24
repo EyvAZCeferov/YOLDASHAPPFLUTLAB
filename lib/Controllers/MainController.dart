@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Controllers/AuthController.dart';
 
 import '../Functions/CacheManager.dart';
 
 class MainController extends GetxController {
+  late AuthController _authController = Get.put(AuthController());
+
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<String> currentlang = ''.obs;
   Rx<String> authtype = ''.obs;
@@ -44,6 +51,7 @@ class MainController extends GetxController {
             data != null && data.isNotEmpty && data != '' && data != ' '
                 ? data.trim()
                 : await CacheManager.getvaluefromsharedprefences(type);
+
         data = auth_id.value;
       } else if (type == "name_surname") {
         data = name_surname.value;
@@ -79,5 +87,10 @@ class MainController extends GetxController {
     } catch (e) {
       print("Main controller error: $e");
     }
+  }
+
+  Future<void> restartapp() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
   }
 }
