@@ -98,6 +98,11 @@ class GoingController extends GetxController {
         new CameraPosition(target: latLngPosn, zoom: 14);
     String language = await _maincontroller.getstoragedat('language');
 
+    if (authtype.value == "driver") {
+      _automobilscontroller.fetchDatas(context);
+      addedsectionshow.value = true;
+    }
+
     kGooglePlex = cameraposition;
     Map gettednameandplace_id = await getnameviacoords(
         position.latitude, position.longitude, language, context);
@@ -581,7 +586,6 @@ class GoingController extends GetxController {
 
   void togglesearch(String type, context) async {
     try {
-      _automobilscontroller.fetchDatas(context);
       if (type == "onmap") {
         openmodal.value = true;
       }
@@ -677,11 +681,10 @@ class GoingController extends GetxController {
           if (response['message'] != null) message = response['message'];
           if (status == "success") {
             data.value = [];
-            if (response['data'] != null) {
+            if (response['data'] != null && response['data'].length > 0) {
               data.value = (response['data'] as List).map((dat) {
                 return Rides.fromMap(dat);
               }).toList();
-
               if (data.value.length == 0) {
                 resulttext.value = "nohasdataforallrides".tr;
               }
@@ -689,8 +692,6 @@ class GoingController extends GetxController {
               resulttext.value = "nohasdataforallrides".tr;
             }
             loading.value = false;
-
-            print(resulttext.value);
 
             refreshpage.value = false;
           } else {
@@ -713,9 +714,40 @@ class GoingController extends GetxController {
 
   void getrideinfo(index, context) {}
 
+  String getrideCardata(Rides ride) {
+    String data = '';
+    if (ride.automobil?.color != null &&
+        ride.automobil?.color != '' &&
+        ride.automobil?.color != ' ') {
+      data += ride.automobil!.color! + ' ';
+    }
+
+    if (ride.automobil?.marka != null &&
+        ride.automobil?.marka != '' &&
+        ride.automobil?.marka != ' ') {
+      data += ride.automobil!.marka! + ' ';
+    }
+
+    if (ride.automobil?.model != null &&
+        ride.automobil?.model != '' &&
+        ride.automobil?.model != ' ') {
+      data += ride.automobil!.model! + ' ';
+    }
+
+    if (ride.automobil?.autoSerialNumber != null &&
+        ride.automobil?.autoSerialNumber != '' &&
+        ride.automobil?.autoSerialNumber != ' ') {
+      data += ride.automobil!.autoSerialNumber! + ' ';
+    }
+
+    return data;
+  }
+
+  void rides_getuserrides(user_id) {}
+
   void lookmore(Rides ride, context) {
     print("RIDES");
-    print(ride.fromCoordinates!.address);
+    print(ride.coordinates![0].address);
     Get.bottomSheet(Container(
       height: 300,
       color: Colors.white,
@@ -737,120 +769,116 @@ class GoingController extends GetxController {
             children: [
               Devider(),
               SizedBox(
-                width: Get.width - 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.toNamed('/profiledriver/eyvaz-ceferov'),
-                      child: CircleAvatar(
-                        backgroundColor: primarycolor,
-                        foregroundColor: whitecolor,
-                        radius: 25,
-                        backgroundImage: NetworkImage(getimageurl("user",
-                            'users', ride.creator?.additionalinfo?.image)),
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () => Get.toNamed('/profiledriver/eyvaz-ceferov'),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                width: Get.width - 30,
+                child: ride.userId != auth_id.value
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StaticText(
-                                  text: ride.creator?.nameSurname ?? ' ',
-                                  weight: FontWeight.w600,
-                                  size: normaltextSize,
-                                  color: darkcolor),
-                              SizedBox(width: 4),
-                              Icon(
-                                FeatherIcons.star,
-                                color: Colors.yellow,
-                                size: normaltextSize,
-                              ),
-                              StaticText(
-                                  text: "4",
-                                  weight: FontWeight.w500,
-                                  size: smalltextSize,
-                                  color: iconcolor),
-                            ],
-                          ),
-                          SizedBox(
-                            width: Get.width / 3,
-                            child: StaticText(
-                                align: TextAlign.left,
-                                maxline: 2,
-                                textOverflow: TextOverflow.clip,
-                                text: getLocalizedValue(
-                                        ride.automobil?.automark?.name,
-                                        'name') ??
-                                    " "
-                                            " " +
-                                        getLocalizedValue(
-                                                ride.automobil?.automodels
-                                                    ?.name,
-                                                'name')
-                                            .toString() ??
-                                    " "
-                                            " " +
-                                        ride.automobil!.autoSerialNumber
-                                            .toString() ??
-                                    ' ',
-                                weight: FontWeight.w500,
-                                size: smalltextSize,
-                                color: iconcolor),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () => _messagescontroller
-                                .callpageredirect('call', context),
-                            style: ElevatedButton.styleFrom(
-                              primary: primarycolor,
-                              onPrimary: whitecolor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                            GestureDetector(
+                              onTap: () =>
+                                  Get.toNamed('/profiledriver/${ride.userId}'),
+                              child: CircleAvatar(
+                                backgroundColor: primarycolor,
+                                foregroundColor: whitecolor,
+                                radius: 25,
+                                backgroundImage: NetworkImage(getimageurl(
+                                    "user",
+                                    'users',
+                                    ride.user?.additionalinfo?.image)),
                               ),
                             ),
-                            child: Icon(FeatherIcons.phoneCall,
-                                color: whitecolor, size: normaltextSize),
-                          ),
-                        ),
-                        SizedBox(width: 3),
-                        SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () => Get.toNamed("/messages/"),
-                            style: ElevatedButton.styleFrom(
-                              primary: primarycolor,
-                              onPrimary: whitecolor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                            GestureDetector(
+                              onTap: () =>
+                                  Get.toNamed('/profiledriver/${ride.userId}'),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      StaticText(
+                                          text: ride.user?.nameSurname ?? ' ',
+                                          weight: FontWeight.w600,
+                                          size: normaltextSize,
+                                          color: darkcolor),
+                                      SizedBox(width: 4),
+                                      Icon(
+                                        FeatherIcons.star,
+                                        color: Colors.yellow,
+                                        size: normaltextSize,
+                                      ),
+                                      StaticText(
+                                          text: "4",
+                                          weight: FontWeight.w500,
+                                          size: smalltextSize,
+                                          color: iconcolor),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: Get.width / 2.2,
+                                    child: StaticText(
+                                        align: TextAlign.left,
+                                        maxline: 2,
+                                        textOverflow: TextOverflow.clip,
+                                        text: getrideCardata(ride),
+                                        weight: FontWeight.w500,
+                                        size: smalltextSize,
+                                        color: iconcolor),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Icon(FeatherIcons.messageCircle,
-                                color: whitecolor, size: normaltextSize),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        _messagescontroller.callpageredirect(
+                                            'call', ride.user?.phone, context),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: primarycolor,
+                                      onPrimary: whitecolor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                    ),
+                                    child: Icon(FeatherIcons.phoneCall,
+                                        color: whitecolor,
+                                        size: normaltextSize),
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    onPressed: () => _messagescontroller
+                                        .createandredirectchat(auth_id.value,
+                                            ride.userId, context),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: primarycolor,
+                                      onPrimary: whitecolor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                    ),
+                                    child: Icon(FeatherIcons.messageCircle,
+                                        color: whitecolor,
+                                        size: normaltextSize),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ])
+                    : SizedBox(),
               ),
               Devider(),
             ],
@@ -876,48 +904,63 @@ class GoingController extends GetxController {
                       )
                     ]),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(width: 15),
-                    Container(
-                      width: 60,
-                      height: 60,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      decoration: BoxDecoration(
-                          color: whitecolor,
-                          borderRadius: BorderRadius.circular(30)),
-                      child: ImageClass(
-                        type: false,
-                        boxfit: BoxFit.contain,
-                        url: "./assets/images/money.png",
+                    GestureDetector(
+                      onTap: () => selectplace(1),
+                      child: Container(
+                        width: 110,
+                        height: 35,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: primarycolor,
+                                style: BorderStyle.solid,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(35),
+                            color: selectedplace.value != null &&
+                                    selectedplace.value == 1
+                                ? primarycolor
+                                : whitecolor),
+                        child: StaticText(
+                            color: selectedplace.value != null &&
+                                    selectedplace.value == 1
+                                ? whitecolor
+                                : darkcolor,
+                            size: normaltextSize,
+                            weight: FontWeight.w500,
+                            align: TextAlign.center,
+                            text: "choiseplace".tr),
                       ),
                     ),
-                    SizedBox(width: 15),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StaticText(
-                          color: darkcolor,
-                          size: normaltextSize,
-                          align: TextAlign.left,
-                          weight: FontWeight.w500,
-                          text: "nagd".tr,
-                        ),
-                        StaticText(
-                          color: iconcolor,
-                          size: smalltextSize,
-                          align: TextAlign.left,
-                          weight: FontWeight.w400,
-                          text: "changepaymentmethod".tr,
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: () => selectplace(2),
+                      child: Container(
+                        width: 150,
+                        height: 35,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: primarycolor,
+                                style: BorderStyle.solid,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(35),
+                            color: selectedplace.value != null &&
+                                    selectedplace.value == 2
+                                ? primarycolor
+                                : whitecolor),
+                        child: StaticText(
+                            color: selectedplace.value != null &&
+                                    selectedplace.value == 2
+                                ? whitecolor
+                                : darkcolor,
+                            size: normaltextSize,
+                            weight: FontWeight.w500,
+                            align: TextAlign.center,
+                            text: "fullreservation".tr),
+                      ),
                     ),
-                    SizedBox(width: 15),
-                    Icon(FeatherIcons.chevronRight,
-                        color: iconcolor, size: buttontextSize),
                   ],
                 ),
               ),

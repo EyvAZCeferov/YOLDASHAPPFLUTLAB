@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
 import 'package:yoldashapp/Controllers/AuthController.dart';
+import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
@@ -30,6 +31,7 @@ class MessagesController extends GetxController {
   ];
   late MainController _maincontroller = Get.put(MainController());
   final AuthController _authcontroller = Get.put(AuthController());
+  final GoingController _goingController = Get.put(GoingController());
   Rx<ScrollController> scrollController =
       Rx<ScrollController>(ScrollController());
   Rx<int?> auth_id = Rx<int?>(null);
@@ -311,7 +313,7 @@ class MessagesController extends GetxController {
     }
   }
 
-  void callpageredirect(type, context) async {
+  void callpageredirect(type, dynamic? value, context) async {
     try {
       if (type == "video") {
         var status = await handlepermissionreq(Permission.camera, context);
@@ -319,17 +321,37 @@ class MessagesController extends GetxController {
           Get.toNamed('/callpage/${type}', arguments: {type: type});
         }
       } else {
-        var phone;
-        
-        if (auth_id.value != selectedMessageGroup.value?.senderId) {
-          phone = selectedMessageGroup.value?.senderPhone;
-        } else {
-          phone = selectedMessageGroup.value?.receiverPhone;
-        }
-        launchUrlTOSITE("tel:$phone");
+        launchUrlTOSITE("tel:$value");
       }
     } catch (error) {
       showToastMSG(errorcolor, error.toString(), context);
+    }
+  }
+
+  void createandredirectchat(sender_id, receiver_id, context) async {
+    try {
+      _goingController.refreshpage.value=true;
+      refreshpage.value = true;
+      var body = {
+        'sender_id': sender_id,
+        'receiver_id': receiver_id,
+      };
+      var response = await GetAndPost.postData(
+          "messages_createandredirectchat", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          await getMessages(context, response['data']);
+          refreshpage.value = false;
+          _goingController.refreshpage.value=false;
+          Get.toNamed('/messages/${response['data']}',
+              arguments: selectedMessageGroup.value);
+        }
+      }
+    } catch (e) {
+      showToastMSG(errorcolor, e.toString(), context);
     }
   }
 

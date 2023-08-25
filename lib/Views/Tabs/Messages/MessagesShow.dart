@@ -15,6 +15,21 @@ import 'MessageBubble.dart';
 class MessagesShow extends StatelessWidget {
   late MessagesController _controller = Get.put(MessagesController());
 
+  String getNameToShow() {
+    String name = '';
+    if (_controller.authtype.value == 'rider') {
+      name = _controller.selectedMessageGroup.value?.receiverName ?? '';
+    } else {
+      name = _controller.selectedMessageGroup.value?.senderName ?? '';
+    }
+
+    if (name.length > 15) {
+      return name.substring(0, 15);
+    }
+
+    return name;
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -39,7 +54,11 @@ class MessagesShow extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => _controller.callpageredirect(
                       'call',
-                     
+                      _controller.auth_id.value !=
+                              _controller.selectedMessageGroup.value?.senderId
+                          ? _controller.selectedMessageGroup.value?.senderPhone
+                          : _controller
+                              .selectedMessageGroup.value?.receiverPhone,
                       context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
@@ -57,7 +76,7 @@ class MessagesShow extends StatelessWidget {
                 width: 50,
                 child: ElevatedButton(
                   onPressed: () =>
-                      _controller.callpageredirect('video', context),
+                      _controller.callpageredirect('video', null, context),
                   style: ElevatedButton.styleFrom(
                     primary: primarycolor,
                     onPrimary: whitecolor,
@@ -91,52 +110,32 @@ class MessagesShow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // CachedNetworkImage(
-                //   imageUrl: getimageurl(
-                //       "user",
-                //       "users",
-                //       _controller.authtype == 'rider'
-                //           ? _controller
-                //                   .selectedMessageGroup.value!.receiverImage ??
-                //               null
-                //           : _controller
-                //                   .selectedMessageGroup.value!.senderImage ??
-                //               null),
-                //   placeholder: (context, url) => CircularProgressIndicator(),
-                //   errorWidget: (context, url, error) => Icon(Icons.error),
-                //   imageBuilder: (context, imageProvider) => CircleAvatar(
-                //     backgroundColor: primarycolor,
-                //     foregroundColor: whitecolor,
-                //     radius: 20,
-                //     backgroundImage: imageProvider,
-                //   ),
-                // ),
+                CachedNetworkImage(
+                  imageUrl: getimageurl(
+                      "user",
+                      "users",
+                      _controller.authtype == 'rider'
+                          ? _controller
+                                  .selectedMessageGroup.value?.receiverImage ??
+                              null
+                          : _controller
+                                  .selectedMessageGroup.value?.senderImage ??
+                              null),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  imageBuilder: (context, imageProvider) => CircleAvatar(
+                    backgroundColor: primarycolor,
+                    foregroundColor: whitecolor,
+                    radius: 20,
+                    backgroundImage: imageProvider,
+                  ),
+                ),
                 SizedBox(width: 5),
                 StaticText(
                     align: TextAlign.center,
                     color: darkcolor,
                     size: smalltextSize,
-                    text: _controller.authtype.value == 'rider'
-                        ? _controller.selectedMessageGroup.value!.receiverName
-                                    .toString()
-                                    .length >
-                                15
-                            ? _controller
-                                .selectedMessageGroup.value!.receiverName
-                                .toString()
-                                .substring(0, 15)
-                            : _controller
-                                .selectedMessageGroup.value!.receiverName
-                                .toString()
-                        : _controller.selectedMessageGroup.value!.senderName
-                                    .toString()
-                                    .length >
-                                15
-                            ? _controller.selectedMessageGroup.value!.senderName
-                                .toString()
-                                .substring(0, 15)
-                            : _controller.selectedMessageGroup.value!.senderName
-                                .toString(),
+                    text: getNameToShow(),
                     weight: FontWeight.w500),
               ],
             )),
@@ -166,20 +165,19 @@ class MessagesShow extends StatelessWidget {
                                   var item = _controller
                                       .selectedMessageLists.value[index];
 
-                                  if (item!.status == false) {
+                                  if (item?.status == false) {
                                     _controller.readmessage(
-                                        item!.messageId as int,
-                                        item!.userId as int,
+                                        item?.messageId as int,
+                                        item?.userId as int,
                                         _controller.auth_id.value as int,
-                                        context as BuildContext
-                                        );
+                                        context as BuildContext);
                                   }
 
                                   return MessageBubble(
-                                    type: item!.messageelementtype ?? 'TEXT',
-                                    message: item!.message.toString(),
+                                    type: item?.messageelementtype ?? 'TEXT',
+                                    message: item?.message,
                                     isMine: _controller.auth_id.value ==
-                                            item.userId!
+                                            item?.userId
                                         ? true
                                         : false,
                                   );

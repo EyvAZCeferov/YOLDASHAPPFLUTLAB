@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1032,58 +1033,85 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               )
-                            : _controller.data.length > 0 &&
-                                    _controller.authtype == "rider" &&
-                                    _controller.resulttext.value == null &&
-                                    _controller.resulttext.value!.length == 0
+                            : _controller.data.value.length > 0 &&
+                                    (_controller.resulttext?.value == null ||
+                                        _controller.resulttext?.value == ' ' ||
+                                        _controller.resulttext?.value == '')
                                 ? Center(
                                     child: SizedBox(
                                     width: width - 40,
                                     height: width,
                                     child: ListView.builder(
-                                      itemCount: _controller.data.length,
+                                      itemCount: _controller.data.value.length,
                                       itemBuilder: (context, index) {
-                                        Rides ride = _controller.data[index];
-
+                                        Rides ride =
+                                            _controller.data.value[index];
+                                        String addressText = '';
+                                        if (ride.coordinates != null) {
+                                          addressText = ride.coordinates!
+                                              .map((element) =>
+                                                  element.address ?? '')
+                                              .join(', ');
+                                        }
                                         return GestureDetector(
                                           onTap: () => _controller.lookmore(
                                               ride, context),
                                           child: Center(
-                                              child: Container(
-                                            width: width - 40,
-                                            height: 100,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            margin: EdgeInsets.symmetric(
-                                                vertical: 8),
-                                            decoration: BoxDecoration(
+                                            child: Container(
+                                              width: width - 40,
+                                              height: 100,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 8),
+                                              decoration: BoxDecoration(
                                                 color: Colors.transparent,
                                                 border: Border(
                                                     bottom: BorderSide(
                                                         color: iconcolor,
                                                         style:
                                                             BorderStyle.solid,
-                                                        width: 1))),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    // Icon(
-                                                    //   FontAwesomeIcons.car,
-                                                    //   color: secondarycolor,
-                                                    //   size: subHeadingSize,
-                                                    // ),
-                                                    // SizedBox(width: 11),
-                                                    Column(
+                                                        width: 1)),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 50,
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: getimageurl(
+                                                          "models",
+                                                          'automobils/types',
+                                                          ride.automobil
+                                                              ?.autotype?.icon),
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          CircularProgressIndicator(),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(Icons.error),
+                                                      imageBuilder: (context,
+                                                              imageProvider) =>
+                                                          CircleAvatar(
+                                                        backgroundColor:
+                                                            primarycolor,
+                                                        foregroundColor:
+                                                            whitecolor,
+                                                        radius: 35,
+                                                        backgroundImage:
+                                                            imageProvider,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 11),
+                                                  SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
@@ -1092,62 +1120,48 @@ class _HomePageState extends State<HomePage> {
                                                               .start,
                                                       children: [
                                                         StaticText(
-                                                            maxline: 5,
-                                                            textOverflow:
-                                                                TextOverflow
-                                                                    .clip,
-                                                            text: ride
-                                                                    .fromCoordinates!
-                                                                    .address
-                                                                    .toString()
-                                                                    .substring(
-                                                                        0, 8) +
-                                                                " - " +
-                                                                ride.toCoordinates!
-                                                                    .address
-                                                                    .toString()
-                                                                    .substring(
-                                                                        0, 8),
-                                                            weight:
-                                                                FontWeight.w500,
-                                                            size:
-                                                                normaltextSize,
-                                                            color: darkcolor,
-                                                            align:
-                                                                TextAlign.left),
+                                                          maxline: 5,
+                                                          textOverflow:
+                                                              TextOverflow.clip,
+                                                          text: addressText,
+                                                          weight:
+                                                              FontWeight.w500,
+                                                          size: normaltextSize,
+                                                          color: darkcolor,
+                                                          align: TextAlign.left,
+                                                        ),
                                                         StaticText(
-                                                            text: ride
-                                                                .minimalPriceOfWay
-                                                                .toString(),
-                                                            weight:
-                                                                FontWeight.w500,
-                                                            size: smalltextSize,
-                                                            color: iconcolor,
-                                                            align:
-                                                                TextAlign.left),
+                                                          text:
+                                                              " ${ride.automobil?.autotype?.places}",
+                                                          weight:
+                                                              FontWeight.w500,
+                                                          size: smalltextSize,
+                                                          color: iconcolor,
+                                                          align: TextAlign.left,
+                                                        ),
                                                       ],
                                                     ),
-                                                  ],
-                                                ),
-                                                Center(
-                                                  child: ButtonElement(
-                                                    text: "more".tr,
-                                                    width: 110,
-                                                    height: 40,
-                                                    bgColor: primarycolor,
-                                                    textColor: whitecolor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
-                                                    fontsize: normaltextSize,
-                                                    onPressed: () =>
-                                                        _controller.lookmore(
-                                                            ride, context),
                                                   ),
-                                                ),
-                                              ],
+                                                  Center(
+                                                    child: ButtonElement(
+                                                      text: "more".tr,
+                                                      width: 110,
+                                                      height: 40,
+                                                      bgColor: primarycolor,
+                                                      textColor: whitecolor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      fontsize: normaltextSize,
+                                                      onPressed: () =>
+                                                          _controller.lookmore(
+                                                              ride, context),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          )),
+                                          ),
                                         );
                                       },
                                     ),
@@ -1156,18 +1170,18 @@ class _HomePageState extends State<HomePage> {
                                     child: SizedBox(
                                       width: width - 40,
                                       height: width / 1.6,
-                                      child: _controller.resulttext.value !=
+                                      child: _controller.resulttext?.value !=
                                                   null &&
-                                              _controller.resulttext.value !=
+                                              _controller.resulttext?.value !=
                                                   '' &&
-                                              _controller.resulttext.value !=
+                                              _controller.resulttext?.value !=
                                                   ' '
                                           ? Center(
                                               child: StaticText(
                                                   align: TextAlign.center,
                                                   text: _controller
-                                                      .resulttext.value
-                                                      .toString(),
+                                                          .resulttext?.value ??
+                                                      ' ',
                                                   weight: FontWeight.w700,
                                                   size: normaltextSize,
                                                   color: errorcolor),
