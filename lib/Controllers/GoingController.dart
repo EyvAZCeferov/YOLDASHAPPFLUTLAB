@@ -744,16 +744,49 @@ class GoingController extends GetxController {
           String message = "";
           if (response['message'] != null) message = response['message'];
           if (status == "success") {
-            data.value = [];
-            if (response['data'] != null && response['data'].length > 0) {
-              data.value = (response['data'] as List).map((dat) {
-                return Rides.fromMap(dat);
-              }).toList();
-              if (data.value.length == 0) {
+            if (authtype.value == "rider") {
+              data.value = [];
+              if (response['data'] != null && response['data'].length > 0) {
+                data.value = (response['data'] as List).map((dat) {
+                  return Rides.fromMap(dat);
+                }).toList();
+                if (data.value.length == 0) {
+                  resulttext.value = "nohasdataforallrides".tr;
+                }
+              } else {
                 resulttext.value = "nohasdataforallrides".tr;
               }
             } else {
-              resulttext.value = "nohasdataforallrides".tr;
+              if (type == "onsearch") {
+                data.value = [];
+                searchinglocations.value = [];
+                selectedindex.value = 0;
+                weightcontroller.value = TextEditingController();
+                priceofwaycontroller.value = TextEditingController();
+                tocontroller.value = TextEditingController();
+                markers.removeWhere(
+                    (element) => element?.markerId != "currentposition");
+                circles.removeWhere(
+                    (element) => element?.circleId != "currentposition");
+                minimumpriceofwaycontroller.value = TextEditingController();
+                openmodal.value = false;
+                addedsectionshow.value = false;
+                loading.value = false;
+                fromTime.value = DateTime.now();
+                toTime.value = DateTime.now().add(Duration(days: 4));
+                goinglocations.removeWhere(
+                    (element) => element?.type != "currentposition");
+                polyline.value = {};
+                inptype.value = "to";
+                mapped?.value = {};
+                resulttext.value = null;
+                if (response['data'] != null) {
+                  currentrides.value.add(Rides.fromMap(response['data']));
+                }
+                refreshpage.value = true;
+              }
+
+              getcurrentrides(context);
             }
             loading.value = false;
 
@@ -806,8 +839,6 @@ class GoingController extends GetxController {
 
     return data;
   }
-
-  void rides_getuserrides(user_id) {}
 
   void lookmore(Rides ride, BuildContext context) {
     _authController.getalldataoncache(context);
@@ -1167,6 +1198,7 @@ class GoingController extends GetxController {
     Map<String, dynamic> body = {};
     userlocations.value = [];
     var response = await GetAndPost.fetchData("rides", context, body);
+    print(response);
     if (response != null) {
       String status = response['status'];
       String message = '';

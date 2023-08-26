@@ -32,6 +32,151 @@ class _HomePageState extends State<HomePage> {
   late AuthController _authcontroller = Get.put(AuthController());
   late CardsController _cardscontroller = Get.put(CardsController());
 
+  String? getrideofferprice(Rides ride, type) {
+    if (type == "rider") {
+      List queries = ride.queries ?? [];
+      Queries? query;
+      if (queries != null && queries.length > 0) {
+        query = queries.firstWhere(
+            (element) => element.riderId == _controller.auth_id.value);
+        return query?.price ?? '0';
+      } else {
+        return '0';
+      }
+    } else {
+      return ride.priceOfWay ?? '0';
+    }
+  }
+
+  Widget getmyroutes(context) {
+    if (_controller.currentrides.value.length > 0 &&
+        _controller.currentrides.value != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _controller.currentrides.value.length,
+              itemBuilder: (context, index) {
+                Rides ride = _controller.currentrides.value[index];
+                String addressText = '';
+                if (ride.coordinates != null) {
+                  addressText = ride.coordinates!
+                      .map((element) => element.address ?? '')
+                      .join(', ');
+                }
+                return GestureDetector(
+                  onTap: () => showToastMSG(
+                      errorcolor, "Sehife uzerinde is gedir...", context),
+                  child: Center(
+                    child: Container(
+                      width: Get.width - 40,
+                      height: addressText.length > 45 ? 125 : 100,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: whitecolor,
+                        border: Border(
+                            bottom: BorderSide(
+                                color: iconcolor,
+                                style: BorderStyle.solid,
+                                width: 1)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 50,
+                            child: CachedNetworkImage(
+                              imageUrl: getimageurl(
+                                  "models",
+                                  'automobils/types',
+                                  ride.automobil?.autotype?.icon),
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              imageBuilder: (context, imageProvider) =>
+                                  CircleAvatar(
+                                backgroundColor: primarycolor,
+                                foregroundColor: whitecolor,
+                                radius: 35,
+                                backgroundImage: imageProvider,
+                              ),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          SizedBox(width: 11),
+                          SizedBox(
+                            width: Get.width / 1.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StaticText(
+                                  maxline: 5,
+                                  textOverflow: TextOverflow.clip,
+                                  text: addressText,
+                                  weight: FontWeight.w500,
+                                  size: normaltextSize,
+                                  color: darkcolor,
+                                  align: TextAlign.left,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FeatherIcons.user,
+                                      color: iconcolor,
+                                      size: normaltextSize,
+                                    ),
+                                    SizedBox(width: 4),
+                                    StaticText(
+                                      text:
+                                          "${ride.automobil?.autotype?.places}",
+                                      weight: FontWeight.w500,
+                                      size: smalltextSize,
+                                      color: iconcolor,
+                                      align: TextAlign.left,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Icon(
+                                      FontAwesomeIcons.moneyBill,
+                                      color: iconcolor,
+                                      size: normaltextSize,
+                                    ),
+                                    SizedBox(width: 4),
+                                    StaticText(
+                                      text:
+                                          " ${getrideofferprice(ride as Rides, _controller.authtype.value)}",
+                                      weight: FontWeight.w500,
+                                      size: smalltextSize,
+                                      color: iconcolor,
+                                      align: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _cardscontroller.fetchDatas(context);
@@ -324,133 +469,156 @@ class _HomePageState extends State<HomePage> {
                             left: 20,
                             width: width - 40,
                             child: Container(
-                                width: width - 40,
-                                height: width / 2.3,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                margin: EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                    color: whitecolor,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        blurStyle: BlurStyle.solid,
-                                        color: Colors.black38,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 4),
-                                        spreadRadius: 0,
-                                      )
-                                    ]),
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      _controller.openmodal.value = true,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Devider(size: 3),
-                                      StaticText(
-                                        color: darkcolor,
-                                        size: buttontextSize,
-                                        align: TextAlign.left,
-                                        weight: FontWeight.w600,
-                                        text: "wheredoyougo".tr,
-                                      ),
-                                      Devider(size: 3),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: 44,
-                                            height: 90,
-                                            child: ImageClass(
-                                                url:
-                                                    "./assets/images/destinationicon.png",
-                                                type: false),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Center(
-                                                child: SizedBox(
-                                                  width: width - 125,
-                                                  child: StaticText(
-                                                    color: iconcolor,
-                                                    size: normaltextSize,
-                                                    text: _controller
-                                                                    .fromcontroller
-                                                                    .value
-                                                                    .text !=
-                                                                null &&
-                                                            _controller
-                                                                    .fromcontroller
-                                                                    .value
-                                                                    .text
-                                                                    .toString()
-                                                                    .length >
-                                                                0
-                                                        ? _controller
-                                                            .fromcontroller
-                                                            .value
-                                                            .text
-                                                            .toString()
-                                                        : "from".tr,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.left,
-                                                  ),
+                                height: width,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    _controller.currentrides.value.length > 0 &&
+                                            _controller.currentrides.value
+                                                    .length !=
+                                                null
+                                        ? Container(
+                                            height: 170,
+                                            child: getmyroutes(context),
+                                          )
+                                        : SizedBox(),
+                                    Container(
+                                      width: width - 40,
+                                      height: width / 2.3,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      margin: EdgeInsets.symmetric(vertical: 8),
+                                      decoration: BoxDecoration(
+                                          color: whitecolor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              blurStyle: BlurStyle.solid,
+                                              color: Colors.black38,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
+                                              spreadRadius: 0,
+                                            )
+                                          ]),
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            _controller.openmodal.value = true,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Devider(size: 3),
+                                            StaticText(
+                                              color: darkcolor,
+                                              size: buttontextSize,
+                                              align: TextAlign.left,
+                                              weight: FontWeight.w600,
+                                              text: "wheredoyougo".tr,
+                                            ),
+                                            Devider(size: 3),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 44,
+                                                  height: 90,
+                                                  child: ImageClass(
+                                                      url:
+                                                          "./assets/images/destinationicon.png",
+                                                      type: false),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                height: 20,
-                                              ),
-                                              Center(
-                                                child: SizedBox(
-                                                  width: width - 125,
-                                                  child: StaticText(
-                                                    color: iconcolor,
-                                                    size: normaltextSize,
-                                                    text: _controller
-                                                                    .tocontroller
-                                                                    .value
-                                                                    .text !=
-                                                                null &&
-                                                            _controller
-                                                                    .tocontroller
-                                                                    .value
-                                                                    .text
-                                                                    .toString()
-                                                                    .length >
-                                                                0
-                                                        ? _controller
-                                                            .tocontroller
-                                                            .value
-                                                            .text
-                                                            .toString()
-                                                        : "to".tr,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.left,
-                                                  ),
+                                                SizedBox(
+                                                  width: 10,
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Center(
+                                                      child: SizedBox(
+                                                        width: width - 125,
+                                                        child: StaticText(
+                                                          color: iconcolor,
+                                                          size: normaltextSize,
+                                                          text: _controller
+                                                                          .fromcontroller
+                                                                          .value
+                                                                          .text !=
+                                                                      null &&
+                                                                  _controller
+                                                                          .fromcontroller
+                                                                          .value
+                                                                          .text
+                                                                          .toString()
+                                                                          .length >
+                                                                      0
+                                                              ? _controller
+                                                                  .fromcontroller
+                                                                  .value
+                                                                  .text
+                                                                  .toString()
+                                                              : "from".tr,
+                                                          weight:
+                                                              FontWeight.w400,
+                                                          align: TextAlign.left,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Center(
+                                                      child: SizedBox(
+                                                        width: width - 125,
+                                                        child: StaticText(
+                                                          color: iconcolor,
+                                                          size: normaltextSize,
+                                                          text: _controller
+                                                                          .tocontroller
+                                                                          .value
+                                                                          .text !=
+                                                                      null &&
+                                                                  _controller
+                                                                          .tocontroller
+                                                                          .value
+                                                                          .text
+                                                                          .toString()
+                                                                          .length >
+                                                                      0
+                                                              ? _controller
+                                                                  .tocontroller
+                                                                  .value
+                                                                  .text
+                                                                  .toString()
+                                                              : "to".tr,
+                                                          weight:
+                                                              FontWeight.w400,
+                                                          align: TextAlign.left,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Devider(size: 3),
+                                          ],
+                                        ),
                                       ),
-                                      Devider(size: 3),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 )),
                           ),
                   ])
@@ -910,54 +1078,6 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   ),
                                   Devider(),
-                                  _authcontroller.authType == "driver"
-                                      ? Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () =>
-                                                  print("Select Placing"),
-                                              child: Container(
-                                                width: width / 1.5,
-                                                height: 35,
-                                                alignment: Alignment.center,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 40,
-                                                      child: ImageClass(
-                                                        type: false,
-                                                        boxfit: BoxFit.contain,
-                                                        url:
-                                                            "./assets/images/yersayi.png",
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    StaticText(
-                                                        color: darkcolor,
-                                                        size: normaltextSize,
-                                                        weight: FontWeight.w500,
-                                                        align: TextAlign.center,
-                                                        text:
-                                                            "Yer sayı 3 nəfər boş"),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Devider(),
-                                          ],
-                                        )
-                                      : SizedBox(),
-                                  Devider(),
                                 ],
                               )
                             : SizedBox(),
@@ -1052,7 +1172,6 @@ class _HomePageState extends State<HomePage> {
                                               .map((element) =>
                                                   element.address ?? '')
                                               .join(', ');
-                                          print(addressText.length);
                                         }
                                         return GestureDetector(
                                           onTap: () => _controller.lookmore(
@@ -1061,7 +1180,7 @@ class _HomePageState extends State<HomePage> {
                                             child: Container(
                                               width: width - 40,
                                               height: addressText.length > 45
-                                                  ? 125
+                                                  ? 140
                                                   : 100,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10, vertical: 5),

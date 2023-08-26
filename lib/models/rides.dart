@@ -5,49 +5,56 @@ import 'package:yoldashapp/models/users.dart';
 
 class Rides {
   const Rides({
-      this.id,
-      this.userId,
-      this.automobilId,
-      this.coordinates,
-      this.startTime,
-      this.endTime,
-      this.kmofway,
-      this.durationofway,
-      this.minimalPriceOfWay,
-      this.priceOfWay,
-      this.paymentMethod,
-      this.status,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.queries,
-      this.automobil,
-      this.user,
+    this.id,
+    this.userId,
+    this.automobilId,
+    this.coordinates,
+    this.startTime,
+    this.endTime,
+    this.kmofway,
+    this.durationofway,
+    this.minimalPriceOfWay,
+    this.priceOfWay,
+    this.paymentMethod,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.queries,
+    this.automobil,
+    this.user,
   });
-  
+
   factory Rides.fromMap(Map<String, dynamic> map) => Rides(
-      id: map['id'],
-      userId: map['user_id'],
-      automobilId: map['automobil_id'],
-      coordinates: map['coordinates'] == null ? null : List<CoordinatesRides>.from(map['coordinates'].map((e) => CoordinatesRides.fromMap(e))),
-      startTime: map['start_time'],
-      endTime: map['end_time'],
-      kmofway: map['kmofway'],
-      durationofway: map['durationofway'],
-      minimalPriceOfWay: map['minimal_price_of_way'],
-      priceOfWay: map['price_of_way'],
-      paymentMethod: map['payment_method'],
-      status: map['status'],
-      createdAt: map['created_at'],
-      updatedAt: map['updated_at'],
-      deletedAt: map['deleted_at'],
-      queries: map['queries'] == null ? null : List<Queries>.from(map['queries'].map((e) => Queries.fromMap(e))),
-      automobil: map['automobil'] == null ? null : Automobils.fromMap(map['automobil']),
-      user: map['user'] == null ? null : Users.fromMap(map['user']),
-  );
-  
+        id: map['id'],
+        userId: map['user_id'],
+        automobilId: map['automobil_id'],
+        coordinates: map['coordinates'] == null
+            ? null
+            : List<CoordinatesRides>.from(
+                map['coordinates'].map((e) => CoordinatesRides.fromMap(e))),
+        startTime: map['start_time'],
+        endTime: map['end_time'],
+        kmofway: map['kmofway'],
+        durationofway: map['durationofway'],
+        minimalPriceOfWay: map['minimal_price_of_way'],
+        priceOfWay: map['price_of_way'],
+        paymentMethod: map['payment_method'],
+        status: map['status'],
+        createdAt: map['created_at'],
+        updatedAt: map['updated_at'],
+        deletedAt: map['deleted_at'],
+        queries: map['queries'] == null
+            ? null
+            : List<Queries>.from(map['queries'].map((e) => Queries.fromMap(e))),
+        automobil: map['automobil'] == null
+            ? null
+            : Automobils.fromMap(map['automobil']),
+        user: map['user'] == null ? null : Users.fromMap(map['user']),
+      );
+
   factory Rides.fromJson(String str) => Rides.fromMap(json.decode(str));
-  
+
   final int? id;
   final int? userId;
   final int? automobilId;
@@ -66,79 +73,80 @@ class Rides {
   final List<Queries>? queries;
   final Automobils? automobil;
   final Users? user;
-  
+
   Map<String, dynamic> toMap() => {
-      'id': id,
-      'user_id': userId,
-      'automobil_id': automobilId,
-      'coordinates': coordinates?.map((e) => e?.toMap()).toList(),
-      'start_time': startTime,
-      'end_time': endTime,
-      'kmofway': kmofway,
-      'durationofway': durationofway,
-      'minimal_price_of_way': minimalPriceOfWay,
-      'price_of_way': priceOfWay,
-      'payment_method': paymentMethod,
-      'status': status,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'deleted_at': deletedAt,
-      'queries': queries?.map((e) => e?.toMap()).toList(),
-      'automobil': automobil?.toMap(),
-      'user': user?.toMap(),
-  };
-  
+        'id': id,
+        'user_id': userId,
+        'automobil_id': automobilId,
+        'coordinates': coordinates?.map((e) => e?.toMap()).toList(),
+        'start_time': startTime,
+        'end_time': endTime,
+        'kmofway': kmofway,
+        'durationofway': durationofway,
+        'minimal_price_of_way': minimalPriceOfWay,
+        'price_of_way': priceOfWay,
+        'payment_method': paymentMethod,
+        'status': status,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
+        'deleted_at': deletedAt,
+        'queries': queries?.map((e) => e?.toMap()).toList(),
+        'automobil': automobil?.toMap(),
+        'user': user?.toMap(),
+      };
+
   String toJson() => json.encode(toMap());
-  
 }
 
 class Queries {
   const Queries({
-      this.id,
-      this.rideId,
-      this.userId,
-      this.driverId,
-      this.riderId,
-      this.status,
-      this.price,
-      this.weight,
-      this.position,
-      this.gender,
-      this.coordinates,
-      this.kmofway,
-      this.durationofway,
-      this.reasonId,
-      this.createdAt,
-      this.updatedAt,
-      this.driver,
-      this.rider,
-      this.reason,
+    this.id,
+    this.rideId,
+    this.userId,
+    this.driverId,
+    this.riderId,
+    this.status,
+    this.price,
+    this.weight,
+    this.position,
+    this.gender,
+    this.coordinates,
+    this.kmofway,
+    this.durationofway,
+    this.reasonId,
+    this.createdAt,
+    this.updatedAt,
+    this.driver,
+    this.rider,
+    this.reason,
   });
-  
+
   factory Queries.fromMap(Map<String, dynamic> map) => Queries(
-      id: map['id'],
-      rideId: map['ride_id'],
-      userId: map['user_id'],
-      driverId: map['driver_id'],
-      riderId: map['rider_id'],
-      status: map['status'],
-      price: map['price'],
-      weight: map['weight'],
-      position: map['position'],
-      gender: map['gender'],
-      coordinates: map['coordinates'] == null ? null : CoordinatesRides.fromMap(map['coordinates']),
-      kmofway: map['kmofway'],
-      durationofway: map['durationofway'],
-      reasonId: map['reason_id'],
-      createdAt: map['created_at'],
-      updatedAt: map['updated_at'],
-      driver: map['driver'] == null ? null : Users.fromMap(map['driver']),
-      rider: map['rider'] == null ? null : Users.fromMap(map['rider']),
-      reason: map['reason'],
-  );
-  
+        id: map['id'],
+        rideId: map['ride_id'],
+        userId: map['user_id'],
+        driverId: map['driver_id'],
+        riderId: map['rider_id'],
+        status: map['status'],
+        price: map['price'],
+        weight: map['weight'],
+        position: map['position'],
+        gender: map['gender'],
+        coordinates: map['coordinates'] == null
+            ? null
+            : CoordinatesRides.fromMap(map['coordinates']),
+        kmofway: map['kmofway'],
+        durationofway: map['durationofway'],
+        reasonId: map['reason_id'],
+        createdAt: map['created_at'],
+        updatedAt: map['updated_at'],
+        driver: map['driver'] == null ? null : Users.fromMap(map['driver']),
+        rider: map['rider'] == null ? null : Users.fromMap(map['rider']),
+        reason: map['reason'],
+      );
+
   factory Queries.fromJson(String str) => Queries.fromMap(json.decode(str));
-  
+
   final int? id;
   final int? rideId;
   final int? userId;
@@ -157,60 +165,107 @@ class Queries {
   final String? updatedAt;
   final Users? driver;
   final Users? rider;
-  final dynamic? reason;
-  
+  final Reason? reason;
+
   Map<String, dynamic> toMap() => {
-      'id': id,
-      'ride_id': rideId,
-      'user_id': userId,
-      'driver_id': driverId,
-      'rider_id': riderId,
-      'status': status,
-      'price': price,
-      'weight': weight,
-      'position': position,
-      'gender': gender,
-      'coordinates': coordinates?.toMap(),
-      'kmofway': kmofway,
-      'durationofway': durationofway,
-      'reason_id': reasonId,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'driver': driver?.toMap(),
-      'rider': rider,
-      'reason': reason,
-  };
-  
+        'id': id,
+        'ride_id': rideId,
+        'user_id': userId,
+        'driver_id': driverId,
+        'rider_id': riderId,
+        'status': status,
+        'price': price,
+        'weight': weight,
+        'position': position,
+        'gender': gender,
+        'coordinates': coordinates?.toMap(),
+        'kmofway': kmofway,
+        'durationofway': durationofway,
+        'reason_id': reasonId,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
+        'driver': driver?.toMap(),
+        'rider': rider,
+        'reason': reason,
+      };
+
   String toJson() => json.encode(toMap());
-  
+}
+
+class Reason {
+  const Reason({
+    this.id,
+    this.name,
+    this.slugs,
+    this.order,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+  });
+
+  factory Reason.fromMap(Map<String, dynamic> map) => Reason(
+        id: map['id'],
+        name: map['name'] == null ? null : Name.fromMap(map['name']),
+        slugs: map['slugs'] == null ? null : Slugs.fromMap(map['slugs']),
+        order: map['order'],
+        status: map['status'],
+        createdAt: map['created_at'],
+        updatedAt: map['updated_at'],
+        deletedAt: map['deleted_at'],
+      );
+
+  factory Reason.fromJson(String str) => Reason.fromMap(json.decode(str));
+
+  final int? id;
+  final Name? name;
+  final Slugs? slugs;
+  final int? order;
+  final bool? status;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? deletedAt;
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        "name": name?.toMap(),
+        "slugs": slugs?.toMap(),
+        "order": order,
+        "status": status,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+        "deleted_at": deletedAt,
+      };
+
+  String toJson() => json.encode(toMap());
 }
 
 class CoordinatesRides {
   const CoordinatesRides({
-      this.latitude,
-      this.longitude,
-      this.address,
+    this.latitude,
+    this.longitude,
+    this.address,
   });
-  
-  factory CoordinatesRides.fromMap(Map<String, dynamic> map) => CoordinatesRides(
-      latitude: map['latitude'],
-      longitude: map['longitude'],
-      address: map['address'],
-  );
-  
-  factory CoordinatesRides.fromJson(String str) => CoordinatesRides.fromMap(json.decode(str));
-  
+
+  factory CoordinatesRides.fromMap(Map<String, dynamic> map) =>
+      CoordinatesRides(
+        latitude: map['latitude'],
+        longitude: map['longitude'],
+        address: map['address'],
+      );
+
+  factory CoordinatesRides.fromJson(String str) =>
+      CoordinatesRides.fromMap(json.decode(str));
+
   final String? latitude;
   final String? longitude;
   final String? address;
-  
-  Map<String, dynamic> toMap() => {
-      'latitude': latitude,
-      'longitude': longitude,
-      'address': address,
-  };
-  
-  String toJson() => json.encode(toMap());
-  
-}
 
+  Map<String, dynamic> toMap() => {
+        'latitude': latitude,
+        'longitude': longitude,
+        'address': address,
+      };
+
+  String toJson() => json.encode(toMap());
+}
