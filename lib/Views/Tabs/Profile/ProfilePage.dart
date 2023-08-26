@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Center(
                       child: Container(
-                        height: width / 3,
+                        height: width / 4,
                         width: width - 40,
                         alignment: Alignment.center,
                         padding:
@@ -121,32 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Get.toNamed("/profileinformation"))
                                   ],
                                 ),
-                                _controller.userdatas.value != null &&
-                                        _controller.userdatas.value?.email !=
-                                            '' &&
-                                        _controller.userdatas.value?.email !=
-                                            ' '
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                            Icon(
-                                              FeatherIcons.mail,
-                                              color: secondarycolor,
-                                              size: normaltextSize,
-                                            ),
-                                            StaticText(
-                                                text: ' ' +
-                                                    _controller
-                                                        .userdatas.value!.email
-                                                        .toString(),
-                                                weight: FontWeight.w500,
-                                                size: smalltextSize,
-                                                color: Colors.grey),
-                                          ])
-                                    : SizedBox(),
+                               
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,

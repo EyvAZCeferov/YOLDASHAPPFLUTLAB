@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:yoldashapp/Controllers/AuthController.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
 import 'package:yoldashapp/models/distancedetails.dart';
 import 'package:yoldashapp/models/rides.dart';
@@ -17,10 +17,12 @@ import 'package:yoldashapp/models/searchionglocations.dart';
 import '../Constants/ButtonElement.dart';
 import '../Constants/Devider.dart';
 import '../Constants/ImageClass.dart';
+import '../Constants/InputElement.dart';
 import '../Constants/StaticText.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
+import '../models/automobils.dart';
 import '../models/user_locations.dart';
 import 'CardsController.dart';
 import 'MainController.dart';
@@ -29,6 +31,7 @@ import 'MessagesController.dart';
 class GoingController extends GetxController {
   late MainController _maincontroller = Get.put(MainController());
   late MessagesController _messagescontroller = Get.put(MessagesController());
+  late AuthController _authController = Get.put(AuthController());
   late AutomobilsController _automobilscontroller =
       Get.put(AutomobilsController());
   Rx<bool> refreshpage = Rx<bool>(false);
@@ -49,7 +52,7 @@ class GoingController extends GetxController {
   final selectedindex = 0.obs;
   final Rx<DateTime> fromTime = DateTime.now().obs;
   final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 4)).obs;
-  final selectedplace = 0.obs;
+  Rx<int> selectedplace = Rx<int>(0);
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
   final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
@@ -71,6 +74,7 @@ class GoingController extends GetxController {
   Rx<LatLng?> latLngPos = Rx<LatLng?>(null);
   RxMap? mapped = RxMap();
   Rx<String?> resulttext = Rx<String?>(null);
+  RxList<Rides> currentrides = <Rides>[].obs;
 
   CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(40.409264, 49.867092),
@@ -88,6 +92,7 @@ class GoingController extends GetxController {
 
   void getcurrentposition(context) async {
     refreshpage.value = true;
+    getcurrentrides(context);
     await handlepermissionreq(Permission.location, context);
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -433,52 +438,111 @@ class GoingController extends GetxController {
     }
   }
 
-  void selectplace(index) {
-    selectedplace.value = 0;
-    selectedplace.value = index;
+  void selectplace(index, List places, Rides ride, BuildContext context) {
+    selectedindex.value = index;
     if (index == 1) {
       Get.bottomSheet(Container(
-        height: 300,
+        height: 500,
         color: Colors.white,
         child: Column(
           children: [
-            Devider(),
+            Devider(size: 25),
             StaticText(
               color: secondarycolor,
               size: buttontextSize,
               text: "pleaseselectplaceandclick".tr,
               weight: FontWeight.w500,
               align: TextAlign.center,
+              maxline: 2,
             ),
-            Devider(),
-            Expanded(
-              child: Center(
-                child: SizedBox(
-                  width: Get.width - 40,
-                  child: ImageClass(
-                    type: false,
-                    boxfit: BoxFit.contain,
-                    url: "./assets/images/places.png",
-                  ),
-                ),
-              ),
+            Devider(size: 25),
+            Column(
+              children: groupAndSortPlaces(
+                  places as List<PlacesMark>, context as BuildContext),
             ),
-            Devider(),
-            ButtonElement(
-              text: "choise".tr,
-              width: 90,
-              onPressed: () => Get.back(),
-              bgColor: primarycolor,
-              borderRadius: BorderRadius.circular(45),
-              fontsize: normaltextSize,
-              height: 45,
-              textColor: whitecolor,
+            Devider(
+              size: 25,
             ),
-            Devider(),
           ],
         ),
       ));
+    } else {
+      Get.back();
+      lookmore(ride, context);
     }
+  }
+
+  List<Widget> groupAndSortPlaces(List<PlacesMark> places, context) {
+    Map<int, List<PlacesMark>> rowGroups = {};
+
+    for (var place in places) {
+      final row = place.row ?? 0;
+      if (!rowGroups.containsKey(row)) {
+        rowGroups[row] = [];
+      }
+      rowGroups[row]!.add(place);
+    }
+
+    rowGroups.forEach((row, group) {
+      group.sort((a, b) {
+        final positionA = a.position ?? 0;
+        final positionB = b.position ?? 0;
+        return positionA.compareTo(positionB);
+      });
+    });
+
+    List<Widget> groupedItems = rowGroups.entries.map((entry) {
+      List<Widget> rowWidgets = entry.value.map((place) {
+        String imageUrl;
+        if (place.type == "driver") {
+          imageUrl = './assets/images/place_driver.png';
+        } else {
+          imageUrl = './assets/images/place_rider.png';
+        }
+
+        return GestureDetector(
+          onTap: () {
+            if (place.type == "driver") {
+              showToastMSG(errorcolor, "youarenotselectingdriver".tr, context);
+            } else {
+              refreshpage.value = true;
+              selectedplace.value = place.id!;
+              refreshpage.value = false;
+              showToastMSG(
+                  primarycolor,
+                  "youarenotselectingdriver".trParams({
+                    "rider":
+                        getLocalizedValue(place.name as Name, "name").toString()
+                  }),
+                  context);
+              Get.back();
+            }
+          },
+          child: Container(
+            width: 60,
+            height: 60,
+            alignment: Alignment.center,
+            child: ImageClass(
+              url: selectedplace.value != 0 && selectedplace.value == place.id
+                  ? _authController.userdatas.value?.additionalinfo?.gender == 1
+                      ? './assets/images/place_man.png'
+                      : './assets/images/place_woman.png'
+                  : imageUrl,
+              type: false,
+              boxfit: BoxFit.contain,
+            ),
+          ),
+        );
+      }).toList();
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: rowWidgets,
+      );
+    }).toList();
+
+    return groupedItems;
   }
 
   void createroute(context) async {
@@ -745,11 +809,11 @@ class GoingController extends GetxController {
 
   void rides_getuserrides(user_id) {}
 
-  void lookmore(Rides ride, context) {
-    print("RIDES");
-    print(ride.coordinates![0].address);
+  void lookmore(Rides ride, BuildContext context) {
+    _authController.getalldataoncache(context);
+    priceofwaycontroller.value.text = ride.priceOfWay!;
     Get.bottomSheet(Container(
-      height: 300,
+      height: 400,
       color: Colors.white,
       child: Column(
         children: [
@@ -770,7 +834,7 @@ class GoingController extends GetxController {
               Devider(),
               SizedBox(
                 width: Get.width - 30,
-                child: ride.userId != auth_id.value
+                child: ride.userId != auth_id?.value
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -806,16 +870,6 @@ class GoingController extends GetxController {
                                           size: normaltextSize,
                                           color: darkcolor),
                                       SizedBox(width: 4),
-                                      Icon(
-                                        FeatherIcons.star,
-                                        color: Colors.yellow,
-                                        size: normaltextSize,
-                                      ),
-                                      StaticText(
-                                          text: "4",
-                                          weight: FontWeight.w500,
-                                          size: smalltextSize,
-                                          color: iconcolor),
                                     ],
                                   ),
                                   SizedBox(
@@ -861,7 +915,7 @@ class GoingController extends GetxController {
                                   height: 50,
                                   child: ElevatedButton(
                                     onPressed: () => _messagescontroller
-                                        .createandredirectchat(auth_id.value,
+                                        .createandredirectchat(auth_id?.value,
                                             ride.userId, context),
                                     style: ElevatedButton.styleFrom(
                                       primary: primarycolor,
@@ -884,85 +938,93 @@ class GoingController extends GetxController {
             ],
           )),
           Devider(),
+          Container(
+            width: Get.width - 40,
+            height: 53,
+            decoration: BoxDecoration(
+                color: whitecolor,
+                borderRadius: BorderRadius.all(Radius.circular(50))),
+            child: InputElement(
+                placeholder: "wayofprice".tr,
+                accentColor: primarycolor,
+                textColor: bodycolor,
+                inputType: TextInputType.text,
+                cornerradius: BorderRadius.all(Radius.circular(50)),
+                controller: priceofwaycontroller.value),
+          ),
+          Devider(),
           Center(
-            child: GestureDetector(
-              onTap: () => changemethod(context),
-              child: Container(
-                width: Get.width - 40,
-                height: 70,
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color(0xffECECEC),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        blurStyle: BlurStyle.solid,
-                        color: Colors.black38,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ]),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => selectplace(1),
-                      child: Container(
-                        width: 110,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: primarycolor,
-                                style: BorderStyle.solid,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(35),
-                            color: selectedplace.value != null &&
-                                    selectedplace.value == 1
-                                ? primarycolor
-                                : whitecolor),
-                        child: StaticText(
-                            color: selectedplace.value != null &&
-                                    selectedplace.value == 1
-                                ? whitecolor
-                                : darkcolor,
-                            size: normaltextSize,
-                            weight: FontWeight.w500,
-                            align: TextAlign.center,
-                            text: "choiseplace".tr),
-                      ),
+            child: Container(
+              width: Get.width - 40,
+              height: 70,
+              margin: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => selectplace(
+                        1,
+                        ride.automobil?.autotype?.placesMark ?? [],
+                        ride as Rides,
+                        context as BuildContext),
+                    child: Container(
+                      width: 110,
+                      height: 35,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: primarycolor,
+                              style: BorderStyle.solid,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(35),
+                          color: selectedplace.value != null &&
+                                  selectedplace.value == 1
+                              ? primarycolor
+                              : whitecolor),
+                      child: StaticText(
+                          color: selectedplace.value != null &&
+                                  selectedplace.value == 1
+                              ? whitecolor
+                              : darkcolor,
+                          size: normaltextSize,
+                          weight: FontWeight.w500,
+                          align: TextAlign.center,
+                          text: "choiseplace".tr),
                     ),
-                    GestureDetector(
-                      onTap: () => selectplace(2),
-                      child: Container(
-                        width: 150,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: primarycolor,
-                                style: BorderStyle.solid,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(35),
-                            color: selectedplace.value != null &&
-                                    selectedplace.value == 2
-                                ? primarycolor
-                                : whitecolor),
-                        child: StaticText(
-                            color: selectedplace.value != null &&
-                                    selectedplace.value == 2
-                                ? whitecolor
-                                : darkcolor,
-                            size: normaltextSize,
-                            weight: FontWeight.w500,
-                            align: TextAlign.center,
-                            text: "fullreservation".tr),
-                      ),
+                  ),
+                  GestureDetector(
+                    onTap: () => selectplace(
+                        2,
+                        ride.automobil?.autotype?.placesMark ?? [],
+                        ride as Rides,
+                        context as BuildContext),
+                    child: Container(
+                      width: 150,
+                      height: 35,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: primarycolor,
+                              style: BorderStyle.solid,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(35),
+                          color: selectedplace.value != null &&
+                                  selectedplace.value == 2
+                              ? primarycolor
+                              : whitecolor),
+                      child: StaticText(
+                          color: selectedplace.value != null &&
+                                  selectedplace.value == 2
+                              ? whitecolor
+                              : darkcolor,
+                          size: normaltextSize,
+                          weight: FontWeight.w500,
+                          align: TextAlign.center,
+                          text: "fullreservation".tr),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -974,7 +1036,11 @@ class GoingController extends GetxController {
               ButtonElement(
                 text: "close".tr,
                 width: 90,
-                onPressed: () => Get.back(),
+                onPressed: () {
+                  selectedplace.value = 0;
+                  selectedindex.value = 0;
+                  Get.back();
+                },
                 bgColor: primarycolor,
                 borderRadius: BorderRadius.circular(45),
                 fontsize: normaltextSize,
@@ -987,7 +1053,8 @@ class GoingController extends GetxController {
               ButtonElement(
                 text: "reguestnow".tr,
                 width: 160,
-                onPressed: () => Get.back(),
+                onPressed: () =>
+                    getrequestforride(ride as Rides, context as BuildContext),
                 bgColor: primarycolor,
                 borderRadius: BorderRadius.circular(80),
                 fontsize: normaltextSize,
@@ -1000,6 +1067,123 @@ class GoingController extends GetxController {
         ],
       ),
     ));
+  }
+
+  void getrequestforride(Rides ride, BuildContext context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {
+      "ride_id": ride.id,
+      "price": priceofwaycontroller.value.text ?? 0,
+      "weight": weightcontroller.value.text ?? 0,
+      "position": selectedplace.value ?? null,
+      "coordinates": [
+        {
+          "latitude": markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .position!
+              .latitude
+              .toString(),
+          "longitude": markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .position!
+              .longitude
+              .toString(),
+          "address": markers.value
+              .firstWhere(
+                  (element) => element?.markerId.value == "currentposition")!
+              .infoWindow
+              .title
+        },
+        {
+          "latitude": markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value != "destinationposition")!
+              .position!
+              .latitude
+              .toString(),
+          "longitude": markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value != "destinationposition")!
+              .position!
+              .longitude
+              .toString(),
+          "address": markers.value
+              .firstWhere((element) =>
+                  element?.markerId.value == "destinationposition")!
+              .infoWindow
+              .title
+        },
+      ],
+    };
+    var response =
+        await GetAndPost.postData("rides_sendrequest", body, context);
+    Get.back();
+
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        data.value = [];
+        searchinglocations.value = [];
+        selectedindex.value = 0;
+        weightcontroller.value = TextEditingController();
+        priceofwaycontroller.value = TextEditingController();
+        tocontroller.value = TextEditingController();
+        markers
+            .removeWhere((element) => element?.markerId != "currentposition");
+        circles
+            .removeWhere((element) => element?.circleId != "currentposition");
+        minimumpriceofwaycontroller.value = TextEditingController();
+        openmodal.value = false;
+        addedsectionshow.value = false;
+        loading.value = false;
+        fromTime.value = DateTime.now();
+        toTime.value = DateTime.now().add(Duration(days: 4));
+        goinglocations
+            .removeWhere((element) => element?.type != "currentposition");
+        polyline.value = {};
+        inptype.value = "to";
+        mapped?.value = {};
+        resulttext.value = null;
+        if (response['data'] != null) {
+          currentrides.value.add(Rides.fromMap(response['data']));
+        }
+        refreshpage.value = true;
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  void getcurrentrides(BuildContext context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    userlocations.value = [];
+    var response = await GetAndPost.fetchData("rides", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        currentrides.value = (response['data'] as List).map((dat) {
+          return Rides.fromMap(dat);
+        }).toList();
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      userlocations.value = [];
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
   }
 
   void changemethod(context) {
@@ -1083,8 +1267,6 @@ class GoingController extends GetxController {
       },
     );
   }
-
-  void selectplacing() {}
 
   void fetchlocations(context) async {
     try {

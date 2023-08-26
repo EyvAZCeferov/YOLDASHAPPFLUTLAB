@@ -37,9 +37,8 @@ class Automobils {
         model: map["model"],
         color: map["color"],
         autoTypeId: map["auto_type_id"],
-        autotype: map["autotype"] == null
-            ? null
-            : AutoType.fromMap(map["autotype"]),
+        autotype:
+            map["autotype"] == null ? null : AutoType.fromMap(map["autotype"]),
         images: map["images"] == null
             ? null
             : List<Images>.from(map["images"].map((e) => Images.fromMap(e))),
@@ -130,33 +129,36 @@ class Images {
 }
 
 class AutoType {
-  const AutoType({
-    this.id,
-    this.icon,
-    this.name,
-    this.order_number,
-    this.places,
-    this.weight_kg,
-    this.weight_liter,
-    this.status,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-  });
+  const AutoType(
+      {this.id,
+      this.icon,
+      this.name,
+      this.order_number,
+      this.places,
+      this.weight_kg,
+      this.weight_liter,
+      this.status,
+      this.createdAt,
+      this.updatedAt,
+      this.deletedAt,
+      this.placesMark});
 
   factory AutoType.fromMap(Map<String, dynamic> map) => AutoType(
-        id: map["id"],
-        icon: map['icon'],
-        name: map["name"] == null ? null : Name.fromMap(map["name"]),
-        order_number: map['order_number'],
-        places: map['places'],
-        weight_kg: map['weight_kg'],
-        weight_liter: map['weight_liter'],
-        status: map['status'],
-        createdAt: map["created_at"],
-        updatedAt: map["updated_at"],
-        deletedAt: map["deleted_at"],
-      );
+      id: map["id"],
+      icon: map['icon'],
+      name: map["name"] == null ? null : Name.fromMap(map["name"]),
+      order_number: map['order_number'],
+      places: map['places'],
+      weight_kg: map['weight_kg'],
+      weight_liter: map['weight_liter'],
+      status: map['status'],
+      createdAt: map["created_at"],
+      updatedAt: map["updated_at"],
+      deletedAt: map["deleted_at"],
+      placesMark: map["places_mark"] == null
+          ? null
+          : List<PlacesMark>.from(
+              map['places_mark'].map((e) => PlacesMark.fromMap(e))));
 
   factory AutoType.fromJson(String str) => AutoType.fromMap(json.decode(str));
 
@@ -170,7 +172,8 @@ class AutoType {
   final bool? status;
   final String? createdAt;
   final String? updatedAt;
-  final dynamic deletedAt;
+  final String? deletedAt;
+  final List<PlacesMark>? placesMark;
 
   Map<String, dynamic> toMap() => {
         "id": id,
@@ -181,6 +184,64 @@ class AutoType {
         "weight_kg": weight_kg,
         "weight_liter": weight_liter,
         "status": status,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+        "deleted_at": deletedAt,
+        "placesMark": placesMark?.map((e) => e?.toMap()).toList(),
+      };
+
+  String toJson() => json.encode(toMap());
+}
+
+class PlacesMark {
+  const PlacesMark({
+    this.id,
+    this.autoTypeId,
+    this.name,
+    this.slugs,
+    this.type,
+    this.row,
+    this.position,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+  });
+
+  factory PlacesMark.fromMap(Map<String, dynamic> map) => PlacesMark(
+        id: map["id"],
+        autoTypeId: map["auto_type_id"],
+        name: map["name"] == null ? null : Name.fromMap(map["name"]),
+        slugs: map["slugs"] == null ? null : Slugs.fromMap(map["slugs"]),
+        type: map["type"],
+        row: map["row"],
+        position: map["position"],
+        createdAt: map["created_at"],
+        updatedAt: map["updated_at"],
+        deletedAt: map["deleted_at"],
+      );
+
+  factory PlacesMark.fromJson(String str) =>
+      PlacesMark.fromMap(json.decode(str));
+
+  final int? id;
+  final int? autoTypeId;
+  final Name? name;
+  final Slugs? slugs;
+  final String? type;
+  final int? row;
+  final int? position;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? deletedAt;
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "auto_type_id": autoTypeId,
+        "name": name?.toMap(),
+        "slugs": slugs?.toMap(),
+        "type": type,
+        "row": row,
+        "position": position,
         "created_at": createdAt,
         "updated_at": updatedAt,
         "deleted_at": deletedAt,
@@ -219,23 +280,6 @@ class Slugs {
       };
 
   String toJson() => json.encode(toMap());
-
-  Slugs copyWith({
-    String? azSlug,
-    String? ruSlug,
-    String? enSlug,
-    String? trSlug,
-  }) =>
-      Slugs(
-        azSlug: azSlug ?? this.azSlug,
-        ruSlug: ruSlug ?? this.ruSlug,
-        enSlug: enSlug ?? this.enSlug,
-        trSlug: trSlug ?? this.trSlug,
-      );
-
-  @override
-  String toString() =>
-      "Slugs(azSlug: $azSlug, ruSlug: $ruSlug, enSlug: $enSlug, trSlug: $trSlug)";
 }
 
 class Name {
@@ -268,21 +312,4 @@ class Name {
       };
 
   String toJson() => json.encode(toMap());
-
-  Name copyWith({
-    String? azName,
-    String? ruName,
-    String? enName,
-    String? trName,
-  }) =>
-      Name(
-        azName: azName ?? this.azName,
-        ruName: ruName ?? this.ruName,
-        enName: enName ?? this.enName,
-        trName: trName ?? this.trName,
-      );
-
-  @override
-  String toString() =>
-      "Name(azName: $azName, ruName: $ruName, enName: $enName, trName: $trName)";
 }

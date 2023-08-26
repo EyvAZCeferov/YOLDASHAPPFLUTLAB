@@ -919,7 +919,7 @@ class _HomePageState extends State<HomePage> {
                                           children: [
                                             GestureDetector(
                                               onTap: () =>
-                                                  _controller.selectplacing(),
+                                                  print("Select Placing"),
                                               child: Container(
                                                 width: width / 1.5,
                                                 height: 35,
@@ -1052,6 +1052,7 @@ class _HomePageState extends State<HomePage> {
                                               .map((element) =>
                                                   element.address ?? '')
                                               .join(', ');
+                                          print(addressText.length);
                                         }
                                         return GestureDetector(
                                           onTap: () => _controller.lookmore(
@@ -1059,7 +1060,9 @@ class _HomePageState extends State<HomePage> {
                                           child: Center(
                                             child: Container(
                                               width: width - 40,
-                                              height: 100,
+                                              height: addressText.length > 45
+                                                  ? 125
+                                                  : 100,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10, vertical: 5),
                                               margin: EdgeInsets.symmetric(
@@ -1078,7 +1081,7 @@ class _HomePageState extends State<HomePage> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   SizedBox(
                                                     width: 50,
@@ -1108,9 +1111,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 11),
-                                                  SingleChildScrollView(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
+                                                  SizedBox(
+                                                    width: Get.width / 2.6,
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1130,14 +1132,53 @@ class _HomePageState extends State<HomePage> {
                                                           color: darkcolor,
                                                           align: TextAlign.left,
                                                         ),
-                                                        StaticText(
-                                                          text:
-                                                              " ${ride.automobil?.autotype?.places}",
-                                                          weight:
-                                                              FontWeight.w500,
-                                                          size: smalltextSize,
-                                                          color: iconcolor,
-                                                          align: TextAlign.left,
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                              FeatherIcons.user,
+                                                              color: iconcolor,
+                                                              size:
+                                                                  normaltextSize,
+                                                            ),
+                                                            SizedBox(width: 4),
+                                                            StaticText(
+                                                              text:
+                                                                  " ${ride.automobil?.autotype?.places}",
+                                                              weight: FontWeight
+                                                                  .w500,
+                                                              size:
+                                                                  smalltextSize,
+                                                              color: iconcolor,
+                                                              align: TextAlign
+                                                                  .left,
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Icon(
+                                                              FontAwesomeIcons
+                                                                  .moneyBill,
+                                                              color: iconcolor,
+                                                              size:
+                                                                  normaltextSize,
+                                                            ),
+                                                            SizedBox(width: 4),
+                                                            StaticText(
+                                                              text:
+                                                                  " ${ride.priceOfWay}",
+                                                              weight: FontWeight
+                                                                  .w500,
+                                                              size:
+                                                                  smalltextSize,
+                                                              color: iconcolor,
+                                                              align: TextAlign
+                                                                  .left,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),

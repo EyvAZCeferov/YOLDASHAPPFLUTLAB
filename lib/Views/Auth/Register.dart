@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/DateElement.dart';

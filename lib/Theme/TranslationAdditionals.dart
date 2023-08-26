@@ -145,7 +145,9 @@ class TranslationAdditionals extends Translations {
           "autotype": "Avtomobil tipi",
           "autoimages": "Avtomobil şəkilləri",
           "waiting": "Gözləmədə",
-          "nohasdataforallrides": "Axtardığınız parametrlərdə gediş tapılmadı."
+          "nohasdataforallrides": "Axtardığınız parametrlərdə gediş tapılmadı.",
+          "youarenotselectingdriver":"Sürücü qoltuğunu seçə bilmərsiniz",
+          "youareselectedrider":"@rider qoltuğunu seçdiniz."
         }
       };
 }

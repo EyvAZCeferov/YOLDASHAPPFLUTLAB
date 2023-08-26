@@ -45,10 +45,10 @@ class Users {
   final String? phone;
   final bool? status;
   final dynamic provider;
-  final dynamic providerId;
+  final int? providerId;
   final String? createdAt;
   final String? updatedAt;
-  final dynamic deletedAt;
+  final String? deletedAt;
   final Additionalinfo? additionalinfo;
   final List<StatusActions>? statusActions;
 
@@ -129,7 +129,8 @@ class Additionalinfo {
         birthday: map["birthday"],
         gender: map["gender"],
         description: map["description"],
-        knownLanguages: map["known_languages"],
+        knownLanguages: (map["known_languages"] as List<dynamic>?)
+          ?.map<String>((dynamic item) => item.toString())?.toList(),
         originalPassword: map["original_password"],
         createdAt: map["created_at"],
         updatedAt: map["updated_at"],
@@ -140,12 +141,12 @@ class Additionalinfo {
 
   final int? id;
   final int? userId;
-  final dynamic image;
+  final String? image;
   final String? birthday;
   final int? gender;
-  final dynamic description;
-  final dynamic knownLanguages;
-  final dynamic originalPassword;
+  final String? description;
+  final List<String>? knownLanguages;
+  final String? originalPassword;
   final String? createdAt;
   final String? updatedAt;
 
