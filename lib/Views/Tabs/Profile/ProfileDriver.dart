@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Controllers/AutomobilsController.dart';
+import 'package:yoldashapp/models/automobils.dart';
 
 import '../../../Constants/BaseAppBar.dart';
 import '../../../Constants/ButtonElement.dart';
@@ -10,6 +13,8 @@ import '../../../Constants/Devider.dart';
 import '../../../Constants/ImageClass.dart';
 import '../../../Constants/ImageModal.dart';
 import '../../../Constants/StaticText.dart';
+import '../../../Controllers/AuthController.dart';
+import '../../../Functions/helpers.dart';
 import '../../../Theme/ThemeService.dart';
 
 class ProfileDriver extends StatefulWidget {
@@ -18,8 +23,25 @@ class ProfileDriver extends StatefulWidget {
 }
 
 class _ProfileDriverState extends State<ProfileDriver> {
+  final AuthController _controller = Get.put(AuthController());
+  final AutomobilsController _automobilsController =
+      Get.put(AutomobilsController());
   bool showimagemodal = false;
   String selectedimage = '';
+
+  Country getcountryname(String name) {
+    if (name == "az") {
+      return Country.az;
+    } else if (name == "ru") {
+      return Country.ru;
+    } else if (name == "en") {
+      return Country.us;
+    } else if (name == "tr") {
+      return Country.tr;
+    } else {
+      return Country.az;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +51,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
           backbutton: true,
-          title: "Eyvaz Cəfərov",
+          title: _controller.driverpage.value?.nameSurname,
           changeprof: false,
           titlebg: false,
         ),
@@ -39,7 +61,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
                 close: () => setState(() => showimagemodal = false))
             : SingleChildScrollView(
                 controller: ScrollController(),
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -50,13 +72,25 @@ class _ProfileDriverState extends State<ProfileDriver> {
                     verticalDirection: VerticalDirection.down,
                     children: [
                       Center(
-                          child: CircleAvatar(
-                        backgroundColor: primarycolor,
-                        foregroundColor: whitecolor,
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                            'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg'),
-                      )),
+                        child: CachedNetworkImage(
+                          imageUrl: getimageurl(
+                              "user",
+                              'users',
+                              _controller
+                                  .driverpage.value?.additionalinfo?.image),
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          imageBuilder: (context, imageProvider) =>
+                              CircleAvatar(
+                            backgroundColor: primarycolor,
+                            foregroundColor: whitecolor,
+                            radius: 55,
+                            backgroundImage: imageProvider,
+                          ),
+                        ),
+                      ),
                       Devider(),
                       Center(
                         child: SizedBox(
@@ -66,233 +100,231 @@ class _ProfileDriverState extends State<ProfileDriver> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  StaticText(
-                                    text: "aboutme".tr,
-                                    weight: FontWeight.w600,
-                                    size: normaltextSize,
-                                    color: darkcolor,
-                                    align: TextAlign.left,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 32,
-                                          height: 30,
-                                          child: CountryFlag(
-                                            country: Country.az,
-                                            height: 30,
-                                          ),
-                                        ),
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    StaticText(
+                                      text: "aboutme".tr,
+                                      weight: FontWeight.w600,
+                                      size: normaltextSize,
+                                      color: darkcolor,
+                                      align: TextAlign.left,
+                                    ),
+                                    Container(
+                                      height: 30,
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: _controller
+                                                .driverpage
+                                                .value
+                                                ?.additionalinfo
+                                                ?.knownLanguages
+                                                ?.length ??
+                                            0,
+                                        itemBuilder: (context, index) {
+                                          var item = _controller
+                                              .driverpage
+                                              .value
+                                              ?.additionalinfo
+                                              ?.knownLanguages![index]!;
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: Container(
+                                                  width: 32,
+                                                  height: 30,
+                                                  child: CountryFlag(
+                                                    country: getcountryname(
+                                                      item!,
+                                                    ),
+                                                    height: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 7),
+                                              // Diğer elemanlar eklenecek
+                                            ],
+                                          );
+                                        },
                                       ),
-                                      SizedBox(
-                                        width: 7,
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 32,
-                                          height: 30,
-                                          child: CountryFlag(
-                                            country: Country.ru,
-                                            height: 30,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 7,
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 32,
-                                          height: 30,
-                                          child: CountryFlag(
-                                            country: Country.gb,
-                                            height: 30,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 7,
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 32,
-                                          height: 30,
-                                          child: CountryFlag(
-                                            country: Country.tr,
-                                            height: 30,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ]),
                               Devider(),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FeatherIcons.user,
-                                        color: iconcolor,
-                                        size: subHeadingSize,
-                                      ),
-                                      Devider(size: 8, type: false),
-                                      StaticText(
-                                        text: "Eyvaz Ceferov",
-                                        weight: FontWeight.w500,
-                                        size: smalltextSize,
-                                        color: iconcolor,
-                                        align: TextAlign.left,
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FeatherIcons.phone,
-                                        color: iconcolor,
-                                        size: subHeadingSize,
-                                      ),
-                                      Devider(size: 8, type: false),
-                                      StaticText(
-                                        text: "+994516543290",
-                                        weight: FontWeight.w500,
-                                        size: smalltextSize,
-                                        color: iconcolor,
-                                        align: TextAlign.left,
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Devider(),
-                              StaticText(
-                                text:
-                                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                                weight: FontWeight.w500,
-                                size: normaltextSize,
-                                color: iconcolor,
-                                align: TextAlign.left,
-                                maxline: 15,
-                                textOverflow: TextOverflow.clip,
-                              ),
-                              Devider(),
-                              StaticText(
-                                text: "infoauto".tr,
-                                weight: FontWeight.w600,
-                                size: normaltextSize,
-                                color: darkcolor,
-                                align: TextAlign.left,
-                              ),
-                              Devider(),
-                              CarouselSlider(
-                                options: CarouselOptions(
-                                    enlargeCenterPage: true,
-                                    aspectRatio: 16 / 9,
-                                    autoPlay: true,
-                                    autoPlayAnimationDuration:
-                                        Duration(milliseconds: 500),
-                                    scrollDirection: Axis.horizontal),
-                                items: [
+                                  _controller.driverpage.value?.email != null &&
+                                          _controller.driverpage.value?.email !=
+                                              '' &&
+                                          _controller.driverpage.value?.email !=
+                                              ' '
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            launchUrlTOSITE(
+                                                "mailto:${_controller.driverpage.value?.email}");
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                FeatherIcons.mail,
+                                                color: iconcolor,
+                                                size: subHeadingSize,
+                                              ),
+                                              Devider(size: 8, type: false),
+                                              StaticText(
+                                                text:
+                                                    "${_controller.driverpage.value?.email}",
+                                                weight: FontWeight.w500,
+                                                size: smalltextSize,
+                                                color: iconcolor,
+                                                align: TextAlign.left,
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      : SizedBox(),
                                   GestureDetector(
                                     onTap: () {
-                                      setState(() {
-                                        selectedimage =
-                                            "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg";
-                                        showimagemodal = true;
-                                      });
+                                      launchUrlTOSITE(
+                                          "tel:${_controller.driverpage.value?.phone}");
                                     },
-                                    child: ImageClass(
-                                      url:
-                                          "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg",
-                                      type: true,
-                                      boxfit: BoxFit.contain,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedimage =
-                                            "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg";
-                                        showimagemodal = true;
-                                      });
-                                    },
-                                    child: ImageClass(
-                                      url:
-                                          "https://www.budget.com/content/dam/cars/m/2021/kia/2021-kia-soul-s-5door-hatchback-white_featured.png",
-                                      type: true,
-                                      boxfit: BoxFit.contain,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedimage =
-                                            "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg";
-                                        showimagemodal = true;
-                                      });
-                                    },
-                                    child: ImageClass(
-                                      url:
-                                          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ford_Model_T_and_VW_type_11_Luxus%2C_Technisches_Museum_Wien%2C_Juni_2009.jpg/300px-Ford_Model_T_and_VW_type_11_Luxus%2C_Technisches_Museum_Wien%2C_Juni_2009.jpg",
-                                      type: true,
-                                      boxfit: BoxFit.contain,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedimage =
-                                            "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg";
-                                        showimagemodal = true;
-                                      });
-                                    },
-                                    child: ImageClass(
-                                      url:
-                                          "https://www.topgear.com/_next/static/images/hatchbacks-1b0085dc3dab0b05a327a8ed27e3c017.png",
-                                      type: true,
-                                      boxfit: BoxFit.contain,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedimage =
-                                            "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg";
-                                        showimagemodal = true;
-                                      });
-                                    },
-                                    child: ImageClass(
-                                      url:
-                                          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/1916_Ford_Model_T_touring_car.JPG/250px-1916_Ford_Model_T_touring_car.JPG",
-                                      type: true,
-                                      boxfit: BoxFit.contain,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          FeatherIcons.phone,
+                                          color: iconcolor,
+                                          size: subHeadingSize,
+                                        ),
+                                        Devider(size: 8, type: false),
+                                        StaticText(
+                                          text:
+                                              "${_controller.driverpage.value?.phone}",
+                                          weight: FontWeight.w500,
+                                          size: smalltextSize,
+                                          color: iconcolor,
+                                          align: TextAlign.left,
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
+                              Devider(),
+                              _controller.driverpage.value?.additionalinfo
+                                              ?.description !=
+                                          null &&
+                                      _controller.driverpage.value
+                                              ?.additionalinfo?.description !=
+                                          '' &&
+                                      _controller.driverpage.value
+                                              ?.additionalinfo?.description !=
+                                          ' '
+                                  ? StaticText(
+                                      text: _controller.driverpage.value!
+                                          .additionalinfo!.description!,
+                                      weight: FontWeight.w500,
+                                      size: normaltextSize,
+                                      color: iconcolor,
+                                      align: TextAlign.left,
+                                      maxline: 15,
+                                      textOverflow: TextOverflow.clip,
+                                    )
+                                  : SizedBox(),
+                              Devider(),
+                              _automobilsController
+                                              .selectedAutomobil.value !=
+                                          null &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          null &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          '' &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          ' '
+                                  ? StaticText(
+                                      text: "infoauto".tr,
+                                      weight: FontWeight.w600,
+                                      size: normaltextSize,
+                                      color: darkcolor,
+                                      align: TextAlign.left,
+                                    )
+                                  : SizedBox(),
+                              Devider(),
+                              _automobilsController
+                                              .selectedAutomobil.value !=
+                                          null &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          null &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          '' &&
+                                      _automobilsController.selectedAutomobil
+                                              .value?.autoSerialNumber !=
+                                          ' '
+                                  ? CarouselSlider(
+                                      options: CarouselOptions(
+                                          enlargeCenterPage: true,
+                                          aspectRatio: 16 / 9,
+                                          autoPlay: true,
+                                          autoPlayAnimationDuration:
+                                              Duration(milliseconds: 500),
+                                          scrollDirection: Axis.horizontal),
+                                      items: [
+                                        ListView.builder(
+                                          itemCount: _automobilsController
+                                                  .selectedAutomobil
+                                                  .value
+                                                  ?.images
+                                                  ?.length ??
+                                              0,
+                                          itemBuilder: (context, index) {
+                                            Images image = _automobilsController
+                                                .selectedAutomobil
+                                                .value!
+                                                .images![index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedimage = getimageurl(
+                                                      'automobil',
+                                                      'automobils',
+                                                      image?.image);
+                                                  showimagemodal = true;
+                                                });
+                                              },
+                                              child: ImageClass(
+                                                url: getimageurl('automobil',
+                                                    'automobils', image?.image),
+                                                type: true,
+                                                boxfit: BoxFit.contain,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  : SizedBox(),
                               Devider(),
                             ],
                           ),

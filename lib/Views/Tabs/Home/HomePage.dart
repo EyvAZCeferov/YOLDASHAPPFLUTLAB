@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldashapp/Constants/SearchedLocationItems.dart';
 import 'package:yoldashapp/Controllers/CardsController.dart';
+import 'package:yoldashapp/Controllers/HistoryController.dart';
 import 'package:yoldashapp/Functions/helpers.dart';
 import 'package:yoldashapp/models/searchionglocations.dart';
 
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
   late AuthController _authcontroller = Get.put(AuthController());
   late CardsController _cardscontroller = Get.put(CardsController());
+  late HistoryController _historycontroller = Get.put(HistoryController());
 
   String? getrideofferprice(Rides ride, type) {
     if (type == "rider") {
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       if (queries != null && queries.length > 0) {
         query = queries.firstWhere(
             (element) => element.riderId == _controller.auth_id.value);
-        return query?.price ?? '0';
+        return query?.price.toString() ?? '0';
       } else {
         return '0';
       }
@@ -67,8 +69,10 @@ class _HomePageState extends State<HomePage> {
                       .join(', ');
                 }
                 return GestureDetector(
-                  onTap: () => showToastMSG(
-                      errorcolor, "Sehife uzerinde is gedir...", context),
+                  onTap: () {
+                    _historycontroller.selectedRide.value = ride;
+                    Get.toNamed('/history/${ride.id}');
+                  },
                   child: Center(
                     child: Container(
                       width: Get.width - 40,
@@ -755,162 +759,178 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 Devider(size: 5, type: false),
-                                Center(
-                                  child: SizedBox(
-                                    width: width - 70,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => _controller
-                                              .createorselectlocation(
-                                                  'home', context),
+                                _controller.authtype == "rider"
+                                    ? Center(
+                                        child: SizedBox(
+                                          width: width - 70,
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Icon(
-                                                FeatherIcons.home,
-                                                color: primarycolor,
-                                                size: subHeadingSize,
+                                              GestureDetector(
+                                                onTap: () => _controller
+                                                    .createorselectlocation(
+                                                        'home', context),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      FeatherIcons.home,
+                                                      color: primarycolor,
+                                                      size: subHeadingSize,
+                                                    ),
+                                                    SizedBox(width: 7),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        StaticText(
+                                                            color: darkcolor,
+                                                            size:
+                                                                normaltextSize,
+                                                            weight:
+                                                                FontWeight.w500,
+                                                            align: TextAlign
+                                                                .center,
+                                                            text: "myhome".tr),
+                                                        StaticText(
+                                                            color: iconcolor,
+                                                            size: smalltextSize,
+                                                            weight:
+                                                                FontWeight.w400,
+                                                            align: TextAlign
+                                                                .center,
+                                                            text: () {
+                                                              var locationData =
+                                                                  _controller
+                                                                      .gettypeoflocationaddress(
+                                                                          'home',
+                                                                          context);
+                                                              if (locationData !=
+                                                                      null &&
+                                                                  locationData[
+                                                                          'name'] !=
+                                                                      null) {
+                                                                String
+                                                                    locationName =
+                                                                    locationData[
+                                                                            'name']
+                                                                        as String;
+                                                                if (locationName
+                                                                        .length >
+                                                                    15) {
+                                                                  String
+                                                                      shortenedLocationName =
+                                                                      locationName.substring(
+                                                                              0,
+                                                                              15) +
+                                                                          '...';
+                                                                  return shortenedLocationName;
+                                                                } else {
+                                                                  return locationName;
+                                                                }
+                                                              } else {
+                                                                return 'add'.tr;
+                                                              }
+                                                            }()),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                               SizedBox(width: 7),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  StaticText(
-                                                      color: darkcolor,
-                                                      size: normaltextSize,
-                                                      weight: FontWeight.w500,
-                                                      align: TextAlign.center,
-                                                      text: "myhome".tr),
-                                                  StaticText(
-                                                      color: iconcolor,
-                                                      size: smalltextSize,
-                                                      weight: FontWeight.w400,
-                                                      align: TextAlign.center,
-                                                      text: () {
-                                                        var locationData =
-                                                            _controller
-                                                                .gettypeoflocationaddress(
-                                                                    'home',
-                                                                    context);
-                                                        if (locationData !=
-                                                                null &&
-                                                            locationData[
-                                                                    'name'] !=
-                                                                null) {
-                                                          String locationName =
-                                                              locationData[
-                                                                      'name']
-                                                                  as String;
-                                                          if (locationName
-                                                                  .length >
-                                                              15) {
-                                                            String
-                                                                shortenedLocationName =
-                                                                locationName
-                                                                        .substring(
-                                                                            0,
-                                                                            15) +
-                                                                    '...';
-                                                            return shortenedLocationName;
-                                                          } else {
-                                                            return locationName;
-                                                          }
-                                                        } else {
-                                                          return 'add'.tr;
-                                                        }
-                                                      }()),
-                                                ],
+                                              GestureDetector(
+                                                onTap: () => _controller
+                                                    .createorselectlocation(
+                                                        'work', context),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      FeatherIcons.briefcase,
+                                                      color: primarycolor,
+                                                      size: subHeadingSize,
+                                                    ),
+                                                    SizedBox(width: 7),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        StaticText(
+                                                            color: darkcolor,
+                                                            size:
+                                                                normaltextSize,
+                                                            weight:
+                                                                FontWeight.w500,
+                                                            align: TextAlign
+                                                                .center,
+                                                            text: "mywork".tr),
+                                                        StaticText(
+                                                            color: iconcolor,
+                                                            size: smalltextSize,
+                                                            weight:
+                                                                FontWeight.w400,
+                                                            align: TextAlign
+                                                                .center,
+                                                            text: () {
+                                                              var locationData =
+                                                                  _controller
+                                                                      .gettypeoflocationaddress(
+                                                                          'work',
+                                                                          context);
+                                                              if (locationData !=
+                                                                      null &&
+                                                                  locationData[
+                                                                          'name'] !=
+                                                                      null) {
+                                                                String
+                                                                    locationName =
+                                                                    locationData[
+                                                                            'name']
+                                                                        as String;
+                                                                if (locationName
+                                                                        .length >
+                                                                    15) {
+                                                                  String
+                                                                      shortenedLocationName =
+                                                                      locationName.substring(
+                                                                              0,
+                                                                              15) +
+                                                                          '...';
+                                                                  return shortenedLocationName;
+                                                                } else {
+                                                                  return locationName;
+                                                                }
+                                                              } else {
+                                                                return 'add'.tr;
+                                                              }
+                                                            }()),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 7),
-                                        GestureDetector(
-                                          onTap: () => _controller
-                                              .createorselectlocation(
-                                                  'work', context),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.briefcase,
-                                                color: primarycolor,
-                                                size: subHeadingSize,
-                                              ),
-                                              SizedBox(width: 7),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  StaticText(
-                                                      color: darkcolor,
-                                                      size: normaltextSize,
-                                                      weight: FontWeight.w500,
-                                                      align: TextAlign.center,
-                                                      text: "mywork".tr),
-                                                  StaticText(
-                                                      color: iconcolor,
-                                                      size: smalltextSize,
-                                                      weight: FontWeight.w400,
-                                                      align: TextAlign.center,
-                                                      text: () {
-                                                        var locationData =
-                                                            _controller
-                                                                .gettypeoflocationaddress(
-                                                                    'work',
-                                                                    context);
-                                                        if (locationData !=
-                                                                null &&
-                                                            locationData[
-                                                                    'name'] !=
-                                                                null) {
-                                                          String locationName =
-                                                              locationData[
-                                                                      'name']
-                                                                  as String;
-                                                          if (locationName
-                                                                  .length >
-                                                              15) {
-                                                            String
-                                                                shortenedLocationName =
-                                                                locationName
-                                                                        .substring(
-                                                                            0,
-                                                                            15) +
-                                                                    '...';
-                                                            return shortenedLocationName;
-                                                          } else {
-                                                            return locationName;
-                                                          }
-                                                        } else {
-                                                          return 'add'.tr;
-                                                        }
-                                                      }()),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           ],
@@ -946,7 +966,7 @@ class _HomePageState extends State<HomePage> {
                                           textColor: iconcolor,
                                           cornerradius:
                                               BorderRadius.circular(40),
-                                          inputType: TextInputType.text,
+                                          inputType: TextInputType.number,
                                         ),
                                       ),
                                     ],
@@ -1070,7 +1090,7 @@ class _HomePageState extends State<HomePage> {
                                                   weight: FontWeight.w500,
                                                   align: TextAlign.center,
                                                   text:
-                                                      '${converttimedayandmonth(_controller.fromTime.value)} - ${converttimedayandmonth(_controller.toTime.value)}'),
+                                                      '${converttimedayandmonth(_controller.fromTime.value)} ${_controller.authtype.value == 'rider' ? "- ${converttimedayandmonth(_controller.toTime.value)}" : ""} '),
                                             ),
                                           ),
                                         ),
@@ -1363,8 +1383,8 @@ class _HomePageState extends State<HomePage> {
                               text: _controller.loading.value == true
                                   ? "stopsearching".tr
                                   : _authcontroller.authType == 'rider'
-                                      ? "search".tr
-                                      : "reservation".tr,
+                                      ? "reservation".tr
+                                      : "addroute".tr,
                               width: width - 70,
                               onPressed: () => _controller.togglesearch(
                                   "onsearch", context)),

@@ -71,7 +71,7 @@ class TranslationAdditionals extends Translations {
           "cancelled": "Ləğv edildi",
           "yer_sayi": "Yer sayı: @counter boş",
           "baqaj": "Baqaj: @counter boş",
-          "historydetail": "Tarixçə detalları",
+          "historydetail": "Gediş detalları",
           "customers": "Müştərilər",
           "total_price": "Ümumi məbləğ",
           "choise": "Seç",
@@ -147,7 +147,9 @@ class TranslationAdditionals extends Translations {
           "waiting": "Gözləmədə",
           "nohasdataforallrides": "Axtardığınız parametrlərdə gediş tapılmadı.",
           "youarenotselectingdriver":"Sürücü qoltuğunu seçə bilmərsiniz",
-          "youareselectedrider":"@rider qoltuğunu seçdiniz."
+          "youareselectedrider":"@rider qoltuğunu seçdiniz.",
+          "startride":"Gedişi başlat",
+          "endride":"Gedişi bitir",
         }
       };
 }

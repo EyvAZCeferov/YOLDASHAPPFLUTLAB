@@ -9,6 +9,7 @@ class Rides {
     this.userId,
     this.automobilId,
     this.coordinates,
+    this.polylinePoints,
     this.startTime,
     this.endTime,
     this.kmofway,
@@ -33,6 +34,11 @@ class Rides {
             ? null
             : List<CoordinatesRides>.from(
                 map['coordinates'].map((e) => CoordinatesRides.fromMap(e))),
+        polylinePoints: (map['polyline_points'] as List<dynamic>)
+            .map((pointList) => pointList
+                .map((point) => double.parse(point.toString()))
+                .toList())
+            .toList(),
         startTime: map['start_time'],
         endTime: map['end_time'],
         kmofway: map['kmofway'],
@@ -59,6 +65,7 @@ class Rides {
   final int? userId;
   final int? automobilId;
   final List<CoordinatesRides>? coordinates;
+  final List? polylinePoints;
   final int? startTime;
   final int? endTime;
   final String? kmofway;
@@ -79,6 +86,7 @@ class Rides {
         'user_id': userId,
         'automobil_id': automobilId,
         'coordinates': coordinates?.map((e) => e?.toMap()).toList(),
+        'polyline_points': polylinePoints,
         'start_time': startTime,
         'end_time': endTime,
         'kmofway': kmofway,
@@ -119,6 +127,8 @@ class Queries {
     this.driver,
     this.rider,
     this.reason,
+    this.ratingRide,
+    this.place,
   });
 
   factory Queries.fromMap(Map<String, dynamic> map) => Queries(
@@ -132,9 +142,7 @@ class Queries {
         weight: map['weight'],
         position: map['position'],
         gender: map['gender'],
-        coordinates: map['coordinates'] == null
-            ? null
-            : CoordinatesRides.fromMap(map['coordinates']),
+        coordinates: map['coordinates'] == null ? null : List<CoordinatesRides>.from(map['coordinates'].map((e) => CoordinatesRides.fromMap(e))),
         kmofway: map['kmofway'],
         durationofway: map['durationofway'],
         reasonId: map['reason_id'],
@@ -143,6 +151,8 @@ class Queries {
         driver: map['driver'] == null ? null : Users.fromMap(map['driver']),
         rider: map['rider'] == null ? null : Users.fromMap(map['rider']),
         reason: map['reason'],
+        ratingRide: map['rating_ride'],
+        place: map['place'] == null ? null : PlacesMark.fromMap(map['place']),
       );
 
   factory Queries.fromJson(String str) => Queries.fromMap(json.decode(str));
@@ -157,7 +167,7 @@ class Queries {
   final String? weight;
   final int? position;
   final int? gender;
-  final CoordinatesRides? coordinates;
+  final List<CoordinatesRides>? coordinates;
   final String? kmofway;
   final String? durationofway;
   final int? reasonId;
@@ -166,6 +176,8 @@ class Queries {
   final Users? driver;
   final Users? rider;
   final Reason? reason;
+  final int? ratingRide;
+  final PlacesMark? place;
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -178,7 +190,7 @@ class Queries {
         'weight': weight,
         'position': position,
         'gender': gender,
-        'coordinates': coordinates?.toMap(),
+        'coordinates': coordinates?.map((e) => e?.toMap()).toList(),
         'kmofway': kmofway,
         'durationofway': durationofway,
         'reason_id': reasonId,
@@ -187,6 +199,8 @@ class Queries {
         'driver': driver?.toMap(),
         'rider': rider,
         'reason': reason,
+        'rating_ride': ratingRide,
+        'place': place?.toMap(),
       };
 
   String toJson() => json.encode(toMap());
@@ -245,6 +259,7 @@ class CoordinatesRides {
     this.latitude,
     this.longitude,
     this.address,
+    this.type,
   });
 
   factory CoordinatesRides.fromMap(Map<String, dynamic> map) =>
@@ -252,6 +267,7 @@ class CoordinatesRides {
         latitude: map['latitude'],
         longitude: map['longitude'],
         address: map['address'],
+        type: map['type'],
       );
 
   factory CoordinatesRides.fromJson(String str) =>
@@ -260,12 +276,23 @@ class CoordinatesRides {
   final String? latitude;
   final String? longitude;
   final String? address;
+  final String? type;
 
   Map<String, dynamic> toMap() => {
         'latitude': latitude,
         'longitude': longitude,
         'address': address,
+        'type': type,
       };
+
+  Map<String, dynamic> toJsonMap() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+      'address': address,
+      'type': type,
+    };
+  }
 
   String toJson() => json.encode(toMap());
 }

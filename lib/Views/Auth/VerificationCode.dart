@@ -5,7 +5,6 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../Constants/BaseAppBar.dart';
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/Devider.dart';
-import '../../Constants/LoaderScreen.dart';
 import '../../Constants/StaticText.dart';
 import '../../Constants/TextButton.dart';
 import '../../Controllers/AuthController.dart';

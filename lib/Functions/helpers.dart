@@ -213,3 +213,11 @@ String converttimedayandmonth(DateTime dateTime) {
   String month = DateFormat.MMM().format(dateTime);
   return '$day $month';
 }
+
+String convertToSlug(String text) {
+  text = text.toLowerCase();
+  text = text.replaceAll(RegExp(r'[^a-z0-9\s-]'), '');
+  text = text.replaceAll(RegExp(r'\s+'), '-');
+  text = text.replaceAll(RegExp(r'-+'), '-');
+  return text;
+}

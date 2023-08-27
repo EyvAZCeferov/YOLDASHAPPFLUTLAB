@@ -180,7 +180,7 @@ class GoingController extends GetxController {
         if (status == "success") {
           UserLocations userlocation = UserLocations(
               id: 1,
-              userId: auth_id.value as int,
+              userId: auth_id.value ?? 0,
               coordinates: Coordinates(
                   latitude: latlng.latitude, longitude: latlng.longitude),
               name: Name.fromMap(response['data']['name']),
@@ -271,31 +271,37 @@ class GoingController extends GetxController {
                       },
                     ),
                   ),
-                  StaticText(
-                      text: "choiseendtime".tr,
-                      weight: FontWeight.w600,
-                      size: normaltextSize,
-                      color: darkcolor,
-                      align: TextAlign.center,
-                      textOverflow: TextOverflow.ellipsis),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 250,
-                    width: Get.width - 50,
-                    child: CupertinoDatePicker(
-                      use24hFormat: true,
-                      minimumDate: toTime.value,
-                      mode: CupertinoDatePickerMode.dateAndTime,
-                      backgroundColor: bodycolor,
-                      maximumDate: toTime.value.add(Duration(days: 5)),
-                      initialDateTime: toTime.value,
-                      onDateTimeChanged: (DateTime newDate) {
-                        toTime.value = newDate;
-                      },
-                    ),
-                  ),
+                  authtype.value == "rider"
+                      ? StaticText(
+                          text: "choiseendtime".tr,
+                          weight: FontWeight.w600,
+                          size: normaltextSize,
+                          color: darkcolor,
+                          align: TextAlign.center,
+                          textOverflow: TextOverflow.ellipsis)
+                      : SizedBox(),
+                  authtype.value == "rider"
+                      ? SizedBox(
+                          height: 10,
+                        )
+                      : SizedBox(),
+                  authtype.value == "rider"
+                      ? SizedBox(
+                          height: 250,
+                          width: Get.width - 50,
+                          child: CupertinoDatePicker(
+                            use24hFormat: true,
+                            minimumDate: toTime.value,
+                            mode: CupertinoDatePickerMode.dateAndTime,
+                            backgroundColor: bodycolor,
+                            maximumDate: toTime.value.add(Duration(days: 5)),
+                            initialDateTime: toTime.value,
+                            onDateTimeChanged: (DateTime newDate) {
+                              toTime.value = newDate;
+                            },
+                          ),
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),
@@ -467,6 +473,7 @@ class GoingController extends GetxController {
         ),
       ));
     } else {
+      selectedplace.value = 0;
       Get.back();
       lookmore(ride, context);
     }
@@ -603,6 +610,8 @@ class GoingController extends GetxController {
           geodesic: true);
       polyline.add(polylinenew);
 
+      print(polyline);
+
       LatLngBounds latLngBounds;
 
       if (originCoordinates!.latitude > destinationCoordinates!.latitude &&
@@ -671,6 +680,16 @@ class GoingController extends GetxController {
       if (nextprocess == true) {
         refreshpage.value = true;
 
+        List<LatLng> points = [];
+
+        polyline.forEach((polyline) {
+          if (polyline != null) {
+            polyline.points.forEach((element) {
+              points.add(element);
+            });
+          }
+        });
+
         var body = {
           "coordinates": [
             {
@@ -690,7 +709,8 @@ class GoingController extends GetxController {
                   .firstWhere((element) =>
                       element?.markerId.value == "currentposition")!
                   .infoWindow
-                  .title
+                  .title,
+              "type": "currentposition"
             },
             {
               "latitude": markers.value
@@ -709,13 +729,15 @@ class GoingController extends GetxController {
                   .firstWhere((element) =>
                       element?.markerId.value == "destinationposition")!
                   .infoWindow
-                  .title
+                  .title,
+              "type": "destinationposition"
             },
           ],
           'start_time': fromTime.value.toString() ?? null,
           'end_time': toTime.value.toString() ?? null,
           'kmofway': directiondetails.value!.distanceValue ?? 0,
           'durationofway': directiondetails.value!.durationValue ?? 0,
+          "polyline_points": points,
           'minimal_price_of_way':
               minimumpriceofwaycontroller.value.text != null &&
                       minimumpriceofwaycontroller.value.text != '' &&
@@ -736,6 +758,7 @@ class GoingController extends GetxController {
               : 0,
           'place_id': null,
         };
+        print(body);
         resulttext.value = null;
 
         var response = await GetAndPost.postData("rides", body, context);
@@ -871,8 +894,21 @@ class GoingController extends GetxController {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                             GestureDetector(
-                              onTap: () =>
-                                  Get.toNamed('/profiledriver/${ride.userId}'),
+                              onTap: () {
+                                _authController.driverpage.value = ride.user;
+                                _automobilscontroller.getautomobildata(
+                                    ride.automobilId, context);
+                                if (_authController.driverpage.value != null &&
+                                    _authController.driverpage.value?.id !=
+                                        null &&
+                                    _authController.driverpage.value?.id != 0 &&
+                                    _authController.driverpage.value?.id !=
+                                        '' &&
+                                    _authController.driverpage.value?.id !=
+                                        ' ') {
+                                  Get.toNamed('/profiledriver/${ride.userId}');
+                                }
+                              },
                               child: CircleAvatar(
                                 backgroundColor: primarycolor,
                                 foregroundColor: whitecolor,
@@ -884,8 +920,21 @@ class GoingController extends GetxController {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () =>
-                                  Get.toNamed('/profiledriver/${ride.userId}'),
+                              onTap: () {
+                                _authController.driverpage.value = ride.user;
+                                _automobilscontroller.getautomobildata(
+                                    ride.automobilId, context);
+                                if (_authController.driverpage.value != null &&
+                                    _authController.driverpage.value?.id !=
+                                        null &&
+                                    _authController.driverpage.value?.id != 0 &&
+                                    _authController.driverpage.value?.id !=
+                                        '' &&
+                                    _authController.driverpage.value?.id !=
+                                        ' ') {
+                                  Get.toNamed('/profiledriver/${ride.userId}');
+                                }
+                              },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1009,13 +1058,13 @@ class GoingController extends GetxController {
                               style: BorderStyle.solid,
                               width: 1),
                           borderRadius: BorderRadius.circular(35),
-                          color: selectedplace.value != null &&
-                                  selectedplace.value == 1
+                          color: selectedindex.value != null &&
+                                  selectedindex.value == 1
                               ? primarycolor
                               : whitecolor),
                       child: StaticText(
-                          color: selectedplace.value != null &&
-                                  selectedplace.value == 1
+                          color: selectedindex.value != null &&
+                                  selectedindex.value == 1
                               ? whitecolor
                               : darkcolor,
                           size: normaltextSize,
@@ -1040,13 +1089,13 @@ class GoingController extends GetxController {
                               style: BorderStyle.solid,
                               width: 1),
                           borderRadius: BorderRadius.circular(35),
-                          color: selectedplace.value != null &&
-                                  selectedplace.value == 2
+                          color: selectedindex.value != null &&
+                                  selectedindex.value == 2
                               ? primarycolor
                               : whitecolor),
                       child: StaticText(
-                          color: selectedplace.value != null &&
-                                  selectedplace.value == 2
+                          color: selectedindex.value != null &&
+                                  selectedindex.value == 2
                               ? whitecolor
                               : darkcolor,
                           size: normaltextSize,
@@ -1198,13 +1247,14 @@ class GoingController extends GetxController {
     Map<String, dynamic> body = {};
     userlocations.value = [];
     var response = await GetAndPost.fetchData("rides", context, body);
-    print(response);
     if (response != null) {
       String status = response['status'];
       String message = '';
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         currentrides.value = (response['data'] as List).map((dat) {
+          print("---------------------------DAT------------------------------------------");
+          print(dat);
           return Rides.fromMap(dat);
         }).toList();
       } else {

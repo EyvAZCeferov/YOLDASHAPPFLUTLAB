@@ -31,6 +31,7 @@ class AuthController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<Users?> userdatas = Rx<Users?>(null);
   RxBool agreeterms = RxBool(false);
+  Rx<Users?> driverpage=Rx<Users?>(null);
 
   AuthController() {
     init();

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -190,10 +188,7 @@ class AutomobilsController extends GetxController {
         autoimages.value[2] != ' ' &&
         autoimages.value[3] != null &&
         autoimages.value[3] != '' &&
-        autoimages.value[3] != ' ' &&
-        autoimages.value[4] != null &&
-        autoimages.value[4] != '' &&
-        autoimages.value[4] != ' ') {
+        autoimages.value[3] != ' ') {
       Map<String, dynamic> body = {
         'driving_licence': driving_licence.value,
         'id_card': id_card.value,
@@ -228,6 +223,30 @@ class AutomobilsController extends GetxController {
     } else {
       refreshpage.value = false;
       showToastMSG(errorcolor, "fillthefield".tr, context);
+    }
+  }
+
+  void getautomobildata(id, context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response =
+        await GetAndPost.fetchData("automobils/" + id, context, body);
+        print(response);
+    if (response != null) {
+      String status = response['status'];
+      String message = "";
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        selectedAutomobil.value = Automobils();
+        if (response['data'] != null) {
+          refreshpage.value = false;
+          selectedAutomobil.value = Automobils.fromMap(response['data']);
+        }
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
+        showToastMSG(errorcolor, message, context);
+      }
     }
   }
 }

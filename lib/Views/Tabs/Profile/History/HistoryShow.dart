@@ -1,674 +1,473 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yoldashapp/models/rides.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
+import '../../../../Constants/ButtonElement.dart';
 import '../../../../Constants/Devider.dart';
 import '../../../../Constants/ImageClass.dart';
 import '../../../../Constants/ImageModal.dart';
+import '../../../../Constants/LoaderScreen.dart';
 import '../../../../Constants/StaticText.dart';
+import '../../../../Controllers/GoingController.dart';
 import '../../../../Controllers/HistoryController.dart';
+import '../../../../Controllers/MessagesController.dart';
+import '../../../../Functions/helpers.dart';
 import '../../../../Theme/ThemeService.dart';
+import '../../../../models/automobils.dart';
 
 class HistoryShow extends StatelessWidget {
   final HistoryController _controller = Get.find<HistoryController>();
+  final GoingController _goingcontroller = Get.find<GoingController>();
+  final MessagesController _messagesController = Get.find<MessagesController>();
 
-  final index = int.parse(Get.parameters['index'] ?? '');
+  List<Widget> addressWidgets = [];
+
+  void getaddress() {
+    if (_controller.selectedRide.value?.coordinates != null) {
+      for (var address in _controller.selectedRide.value!.coordinates!) {
+        addressWidgets.add(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StaticText(
+                color: secondarycolor,
+                size: smalltextSize,
+                text: address.address as String,
+                weight: FontWeight.bold,
+              ),
+              Devider(),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  HistoryShow() {
+    getaddress();
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
+    _controller.getridecoordsandmarks(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,
+      appBar: BaseAppBar(
+        backbutton: true,
+        changeprof: false,
+        title: "historydetail".tr,
+        titlebg: false,
+      ),
       body: Obx(
-        () => _controller.openmodalval.value == true
-            ? ImageModal(
-                image: _controller.image.value,
-                close: () => _controller.openModal(null))
-            : Stack(
-                fit: StackFit.expand,
-                children: [
-                  Positioned.fill(
-                    bottom: width / 2,
-                    child: ImageClass(
-                      url: "/assets/images/mapbg.png",
-                      type: false,
-                      boxfit: BoxFit.cover,
-                    ),
-                  ),
-                  BaseAppBar(
-                    backbutton: true,
-                    changeprof: false,
-                    title: "historydetail".tr,
-                    titlebg: true,
-                  ),
-                  Positioned(
-                      top: 80,
-                      left: 20,
-                      width: width - 40,
-                      child: Container(
-                        width: width - 40,
-                        height: width / 3.5,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        margin: EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                            color: whitecolor,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                blurStyle: BlurStyle.solid,
-                                color: Colors.black38,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                                spreadRadius: 0,
-                              )
-                            ]),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Devider(size: 3),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 44,
-                                  height: 77,
-                                  child: ImageClass(
-                                      url: "assets/images/destinationicon.png",
-                                      type: false),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    StaticText(
-                                      color: darkcolor,
-                                      size: smalltextSize,
-                                      weight: FontWeight.w400,
-                                      align: TextAlign.left,
-                                      text: "Bakı",
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    StaticText(
-                                      color: darkcolor,
-                                      size: smalltextSize,
-                                      weight: FontWeight.w400,
-                                      align: TextAlign.left,
-                                      text: "Xırdalan",
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Devider(size: 3),
-                          ],
-                        ),
-                      )),
-                  Devider(),
-                  _controller.authtype == "rider"
-                      ? Positioned(
-                          top: width,
-                          child: Container(
-                              width: width,
-                              height: width / 1.3,
-                              color: whitecolor,
-                              child: SingleChildScrollView(
-                                controller: ScrollController(),
-                                physics: const ScrollPhysics(),
-                                child: Column(
+        () => _controller.refreshpage.value == true
+            ? LoaderScreen()
+            : _controller.openmodalval.value == true
+                ? ImageModal(
+                    image: _controller.image.value,
+                    close: () => _controller.openModal(null))
+                : Stack(fit: StackFit.expand, children: [
+                    Positioned.fill(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: Get.width - 100,
+                        child: GoogleMap(
+                          padding: EdgeInsets.only(bottom: width / 2, top: 45),
+                          mapType: MapType.terrain,
+                          myLocationButtonEnabled: true,
+                          initialCameraPosition: _controller.kGooglePlex,
+                          zoomGesturesEnabled: true,
+                          zoomControlsEnabled: true,
+                          mapToolbarEnabled: true,
+                          myLocationEnabled: true,
+                          polylines: _controller.polyline.isNotEmpty
+                              ? Set<Polyline>.from(_controller.polyline)
+                              : {},
+                          markers: _controller.markers.isNotEmpty
+                              ? Set<Marker>.from(_controller.markers)
+                              : {},
+                          circles: _controller.circles.isNotEmpty
+                              ? Set<Circle>.from(_controller.circles)
+                              : {},
+                          onMapCreated: (GoogleMapController controller) {
+                            _controller.googlemapcontroller
+                                .complete(controller);
+                            _controller.newgooglemapcontroller.value =
+                                controller;
+                            _controller.getridecoordsandmarks(context);
+                          },
+                        )),
+                    _controller.selectedRide.value?.coordinates != null
+                        ? Positioned(
+                            top: 80,
+                            left: 20,
+                            width: width - 40,
+                            child: Container(
+                              width: width - 40,
+                              height: width / 3.5,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              margin: EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: whitecolor,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    blurStyle: BlurStyle.solid,
+                                    color: Colors.black38,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Devider(size: 3),
+                                  Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Devider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundColor: primarycolor,
-                                                foregroundColor: whitecolor,
-                                                radius: 25,
-                                                backgroundImage: NetworkImage(
-                                                    "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
-                                              ),
-                                              SizedBox(
-                                                width: 8,
-                                              ),
-                                              StaticText(
-                                                color: darkcolor,
-                                                size: normaltextSize,
-                                                weight: FontWeight.w400,
-                                                align: TextAlign.left,
-                                                text: "Eyvaz Ceferov",
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: 90,
-                                            height: 40,
-                                            child: ElevatedButton(
-                                              onPressed: () =>
-                                                  Get.toNamed("/messages/1"),
-                                              style: ElevatedButton.styleFrom(
-                                                primary: primarycolor,
-                                                onPrimary: whitecolor,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                      FeatherIcons
-                                                          .messageCircle,
-                                                      color: whitecolor,
-                                                      size: normaltextSize),
-                                                  SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  StaticText(
-                                                    color: whitecolor,
-                                                    size: smalltextSize,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.center,
-                                                    text: "chat".tr,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Devider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.briefcase,
-                                                color: primarycolor,
-                                                size: buttontextSize,
-                                              ),
-                                              SizedBox(
-                                                width: 8,
-                                              ),
-                                              StaticText(
-                                                color: darkcolor,
-                                                size: smalltextSize,
-                                                weight: FontWeight.w400,
-                                                align: TextAlign.center,
-                                                text: "10kg yük",
-                                              ),
-                                            ],
-                                          ),
-                                          StaticText(
-                                            color: primarycolor,
-                                            size: buttontextSize,
-                                            weight: FontWeight.w500,
-                                            align: TextAlign.right,
-                                            text: "45 AZN",
-                                          ),
-                                        ],
-                                      ),
-                                      Devider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: smalltextSize,
-                                            weight: FontWeight.w600,
-                                            align: TextAlign.center,
-                                            text: "aboutme".tr,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.star,
-                                                color: Colors.yellow,
-                                                size: normaltextSize,
-                                              ),
-                                              Icon(
-                                                FeatherIcons.star,
-                                                color: Colors.yellow,
-                                                size: normaltextSize,
-                                              ),
-                                              Icon(
-                                                FeatherIcons.star,
-                                                color: Colors.yellow,
-                                                size: normaltextSize,
-                                              ),
-                                              Icon(
-                                                FeatherIcons.star,
-                                                color: Colors.yellow,
-                                                size: normaltextSize,
-                                              ),
-                                              Icon(
-                                                FeatherIcons.star,
-                                                color: Colors.yellow,
-                                                size: normaltextSize,
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Devider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.user,
-                                                color: iconcolor,
-                                                size: subHeadingSize,
-                                              ),
-                                              Devider(size: 8, type: false),
-                                              StaticText(
-                                                text: "Eyvaz Ceferov",
-                                                weight: FontWeight.w500,
-                                                size: smalltextSize,
-                                                color: iconcolor,
-                                                align: TextAlign.left,
-                                              )
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.phone,
-                                                color: iconcolor,
-                                                size: subHeadingSize,
-                                              ),
-                                              Devider(size: 8, type: false),
-                                              StaticText(
-                                                text: "+994516543290",
-                                                weight: FontWeight.w500,
-                                                size: smalltextSize,
-                                                color: iconcolor,
-                                                align: TextAlign.left,
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Devider(),
-                                      Center(
-                                        child: SizedBox(
-                                          width: width - 40,
-                                          child: StaticText(
-                                            text:
-                                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                                            weight: FontWeight.w500,
-                                            size: normaltextSize,
-                                            color: iconcolor,
-                                            align: TextAlign.left,
-                                            maxline: 15,
-                                            textOverflow: TextOverflow.clip,
-                                          ),
+                                      SizedBox(
+                                        width: 44,
+                                        height: 77,
+                                        child: ImageClass(
+                                          url:
+                                              "assets/images/destinationicon.png",
+                                          type: false,
                                         ),
                                       ),
-                                      Devider(),
-                                      CarouselSlider(
-                                        options: CarouselOptions(
-                                            enlargeCenterPage: true,
-                                            aspectRatio: 16 / 9,
-                                            autoPlay: true,
-                                            autoPlayAnimationDuration:
-                                                Duration(milliseconds: 500),
-                                            scrollDirection: Axis.horizontal),
-                                        items: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              _controller.openModal(
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg");
-                                            },
-                                            child: ImageClass(
-                                              url:
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg",
-                                              type: true,
-                                              boxfit: BoxFit.contain,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              _controller.openModal(
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg");
-                                            },
-                                            child: ImageClass(
-                                              url:
-                                                  "https://www.budget.com/content/dam/cars/m/2021/kia/2021-kia-soul-s-5door-hatchback-white_featured.png",
-                                              type: true,
-                                              boxfit: BoxFit.contain,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              _controller.openModal(
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg");
-                                            },
-                                            child: ImageClass(
-                                              url:
-                                                  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ford_Model_T_and_VW_type_11_Luxus%2C_Technisches_Museum_Wien%2C_Juni_2009.jpg/300px-Ford_Model_T_and_VW_type_11_Luxus%2C_Technisches_Museum_Wien%2C_Juni_2009.jpg",
-                                              type: true,
-                                              boxfit: BoxFit.contain,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              _controller.openModal(
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg");
-                                            },
-                                            child: ImageClass(
-                                              url:
-                                                  "https://www.topgear.com/_next/static/images/hatchbacks-1b0085dc3dab0b05a327a8ed27e3c017.png",
-                                              type: true,
-                                              boxfit: BoxFit.contain,
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              _controller.openModal(
-                                                  "https://images.hertz.com/content/dam/irac/Overlay/enUS/tiles/HertzShelbyGT500-H.jpg");
-                                            },
-                                            child: ImageClass(
-                                              url:
-                                                  "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/1916_Ford_Model_T_touring_car.JPG/250px-1916_Ford_Model_T_touring_car.JPG",
-                                              type: true,
-                                              boxfit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ],
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: addressWidgets,
+                                        ),
                                       ),
-                                      Devider(),
-                                    ]),
-                              )))
-                      : Positioned(
-                          top: width,
+                                    ],
+                                  ),
+                                  Devider(size: 3),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
+                    Positioned.fill(
+                        top: Get.width - 100,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          margin: EdgeInsets.symmetric(vertical: 0),
+                          decoration: BoxDecoration(
+                              color: whitecolor,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(42),
+                                  topRight: Radius.circular(42)),
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                  blurStyle: BlurStyle.solid,
+                                  color: Colors.black38,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                  spreadRadius: 0,
+                                )
+                              ]),
+                          width: Get.width - 100,
                           child: Container(
-                            width: width,
-                            height: width / 1.3,
-                            color: whitecolor,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Devider(),
-                                StaticText(
-                                  color: darkcolor,
-                                  size: subHeadingSize,
-                                  align: TextAlign.left,
-                                  weight: FontWeight.w500,
-                                  text: "customers".tr,
-                                ),
-                                Devider(),
-                                Center(
-                                  child: SizedBox(
-                                    width: width - 40,
-                                    child: Row(
+                            child: _rendercontent(context),
+                          ),
+                        ))
+                  ]),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        color: whitecolor,
+        margin: EdgeInsets.only(bottom: 15),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: ButtonElement(
+              text: _controller.authtype.value == "rider"
+                  ? "contact".tr
+                  : "startride".tr,
+              height: 50,
+              width: width - 100,
+              borderRadius: BorderRadius.circular(45),
+              onPressed: () => _controller.bottombutton(context)),
+        ),
+      ),
+    );
+  }
+
+  Widget _rendercontent(context) {
+    if (_controller.authtype.value == "rider") {
+      return Container();
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Devider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              StaticText(
+                color: darkcolor,
+                size: subHeadingSize,
+                text: "customers".tr,
+                weight: FontWeight.bold,
+                align: TextAlign.center,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+              ButtonElement(
+                  text: "add".tr,
+                  height: 50,
+                  width: Get.width / 3,
+                  borderRadius: BorderRadius.circular(45),
+                  onPressed: () => _controller.lookmore(
+                      _controller.selectedRide.value!, context)),
+            ],
+          ),
+          Devider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              StaticText(
+                color: darkcolor,
+                size: normaltextSize,
+                text: "total_price".tr,
+                weight: FontWeight.bold,
+                align: TextAlign.center,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+              StaticText(
+                color: darkcolor,
+                size: normaltextSize,
+                text: _controller.selectedRide.value!.priceOfWay.toString() +
+                    "/${calculatequeryprices()} AZN",
+                weight: FontWeight.bold,
+                align: TextAlign.center,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          Devider(),
+          _controller.selectedRide.value!.queries != null
+              ? Expanded(
+                  child: ListView.builder(
+                    itemCount: _controller.selectedRide.value?.queries
+                            ?.where((element) {
+                          if (element.userId != element.driverId &&
+                              (element.status == "accepted" ||
+                                  element.status == "arrivedoncustomer" ||
+                                  element.status == "changed" ||
+                                  element.status == "waiting")) {
+                            return true;
+                          }
+                          return false;
+                        }).length ??
+                        0,
+                    itemBuilder: (context, index) {
+                      var query = _controller.selectedRide.value!.queries!
+                          .where((element) =>
+                              (element.status == "accepted" ||
+                                  element.status == "arrivedoncustomer" ||
+                                  element.status == "changed" ||
+                                  element.status == "waiting") &&
+                              element.userId != element.driverId)
+                          .toList()[index];
+                      String addressText = '';
+                      if (query?.coordinates != null) {
+                        query!.coordinates!
+                            .where(
+                                (element) => element.type != "currentposition")
+                            .map((element) => element.address ?? '')
+                            .toList();
+                      }
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: Get.width - 40,
+                            height: 100,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: whitecolor,
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    blurStyle: BlurStyle.solid,
+                                    color: Colors.black38,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 2),
+                                    spreadRadius: 0,
+                                  )
+                                ]),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl: getimageurl("user", 'users',
+                                        query.rider?.additionalinfo?.image),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                      backgroundColor: primarycolor,
+                                      foregroundColor: whitecolor,
+                                      radius: 35,
+                                      backgroundImage: imageProvider,
+                                    ),
+                                  ),
+                                  Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceAround,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.max,
                                       children: [
                                         StaticText(
                                           color: darkcolor,
                                           size: normaltextSize,
-                                          align: TextAlign.left,
                                           weight: FontWeight.w500,
-                                          text: "total_price".tr,
+                                          align: TextAlign.left,
+                                          text: query?.rider?.nameSurname ?? '',
+                                        ),
+                                        query?.place != null
+                                            ? StaticText(
+                                                color: iconcolor,
+                                                size: smalltextSize,
+                                                weight: FontWeight.w400,
+                                                align: TextAlign.left,
+                                                text: getLocalizedValue(
+                                                        query!.place!.name
+                                                            as Name,
+                                                        'name')
+                                                    .toString(),
+                                              )
+                                            : SizedBox(),
+                                        query?.weight != null &&
+                                                query?.weight != 0 &&
+                                                query?.weight != 0.00 &&
+                                                query?.weight != '0.00' &&
+                                                query?.weight != '0'
+                                            ? Row(
+                                                children: [
+                                                  Icon(
+                                                    FeatherIcons.briefcase,
+                                                    color: primarycolor,
+                                                    size: normaltextSize,
+                                                  ),
+                                                  StaticText(
+                                                    color: iconcolor,
+                                                    size: smalltextSize,
+                                                    weight: FontWeight.w400,
+                                                    align: TextAlign.left,
+                                                    text:
+                                                        " ${query!.weight} kg",
+                                                  ),
+                                                ],
+                                              )
+                                            : SizedBox(),
+                                        StaticText(
+                                          color: iconcolor,
+                                          size: smalltextSize,
+                                          text: addressText,
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.left,
+                                          maxline: 5,
                                         ),
                                         StaticText(
-                                          color: primarycolor,
-                                          size: buttontextSize,
-                                          align: TextAlign.right,
-                                          weight: FontWeight.w500,
-                                          text: "40 AZN",
+                                          color: darkcolor,
+                                          size: normaltextSize,
+                                          weight: FontWeight.w600,
+                                          align: TextAlign.left,
+                                          text: "${query!.price} AZN",
                                         ),
+                                      ]),
+                                  ElevatedButton(
+                                    onPressed: () => _messagesController
+                                        .createandredirectchat(query?.userId,
+                                            query?.driverId, context),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: primarycolor,
+                                      onPrimary: whitecolor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(FeatherIcons.messageCircle,
+                                            color: whitecolor,
+                                            size: normaltextSize),
+                                        StaticText(
+                                            text: " " + "chat".tr,
+                                            weight: FontWeight.w400,
+                                            size: normaltextSize,
+                                            color: whitecolor),
                                       ],
                                     ),
                                   ),
-                                ),
-                                Devider(),
-                                SizedBox(
-                                  width: width,
-                                  height: width / 2.3,
-                                  child: ListView.builder(
-                                    itemCount: 5,
-                                    itemBuilder: (context, index) {
-                                      return Center(
-                                        child: Container(
-                                          width: width - 40,
-                                          height: 125,
-                                          alignment: Alignment.center,
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 7),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 10),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: whitecolor,
-                                              boxShadow: <BoxShadow>[
-                                                BoxShadow(
-                                                  blurStyle: BlurStyle.solid,
-                                                  color: Colors.black38,
-                                                  blurRadius: 5,
-                                                  offset: Offset(0, 2),
-                                                  spreadRadius: 0,
-                                                )
-                                              ]),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundColor: primarycolor,
-                                                foregroundColor: whitecolor,
-                                                radius: 35,
-                                                backgroundImage: NetworkImage(
-                                                    "https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"),
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  StaticText(
-                                                    color: darkcolor,
-                                                    size: normaltextSize,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.left,
-                                                    text: "Eyvaz Ceferov",
-                                                  ),
-                                                  StaticText(
-                                                    color: iconcolor,
-                                                    size: smalltextSize,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.left,
-                                                    text: "Arxa sol oturacaq",
-                                                  ),
-                                                  StaticText(
-                                                    color: iconcolor,
-                                                    size: smalltextSize,
-                                                    weight: FontWeight.w400,
-                                                    align: TextAlign.left,
-                                                    text: "Baqaj 100kg",
-                                                  ),
-                                                  StaticText(
-                                                    color: darkcolor,
-                                                    size: smalltextSize,
-                                                    weight: FontWeight.w600,
-                                                    align: TextAlign.left,
-                                                    text: "15 AZN",
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.yellow,
-                                                          size: buttontextSize,
-                                                        ),
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.yellow,
-                                                          size: buttontextSize,
-                                                        ),
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.yellow,
-                                                          size: buttontextSize,
-                                                        ),
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: iconcolor,
-                                                          size: buttontextSize,
-                                                        ),
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: iconcolor,
-                                                          size: buttontextSize,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                  Container(
-                                                    width: 90,
-                                                    height: 40,
-                                                    child: ElevatedButton(
-                                                      onPressed: () =>
-                                                          Get.toNamed(
-                                                              '/messages/$index',
-                                                              arguments: index),
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        primary: primarycolor,
-                                                        onPrimary: whitecolor,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(30),
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                              FeatherIcons
-                                                                  .messageCircle,
-                                                              color: whitecolor,
-                                                              size:
-                                                                  normaltextSize),
-                                                          StaticText(
-                                                              text: "chat".tr,
-                                                              weight: FontWeight
-                                                                  .w400,
-                                                              size:
-                                                                  normaltextSize,
-                                                              color:
-                                                                  whitecolor),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Devider(),
-                              ],
-                            ),
+                                ]),
                           ),
-                        )
-                ],
-              ),
-      ),
-    );
+                          Devider(),
+                        ],
+                      );
+                    },
+                  ),
+                )
+              : SizedBox(),
+        ],
+      );
+    }
+  }
+
+  String calculatequeryprices() {
+    List<Queries>? queries = _controller.selectedRide.value!.queries;
+    Rides? ride = _controller.selectedRide.value!;
+    int totalPrice = 0;
+    if (queries != null && queries!.length != 0) {
+      queries.forEach((element) {
+        if ((element.price != null &&
+                element.price != 0 &&
+                element.price != "" &&
+                element.price != " ") &&
+            (element.status == "accepted" ||
+                element.status == "arrivedoncustomer" ||
+                element.status == "changed")) {
+          if (element.driverId != ride.userId) {
+            totalPrice += (element.price! as double).toInt();
+          }
+        }
+      });
+    }
+    double finalPrice = totalPrice / 100;
+    return finalPrice.toStringAsFixed(2);
   }
 }

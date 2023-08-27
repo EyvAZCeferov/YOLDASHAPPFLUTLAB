@@ -38,7 +38,7 @@ final List<GetPage> Routes = [
 
   // Profile
   GetPage(name: '/profilepage', page: () => ProfilePage()),
-  GetPage(name: '/profiledriver/:index', page: () => ProfileDriver()),
+  GetPage(name: '/profiledriver/:user_id', page: () => ProfileDriver()),
   GetPage(name: '/profileinformation', page: () => ProfileInformation()),
   GetPage(
     name: '/cards',
