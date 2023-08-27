@@ -132,19 +132,16 @@ class GoingController extends GetxController {
       goinglocations.value.add(userlocation);
 
       markers.value.add(Marker(
-          markerId: MarkerId(userlocation.type as String),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-            title: getLocalizedValue(userlocation.name, 'name'),
-            snippet: 'mylocation'.tr,
-          ),
-          position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-              userlocation.coordinates!.longitude!.toDouble()),
-          draggable: true,
-          onDragEnd: ((value) => print(value)),
-          onDrag: (value) => print(value),
-          onDragStart: (value) => print(value)));
+        markerId: MarkerId(userlocation.type as String),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow: InfoWindow(
+          title: getLocalizedValue(userlocation.name, 'name'),
+          snippet: 'mylocation'.tr,
+        ),
+        position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+            userlocation.coordinates!.longitude!.toDouble()),
+        draggable: true,
+      ));
       circles.value.add(Circle(
         circleId: CircleId(userlocation.type as String),
         fillColor: secondarycolor,
@@ -393,21 +390,19 @@ class GoingController extends GetxController {
           }
 
           markers.value.add(Marker(
-              markerId: MarkerId(userlocation.type as String),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  userlocation.type == "currentposition"
-                      ? BitmapDescriptor.hueAzure
-                      : BitmapDescriptor.hueRed),
-              infoWindow: InfoWindow(
-                title: getLocalizedValue(userlocation.name, 'name'),
-                snippet: 'mylocation'.tr,
-              ),
-              position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-                  userlocation.coordinates!.longitude!.toDouble()),
-              draggable: true,
-              onDragEnd: ((value) => print(value)),
-              onDrag: (value) => print(value),
-              onDragStart: (value) => print(value)));
+            markerId: MarkerId(userlocation.type as String),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                userlocation.type == "currentposition"
+                    ? BitmapDescriptor.hueAzure
+                    : BitmapDescriptor.hueRed),
+            infoWindow: InfoWindow(
+              title: getLocalizedValue(userlocation.name, 'name'),
+              snippet: 'mylocation'.tr,
+            ),
+            position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+                userlocation.coordinates!.longitude!.toDouble()),
+            draggable: true,
+          ));
 
           circles.value.add(Circle(
             circleId: CircleId(userlocation.type as String),
@@ -609,9 +604,6 @@ class GoingController extends GetxController {
           endCap: Cap.roundCap,
           geodesic: true);
       polyline.add(polylinenew);
-
-      print(polyline);
-
       LatLngBounds latLngBounds;
 
       if (originCoordinates!.latitude > destinationCoordinates!.latitude &&
@@ -758,7 +750,6 @@ class GoingController extends GetxController {
               : 0,
           'place_id': null,
         };
-        print(body);
         resulttext.value = null;
 
         var response = await GetAndPost.postData("rides", body, context);
@@ -831,8 +822,6 @@ class GoingController extends GetxController {
       print(e.toString());
     }
   }
-
-  void getrideinfo(index, context) {}
 
   String getrideCardata(Rides ride) {
     String data = '';
@@ -1247,14 +1236,13 @@ class GoingController extends GetxController {
     Map<String, dynamic> body = {};
     userlocations.value = [];
     var response = await GetAndPost.fetchData("rides", context, body);
+    print(response);
     if (response != null) {
       String status = response['status'];
       String message = '';
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         currentrides.value = (response['data'] as List).map((dat) {
-          print("---------------------------DAT------------------------------------------");
-          print(dat);
           return Rides.fromMap(dat);
         }).toList();
       } else {
@@ -1374,7 +1362,6 @@ class GoingController extends GetxController {
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
-      print("FEtch Location errors");
       print(e.toString());
     }
   }

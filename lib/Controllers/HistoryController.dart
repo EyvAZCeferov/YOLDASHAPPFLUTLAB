@@ -642,9 +642,28 @@ class HistoryController extends GetxController {
     refreshpage.value = false;
   }
 
-  void settypequery( id, type, context) async {
+  void settypequery(id, type, context) async {
     refreshpage.value = true;
     if (id != null && id != 0) {
+      Map<String, dynamic> body = {
+        "status": type,
+      };
+      var response =
+          await GetAndPost.postData("ride_queries/$id", body, context);
+      print(response);
+      if (response != null) {
+        String status = response['status'];
+        String message = '';
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          getridedata(context, selectedRide.value!.id!);
+        } else {
+          refreshpage.value = false;
+          showToastMSG(errorcolor, message, context);
+        }
+      }
+
+      refreshpage.value = false;
     } else {
       refreshpage.value = false;
     }
