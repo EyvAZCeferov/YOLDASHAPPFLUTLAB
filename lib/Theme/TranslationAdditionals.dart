@@ -146,10 +146,12 @@ class TranslationAdditionals extends Translations {
           "autoimages": "Avtomobil şəkilləri",
           "waiting": "Gözləmədə",
           "nohasdataforallrides": "Axtardığınız parametrlərdə gediş tapılmadı.",
-          "youarenotselectingdriver":"Sürücü qoltuğunu seçə bilmərsiniz",
-          "youareselectedrider":"@rider qoltuğunu seçdiniz.",
-          "startride":"Gedişi başlat",
-          "endride":"Gedişi bitir",
+          "youarenotselectingdriver": "Sürücü qoltuğunu seçə bilmərsiniz",
+          "youareselectedrider": "@rider qoltuğunu seçdiniz.",
+          "startride": "Gedişi başlat",
+          "endride": "Gedişi bitir",
+          "accept": "Təsdiq et",
+          "cancel": "Ləğv et",
         }
       };
 }

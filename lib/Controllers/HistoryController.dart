@@ -585,14 +585,13 @@ class HistoryController extends GetxController {
         "name_surname": namesurnamecontroller.value.text ?? '',
         'phone': phonecontroller.value.text ?? '',
         'gender': selectedgender.value ?? 1,
-        "coordinates": coordinatesJson
+        "coordinates": coordinatesJson,
+        "status": "accepted"
       };
-      print(body);
       refreshpage.value = false;
       var response =
-          await GetAndPost.postData("rides_sendrequests", body, context);
+          await GetAndPost.postData("rides_sendrequest", body, context);
 
-      print(response);
       Get.back();
 
       if (response != null) {
@@ -602,11 +601,12 @@ class HistoryController extends GetxController {
         if (status == "success") {
           refreshpage.value = false;
           selectedindex.value = 0;
+          selectedplace.value = 0;
           priceofwaycontroller.value = TextEditingController();
           namesurnamecontroller.value = TextEditingController();
           phonecontroller.value = TextEditingController();
           selectedgender.value = 1;
-          getridedata(context, selectedRide.value!.id as int);
+          getridedata(context, selectedRide.value!.id!);
         } else {
           showToastMSG(errorcolor, message, context);
         }
@@ -623,12 +623,9 @@ class HistoryController extends GetxController {
   }
 
   void getridedata(context, int id) async {
-    selectedRide.value = Rides();
     refreshpage.value = true;
-    var body = {};
-    var response = await GetAndPost.fetchData("rides/${id}", body, context);
-    print("RIDE DATA -----------------------------");
-    print(response);
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("rides/$id", context, body);
     if (response != null) {
       String status = response['status'];
       String message = '';
@@ -643,5 +640,13 @@ class HistoryController extends GetxController {
     }
 
     refreshpage.value = false;
+  }
+
+  void settypequery( id, type, context) async {
+    refreshpage.value = true;
+    if (id != null && id != 0) {
+    } else {
+      refreshpage.value = false;
+    }
   }
 }

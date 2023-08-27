@@ -53,6 +53,7 @@ class HistoryShow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _controller.getridedata(context, _controller.selectedRide.value!.id!);
     final width = MediaQuery.of(context).size.width;
     _controller.getridecoordsandmarks(context);
     return Scaffold(
@@ -308,7 +309,7 @@ class HistoryShow extends StatelessWidget {
                         children: [
                           Container(
                             width: Get.width - 40,
-                            height: 100,
+                            height: 145,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: whitecolor,
@@ -345,7 +346,7 @@ class HistoryShow extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         StaticText(
                                           color: darkcolor,
@@ -406,33 +407,144 @@ class HistoryShow extends StatelessWidget {
                                           text: "${query!.price} AZN",
                                         ),
                                       ]),
-                                  ElevatedButton(
-                                    onPressed: () => _messagesController
-                                        .createandredirectchat(query?.userId,
-                                            query?.driverId, context),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: primarycolor,
-                                      onPrimary: whitecolor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () => _messagesController
+                                            .createandredirectchat(
+                                                query?.userId,
+                                                query?.driverId,
+                                                context),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: primarycolor,
+                                          onPrimary: whitecolor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(FeatherIcons.messageCircle,
+                                                color: whitecolor,
+                                                size: normaltextSize),
+                                            StaticText(
+                                                text: " " + "chat".tr,
+                                                weight: FontWeight.w400,
+                                                size: normaltextSize,
+                                                color: whitecolor),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(FeatherIcons.messageCircle,
-                                            color: whitecolor,
-                                            size: normaltextSize),
-                                        StaticText(
-                                            text: " " + "chat".tr,
-                                            weight: FontWeight.w400,
-                                            size: normaltextSize,
-                                            color: whitecolor),
-                                      ],
-                                    ),
+                                      query?.status == "waiting"
+                                          ? ElevatedButton(
+                                              onPressed: () =>
+                                                  _controller.settypequery(
+                                                      query?.id,
+                                                      "accept",
+                                                      context),
+                                              style: ElevatedButton.styleFrom(
+                                                primary: primarycolor,
+                                                onPrimary: whitecolor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(FeatherIcons.check,
+                                                      color: whitecolor,
+                                                      size: normaltextSize),
+                                                  StaticText(
+                                                      text: " " + "accept".tr,
+                                                      weight: FontWeight.w400,
+                                                      size: normaltextSize,
+                                                      color: whitecolor),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox(),
+                                      query?.status == "waiting"
+                                          ? ElevatedButton(
+                                              onPressed: () =>
+                                                  _controller.settypequery(
+                                                      query?.id,
+                                                      "notaccepted",
+                                                      context),
+                                              style: ElevatedButton.styleFrom(
+                                                primary: errorcolor,
+                                                onPrimary: whitecolor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(FeatherIcons.x,
+                                                      color: whitecolor,
+                                                      size: normaltextSize),
+                                                  StaticText(
+                                                      text: " " + "cancel".tr,
+                                                      weight: FontWeight.w400,
+                                                      size: normaltextSize,
+                                                      color: whitecolor),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox(),
+                                      query?.status == "accepted" ||
+                                              query?.status ==
+                                                  "arrivedoncustomer"
+                                          ? ElevatedButton(
+                                              onPressed: () => print("asd"),
+                                              style: ElevatedButton.styleFrom(
+                                                primary: secondarycolor,
+                                                onPrimary: whitecolor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(FeatherIcons.eye,
+                                                      color: whitecolor,
+                                                      size: normaltextSize),
+                                                  StaticText(
+                                                      text: " " + "more".tr,
+                                                      weight: FontWeight.w400,
+                                                      size: normaltextSize,
+                                                      color: whitecolor),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox(),
+                                    ],
                                   ),
                                 ]),
                           ),
@@ -450,24 +562,20 @@ class HistoryShow extends StatelessWidget {
 
   String calculatequeryprices() {
     List<Queries>? queries = _controller.selectedRide.value!.queries;
-    Rides? ride = _controller.selectedRide.value!;
-    int totalPrice = 0;
-    if (queries != null && queries!.length != 0) {
+    var totalPrice = 0.0;
+    if (queries != null && queries.length != 0) {
       queries.forEach((element) {
-        if ((element.price != null &&
-                element.price != 0 &&
-                element.price != "" &&
-                element.price != " ") &&
+        if ((element.price != null && element.price != "null") &&
             (element.status == "accepted" ||
                 element.status == "arrivedoncustomer" ||
                 element.status == "changed")) {
-          if (element.driverId != ride.userId) {
-            totalPrice += (element.price! as double).toInt();
+          if (element.userId != element.driverId) {
+            double parsedPrice = double.tryParse(element!.price!) ?? 0.0;
+            totalPrice += parsedPrice;
           }
         }
       });
     }
-    double finalPrice = totalPrice / 100;
-    return finalPrice.toStringAsFixed(2);
+    return totalPrice.toStringAsFixed(2);
   }
 }
