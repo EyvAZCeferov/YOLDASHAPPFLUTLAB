@@ -69,7 +69,7 @@ class AutomobilsController extends GetxController {
     }
   }
 
-  void fetchModels(BuildContext context, String type) async {
+  Future<void> fetchModels(BuildContext context, String type) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
     var response =
@@ -80,18 +80,22 @@ class AutomobilsController extends GetxController {
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         if (response['data'] != null) {
-          refreshpage.value = false;
           if (type == "types") {
             autotype.value = (response['data'] as List).map((dat) {
               return AutoType.fromMap(dat);
             }).toList();
           }
         }
+
         refreshpage.value = false;
       } else {
         refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
+
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
     }
   }
 
@@ -134,6 +138,8 @@ class AutomobilsController extends GetxController {
       final image = File(pickedFile.path);
       var response = await GetAndPost.uploadfile(
           "automobils/sendphoto/{$type}", image, context);
+      print(response);
+      print(type);
       if (type == "id_card") {
         id_card.value = response['data'];
       } else if (type == "driving_licence") {
@@ -229,9 +235,7 @@ class AutomobilsController extends GetxController {
   void getautomobildata(id, context) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
-    var response =
-        await GetAndPost.fetchData("automobils/" + id, context, body);
-        print(response);
+    var response = await GetAndPost.fetchData("automobils/$id", context, body);
     if (response != null) {
       String status = response['status'];
       String message = "";

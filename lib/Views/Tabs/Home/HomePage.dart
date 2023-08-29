@@ -39,8 +39,12 @@ class _HomePageState extends State<HomePage> {
       List queries = ride.queries ?? [];
       Queries? query;
       if (queries != null && queries.length > 0) {
-        query = queries.firstWhere(
-            (element) => element.riderId == _controller.auth_id.value);
+        for (var i = 0; i < queries.length; i++) {
+          Queries q = queries[i];
+          if (q != null && q.userId == _controller.auth_id.value) {
+            query = q;
+          }
+        }
         return query?.price.toString() ?? '0';
       } else {
         return '0';
@@ -681,6 +685,61 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.max,
                               children: [
+                                // Expanded(
+                                //   child: ListView.builder(
+                                //       itemCount: _controller
+                                //           .textEditingControllers.value.length,
+                                //       itemBuilder: (context, index) {
+                                //         TextEditingController controller =
+                                //             _controller.textEditingControllers
+                                //                 .value[index];
+                                //         return Column(
+                                //           children: [
+                                //             Center(
+                                //               child: SizedBox(
+                                //                 width: width - 110,
+                                //                 child: InputElement(
+                                //                   accentColor: iconcolor,
+                                //                   controller: _controller
+                                //                       .fromcontroller.value,
+                                //                   placeholder: _controller
+                                //                                   .fromcontroller
+                                //                                   .value
+                                //                                   .text !=
+                                //                               null &&
+                                //                           _controller
+                                //                                   .fromcontroller
+                                //                                   .value
+                                //                                   .text
+                                //                                   .toString()
+                                //                                   .length >
+                                //                               0
+                                //                       ? _controller.fromcontroller
+                                //                           .value.text
+                                //                           .toString()
+                                //                       : "from".tr,
+                                //                   textColor: iconcolor,
+                                //                   cornerradius:
+                                //                       BorderRadius.circular(40),
+                                //                   inputType: TextInputType.text,
+                                //                   onchanged: (val) =>
+                                //                       _controller.findplaces(
+                                //                           val,
+                                //                           _controller
+                                //                               .fromcontroller
+                                //                               .value,
+                                //                           'currentposition',
+                                //                           context),
+                                //                 ),
+                                //               ),
+                                //             ),
+                                //             SizedBox(
+                                //               height: 20,
+                                //             ),
+                                //           ],
+                                //         );
+                                //       }),
+                                // ),
                                 Center(
                                   child: SizedBox(
                                     width: width - 110,
@@ -1199,9 +1258,9 @@ class _HomePageState extends State<HomePage> {
                                           child: Center(
                                             child: Container(
                                               width: width - 40,
-                                              height: addressText.length > 45
-                                                  ? 140
-                                                  : 100,
+                                              height: addressText.length > 30
+                                                  ? 170
+                                                  : 120,
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10, vertical: 5),
                                               margin: EdgeInsets.symmetric(

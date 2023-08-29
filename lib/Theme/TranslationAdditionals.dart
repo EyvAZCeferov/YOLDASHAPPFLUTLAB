@@ -152,6 +152,8 @@ class TranslationAdditionals extends Translations {
           "endride": "Gedişi bitir",
           "accept": "Təsdiq et",
           "cancel": "Ləğv et",
+          "rate": "Dəyərləndir",
+          "yourratedbefore": "Bu gedişi dəyərləndirmisiniz."
         }
       };
 }

@@ -55,7 +55,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
           changeprof: false,
           titlebg: false,
         ),
-        body: showimagemodal == true
+        body: Obx(() => showimagemodal == true
             ? ImageModal(
                 image: selectedimage,
                 close: () => setState(() => showimagemodal = false))
@@ -308,16 +308,30 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                                 setState(() {
                                                   selectedimage = getimageurl(
                                                       'automobil',
-                                                      'automobils',
+                                                      'automobils/types',
                                                       image?.image);
                                                   showimagemodal = true;
                                                 });
                                               },
-                                              child: ImageClass(
-                                                url: getimageurl('automobil',
-                                                    'automobils', image?.image),
-                                                type: true,
-                                                boxfit: BoxFit.contain,
+                                              child: CachedNetworkImage(
+                                                imageUrl: getimageurl(
+                                                    'automobil',
+                                                    'automobils/types',
+                                                    image?.image),
+                                                placeholder: (context, url) =>
+                                                    CircularProgressIndicator(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                                imageBuilder:
+                                                    (context, imageProvider) =>
+                                                        CircleAvatar(
+                                                  backgroundColor: primarycolor,
+                                                  foregroundColor: whitecolor,
+                                                  radius: 35,
+                                                  backgroundImage:
+                                                      imageProvider,
+                                                ),
                                               ),
                                             );
                                           },
@@ -331,7 +345,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
                         ),
                       ),
                       Devider(),
-                    ])),
+                    ]))),
         bottomNavigationBar: Container(
           height: 60,
           margin: EdgeInsets.only(bottom: 15),

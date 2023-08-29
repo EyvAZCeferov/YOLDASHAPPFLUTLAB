@@ -31,13 +31,14 @@ class AuthController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<Users?> userdatas = Rx<Users?>(null);
   RxBool agreeterms = RxBool(false);
-  Rx<Users?> driverpage=Rx<Users?>(null);
+  Rx<Users?> driverpage = Rx<Users?>(null);
 
   AuthController() {
     init();
   }
 
   void init() async {
+    var auth_id = await _maincontroller.getstoragedat('auth_id');
     var newval = await _maincontroller.getstoragedat('authtype');
     authType.value = newval;
   }
@@ -245,7 +246,8 @@ class AuthController extends GetxController {
 
         refreshpage.value = false;
 
-        var response = await GetAndPost.postData("auth/register", body, context);
+        var response =
+            await GetAndPost.postData("auth/register", body, context);
         if (response != null) {
           String status = response['status'];
           String message = '';
@@ -349,13 +351,13 @@ class AuthController extends GetxController {
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
-          CacheManager.setvaluetoprefences('auth_id', null);
-          CacheManager.setvaluetoprefences('token', null);
-          CacheManager.setvaluetoprefences('name_surname', null);
-          CacheManager.setvaluetoprefences('email', null);
-          CacheManager.setvaluetoprefences('phone', null);
-          CacheManager.setvaluetoprefences('authtype', null);
-          CacheManager.setvaluetoprefences('profilepicture', null);
+          CacheManager.removevaluefromprefences('auth_id');
+          CacheManager.removevaluefromprefences('token');
+          CacheManager.removevaluefromprefences('name_surname');
+          CacheManager.removevaluefromprefences('email');
+          CacheManager.removevaluefromprefences('phone');
+        CacheManager.removevaluefromprefences('authtype');
+          CacheManager.removevaluefromprefences('profilepicture');
           authType.value = '';
           Get.offAllNamed(
             'login',

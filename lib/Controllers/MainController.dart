@@ -1,19 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:yoldashapp/Controllers/AuthController.dart';
 
 import '../Functions/CacheManager.dart';
 
 class MainController extends GetxController {
-  late AuthController _authController = Get.put(AuthController());
-
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<String> currentlang = ''.obs;
   Rx<String> authtype = ''.obs;
-  Rx<dynamic> auth_id = Rx<dynamic>(null);
+  Rx<int?> auth_id = Rx<int?>(null);
   Rx<String> token = ''.obs;
   Rx<String> name_surname = ''.obs;
   Rx<String> email = ''.obs;
@@ -47,11 +42,9 @@ class MainController extends GetxController {
         data = token.value;
       } else if (type == "auth_id") {
         data = auth_id.value;
-        auth_id.value =
-            data != null && data.isNotEmpty && data != '' && data != ' '
-                ? data.trim()
-                : await CacheManager.getvaluefromsharedprefences(type);
-
+        auth_id.value = data != null
+            ? data
+            : await CacheManager.getvaluefromsharedprefences(type);
         data = auth_id.value;
       } else if (type == "name_surname") {
         data = name_surname.value;

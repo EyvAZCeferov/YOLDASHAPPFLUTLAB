@@ -29,227 +29,226 @@ class AutomobilsCreate extends StatelessWidget {
         changeprof: false,
         titlebg: false,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Devider(),
-            Center(
-                child: Container(
-                    width: Get.width - 40,
-                    height: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    margin: EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                        color: whitecolor,
-                        borderRadius: BorderRadius.circular(15),
-                        shape: BoxShape.rectangle,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            blurStyle: BlurStyle.solid,
-                            color: Colors.black38,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StaticText(
-                            text: "autonumber".tr,
-                            weight: FontWeight.w500,
-                            size: normaltextSize,
-                            color: darkcolor),
-                        Devider(size: 5),
-                        TextField(
-                          controller: _controller.licensePlateController.value,
-                          autocorrect: false,
-                          autofocus: false,
-                          cursorColor: iconcolor,
-                          style: TextStyle(color: primarycolor),
-                          inputFormatters: [
-                            LicensePlateInputFormatter(),
+      body: Obx(
+        () => SingleChildScrollView(
+          child: SizedBox(
+            height: Get.height * 1.9,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Devider(),
+                Center(
+                    child: Container(
+                        width: Get.width - 40,
+                        height: 150,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            color: whitecolor,
+                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.rectangle,
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurStyle: BlurStyle.solid,
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StaticText(
+                                text: "autonumber".tr,
+                                weight: FontWeight.w500,
+                                size: normaltextSize,
+                                color: darkcolor),
+                            Devider(size: 5),
+                            TextField(
+                              controller:
+                                  _controller.licensePlateController.value,
+                              autocorrect: false,
+                              autofocus: false,
+                              cursorColor: iconcolor,
+                              style: TextStyle(color: primarycolor),
+                              inputFormatters: [
+                                LicensePlateInputFormatter(),
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    ))),
-            Devider(),
-            Center(
-                child: Container(
-                    width: Get.width - 40,
-                    height: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    margin: EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                        color: whitecolor,
-                        borderRadius: BorderRadius.circular(15),
-                        shape: BoxShape.rectangle,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            blurStyle: BlurStyle.solid,
-                            color: Colors.black38,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StaticText(
-                            text: "automarka".tr,
-                            weight: FontWeight.w500,
-                            size: normaltextSize,
-                            color: darkcolor),
-                        Devider(size: 5),
-                        TextField(
-                          controller: _controller.marka.value,
-                          autocorrect: false,
-                          autofocus: false,
-                          cursorColor: iconcolor,
-                          style: TextStyle(color: primarycolor),
-                        )
-                      ],
-                    ))),
-            Devider(),
-            Center(
-                child: Container(
-                    width: Get.width - 40,
-                    height: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    margin: EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                        color: whitecolor,
-                        borderRadius: BorderRadius.circular(15),
-                        shape: BoxShape.rectangle,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            blurStyle: BlurStyle.solid,
-                            color: Colors.black38,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StaticText(
-                            text: "automodel".tr,
-                            weight: FontWeight.w500,
-                            size: normaltextSize,
-                            color: darkcolor),
-                        Devider(size: 5),
-                        TextField(
-                          controller: _controller.model.value,
-                          autocorrect: false,
-                          autofocus: false,
-                          cursorColor: iconcolor,
-                          style: TextStyle(color: primarycolor),
-                        )
-                      ],
-                    ))),
-            Devider(),
-            Center(
-                child: Container(
-                    width: Get.width - 40,
-                    height: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    margin: EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                        color: whitecolor,
-                        borderRadius: BorderRadius.circular(15),
-                        shape: BoxShape.rectangle,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            blurStyle: BlurStyle.solid,
-                            color: Colors.black38,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StaticText(
-                            text: "autocolor".tr,
-                            weight: FontWeight.w500,
-                            size: normaltextSize,
-                            color: darkcolor),
-                        Devider(size: 5),
-                        TextField(
-                          controller: _controller.color.value,
-                          autocorrect: false,
-                          autofocus: false,
-                          cursorColor: iconcolor,
-                          style: TextStyle(color: primarycolor),
-                        )
-                      ],
-                    ))),
-            Devider(),
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : DocumentRow(
+                        ))),
+                Devider(),
+                Center(
+                    child: Container(
+                        width: Get.width - 40,
+                        height: 150,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            color: whitecolor,
+                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.rectangle,
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurStyle: BlurStyle.solid,
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StaticText(
+                                text: "automarka".tr,
+                                weight: FontWeight.w500,
+                                size: normaltextSize,
+                                color: darkcolor),
+                            Devider(size: 5),
+                            TextField(
+                              controller: _controller.marka.value,
+                              autocorrect: false,
+                              autofocus: false,
+                              cursorColor: iconcolor,
+                              style: TextStyle(color: primarycolor),
+                            )
+                          ],
+                        ))),
+                Devider(),
+                Center(
+                    child: Container(
+                        width: Get.width - 40,
+                        height: 150,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            color: whitecolor,
+                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.rectangle,
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurStyle: BlurStyle.solid,
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StaticText(
+                                text: "automodel".tr,
+                                weight: FontWeight.w500,
+                                size: normaltextSize,
+                                color: darkcolor),
+                            Devider(size: 5),
+                            TextField(
+                              controller: _controller.model.value,
+                              autocorrect: false,
+                              autofocus: false,
+                              cursorColor: iconcolor,
+                              style: TextStyle(color: primarycolor),
+                            )
+                          ],
+                        ))),
+                Devider(),
+                Center(
+                    child: Container(
+                        width: Get.width - 40,
+                        height: 150,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            color: whitecolor,
+                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.rectangle,
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurStyle: BlurStyle.solid,
+                                color: Colors.black38,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StaticText(
+                                text: "autocolor".tr,
+                                weight: FontWeight.w500,
+                                size: normaltextSize,
+                                color: darkcolor),
+                            Devider(size: 5),
+                            TextField(
+                              controller: _controller.color.value,
+                              autocorrect: false,
+                              autofocus: false,
+                              cursorColor: iconcolor,
+                              style: TextStyle(color: primarycolor),
+                            )
+                          ],
+                        ))),
+                Devider(),
+                // Obx(() => _controller.refreshpage.value == true
+                //     ? LoaderScreen()
+                //     :
+
+                Column(
+                  children: [
+                    DocumentRow(
                       title: "drivinglicence".tr,
                       subtitle: "uploadimage".tr,
                       onPressed: () =>
                           _controller.pickImage("driving_licence", context),
                       data: _controller.driving_licence.value,
                     ),
-            ),
-            Devider(),
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : DocumentRow(
+                    Devider(),
+                    DocumentRow(
                       title: "idcard".tr,
                       subtitle: "uploadimage".tr,
                       onPressed: () =>
                           _controller.pickImage("id_card", context),
                       data: _controller.id_card.value,
                     ),
-            ),
-            Devider(),
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : DocumentRow(
+                    Devider(),
+                    DocumentRow(
                       title: "autotexpasport".tr,
                       subtitle: "uploadimage".tr,
                       onPressed: () =>
                           _controller.pickImage("technical_passport", context),
                       data: _controller.technical_passport.value,
                     ),
+                    Devider(),
+                    AccordionTemplate(
+                        title: "autotype".tr,
+                        type: "types",
+                        data: _controller.autotype.value),
+                    Devider(),
+                    AccordionTemplate(
+                        title: "autoimages".tr,
+                        type: "images",
+                        data: _controller.autoimages.value),
+                  ],
+                ),
+
+                // ),
+                Devider(),
+              ],
             ),
-            Devider(),
-            
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : AccordionTemplate(
-                      title: "autotype".tr,
-                      type: "types",
-                      data: _controller.autotype.value),
-            ),
-            Devider(),
-            Obx(
-              () => _controller.refreshpage.value == true
-                  ? LoaderScreen()
-                  : AccordionTemplate(
-                      title: "autoimages".tr,
-                      type: "images",
-                      data: _controller.autoimages.value),
-            ),
-            Devider(),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(

@@ -168,7 +168,6 @@ IconData fontawesome(String type) {
 
 String getimageurl(String type, String clasore, String? path) {
   try {
-    print("Path: $path");
     if (type == "user") {
       if (path != null && path != '' && path != ' ' && path.length > 0) {
         return imageurl + clasore + '/' + path;
@@ -176,6 +175,7 @@ String getimageurl(String type, String clasore, String? path) {
         return imageurl + clasore + '/' + 'noprofilepicture.webp';
       }
     } else {
+      print(imageurl + clasore + '/' + path!);
       return imageurl + clasore + '/' + path!;
     }
   } catch (e) {

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 import 'package:yoldashapp/models/rides.dart';
 
@@ -17,10 +19,12 @@ import '../Constants/StaticText.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../models/automobils.dart';
+import 'GoingController.dart';
 import 'MainController.dart';
 
 class HistoryController extends GetxController {
-  late MainController _maincontroller = Get.put(MainController());
+  final MainController _maincontroller = Get.put(MainController());
+  final GoingController _goingController = Get.put(GoingController());
   RxBool openmodalval = false.obs;
   Rx<String> image = "".obs;
   Rx<bool> refreshpage = Rx<bool>(false);
@@ -30,7 +34,7 @@ class HistoryController extends GetxController {
   RxSet<Polyline?> polyline = RxSet<Polyline?>({});
   RxSet<Marker?> markers = RxSet<Marker?>({});
   RxSet<Circle?> circles = RxSet<Circle?>({});
-  Rx<int?> auth_id = Rx<int?>(null);
+  Rx<dynamic?> auth_id = Rx<dynamic?>(null);
   Rx<String?> authtype = Rx<String?>('rider');
   Rx<LatLng?> latLngPos = Rx<LatLng?>(null);
   CameraPosition kGooglePlex = CameraPosition(
@@ -52,6 +56,7 @@ class HistoryController extends GetxController {
     2: 'female',
   };
   Rx<int> selectedgender = Rx<int>(1);
+  Rx<bool> ontheway = Rx<bool>(false);
 
   HistoryController() {
     getAuthId();
@@ -62,8 +67,28 @@ class HistoryController extends GetxController {
     authtype.value = await _maincontroller.getstoragedat('authtype');
   }
 
-  Future<void> refreshData() async {
-    await Future.delayed(Duration(seconds: 2));
+  Future<void> getRides(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("rides", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        data.value = (response['data'] as List).map((dat) {
+                return Rides.fromMap(dat);
+              }).toList();
+
+        refreshpage.value = false;
+      } else {
+        print(message);
+        refreshpage.value = false;
+        showToastMSG(errorcolor, message, context);
+      }
+    }
+
+    refreshpage.value = false;
   }
 
   void openModal(imageval) {
@@ -188,7 +213,32 @@ class HistoryController extends GetxController {
     if (authtype.value == "rider") {
       launchUrlTOSITE(selectedRide.value?.user?.phone);
     } else {
-      print("ABS");
+      if (selectedRide.value?.status == 'ontheway') {
+        updateridestatus('completed', context);
+      } else {
+        updateridestatus('ontheway', context);
+      }
+    }
+  }
+
+  int getplacenullorfull(List<Queries>? queries, PlacesMark place, context) {
+    try {
+      if (queries != null && queries.length > 0) {
+        Queries? query = queries.firstWhere(
+            (element) => element.position == place.id,
+            orElse: () => Queries());
+
+        if (query != null) {
+          return query.rider!.additionalinfo!.gender!;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print(e.toString());
+      return 0;
     }
   }
 
@@ -214,10 +264,19 @@ class HistoryController extends GetxController {
     List<Widget> groupedItems = rowGroups.entries.map((entry) {
       List<Widget> rowWidgets = entry.value.map((place) {
         String imageUrl;
+        var getplaceinfo =
+            getplacenullorfull(selectedRide.value?.queries, place, context);
+
         if (place.type == "driver") {
           imageUrl = './assets/images/place_driver.png';
         } else {
-          imageUrl = './assets/images/place_rider.png';
+          if (getplaceinfo != 0 && getplaceinfo == 1) {
+            imageUrl = './assets/images/place_man.png';
+          } else if (getplaceinfo != 0 && getplaceinfo == 2) {
+            imageUrl = './assets/images/place_woman.png';
+          } else {
+            imageUrl = './assets/images/place_rider.png';
+          }
         }
 
         return GestureDetector(
@@ -225,8 +284,10 @@ class HistoryController extends GetxController {
             if (place.type == "driver") {
               showToastMSG(errorcolor, "youarenotselectingdriver".tr, context);
             } else {
-              selectedplace.value = place.id!;
-              Get.back();
+              if (getplaceinfo == 0) {
+                selectedplace.value = place.id!;
+                Get.back();
+              }
             }
           },
           child: Container(
@@ -451,37 +512,39 @@ class HistoryController extends GetxController {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => selectplace(
-                          1,
-                          ride.automobil?.autotype?.placesMark ?? [],
-                          ride as Rides,
-                          context as BuildContext),
-                      child: Container(
-                        width: 110,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: primarycolor,
-                                style: BorderStyle.solid,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(35),
-                            color: selectedindex.value != null &&
-                                    selectedindex.value == 1
-                                ? primarycolor
-                                : whitecolor),
-                        child: StaticText(
-                            color: selectedindex.value != null &&
-                                    selectedindex.value == 1
-                                ? whitecolor
-                                : darkcolor,
-                            size: normaltextSize,
-                            weight: FontWeight.w500,
-                            align: TextAlign.center,
-                            text: "choiseplace".tr),
-                      ),
-                    ),
+                    ride.automobil?.autotype?.placesMark != null
+                        ? GestureDetector(
+                            onTap: () => selectplace(
+                                1,
+                                ride.automobil?.autotype?.placesMark ?? [],
+                                ride as Rides,
+                                context as BuildContext),
+                            child: Container(
+                              width: 110,
+                              height: 35,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: primarycolor,
+                                      style: BorderStyle.solid,
+                                      width: 1),
+                                  borderRadius: BorderRadius.circular(35),
+                                  color: selectedindex.value != null &&
+                                          selectedindex.value == 1
+                                      ? primarycolor
+                                      : whitecolor),
+                              child: StaticText(
+                                  color: selectedindex.value != null &&
+                                          selectedindex.value == 1
+                                      ? whitecolor
+                                      : darkcolor,
+                                  size: normaltextSize,
+                                  weight: FontWeight.w500,
+                                  align: TextAlign.center,
+                                  text: "choiseplace".tr),
+                            ),
+                          )
+                        : SizedBox(),
                     GestureDetector(
                       onTap: () => selectplace(
                           2,
@@ -624,6 +687,7 @@ class HistoryController extends GetxController {
 
   void getridedata(context, int id) async {
     refreshpage.value = true;
+    ontheway.value = false;
     Map<String, dynamic> body = {};
     var response = await GetAndPost.fetchData("rides/$id", context, body);
     if (response != null) {
@@ -632,8 +696,14 @@ class HistoryController extends GetxController {
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         selectedRide.value = Rides.fromMap(response['data']);
+        if (selectedRide.value!.status == "ONTHEWAY" ||
+            selectedRide.value!.status == "ontheway") {
+          ontheway.value = true;
+        }
+
         refreshpage.value = false;
       } else {
+        print(message);
         refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
@@ -650,7 +720,6 @@ class HistoryController extends GetxController {
       };
       var response =
           await GetAndPost.postData("ride_queries/$id", body, context);
-      print(response);
       if (response != null) {
         String status = response['status'];
         String message = '';
@@ -667,5 +736,168 @@ class HistoryController extends GetxController {
     } else {
       refreshpage.value = false;
     }
+  }
+
+  void rate(id, context) async {
+    Get.bottomSheet(Container(
+      height: 100,
+      color: Colors.white,
+      child: Column(
+        children: [
+          Devider(size: 25),
+          RatingBar.builder(
+            initialRating: 5,
+            minRating: 1,
+            direction: Axis.horizontal,
+            allowHalfRating: false,
+            itemCount: 5,
+            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            onRatingUpdate: (rating) {
+              rateride(id, rating, context);
+            },
+          ),
+        ],
+      ),
+    ));
+  }
+
+  void rateride(id, rating, context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {rating: rating};
+    var response = await GetAndPost.patchData("rides/$id", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        getridedata(context, id);
+        refreshpage.value = false;
+        Get.back();
+      } else {
+        refreshpage.value = false;
+        showToastMSG(errorcolor, message, context);
+      }
+    }
+    refreshpage.value = false;
+  }
+
+  void updateridestatus(type, context) async {
+    refreshpage.value = true;
+    if (type != null) {
+      Map<String, dynamic> body = {
+        "status": type,
+      };
+
+      var response = await GetAndPost.postData(
+          "rides_updatestatus/${selectedRide.value?.id}", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = '';
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          getridedata(context, selectedRide.value!.id!);
+          if (type == "completed") {
+            _goingController.getcurrentrides(context);
+
+            Get.back();
+          }
+        } else {
+          refreshpage.value = false;
+          print(message);
+          showToastMSG(errorcolor, message, context);
+        }
+      }
+
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+    }
+  }
+
+  void launchWaze(double lat, double lng) async {
+    var url = 'waze://?ll=${lat.toString()},${lng.toString()}';
+    var fallbackUrl =
+        'https://waze.com/ul?ll=${lat.toString()},${lng.toString()}&navigate=yes';
+    try {
+      bool launched =
+          await launch(url, forceSafariVC: false, forceWebView: false);
+      if (!launched) {
+        await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
+      }
+    } catch (e) {
+      await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
+    }
+  }
+
+  void showroadinfo(Queries query, context) async {
+    refreshpage.value = true;
+    Get.bottomSheet(Container(
+      height: 300,
+      color: Colors.white,
+      child: Column(children: [
+        Devider(size: 25),
+        StaticText(
+          color: secondarycolor,
+          size: buttontextSize,
+          text: "historydetail".tr,
+          weight: FontWeight.w500,
+          align: TextAlign.center,
+          maxline: 2,
+        ),
+        Devider(size: 25),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 100,
+              width: Get.width - 40,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        CoordinatesRides coordinatesRides =
+                            query.coordinates![index];
+                        return StaticText(
+                          text: coordinatesRides.address!,
+                          weight: FontWeight.w500,
+                          size: normaltextSize,
+                          color: coordinatesRides.type != "currentposition"
+                              ? errorcolor
+                              : secondarycolor,
+                          align: TextAlign.left,
+                          maxline: 3,
+                          textOverflow: TextOverflow.clip,
+                        );
+                      },
+                      itemCount: query.coordinates!.length,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Devider(),
+            query.position != null &&
+                    query.position != 0 &&
+                    query.position != '' &&
+                    query.position != ' '
+                ? StaticText(
+                    text: getLocalizedValue(query.place!.name!, 'name')
+                        .toString(),
+                    weight: FontWeight.w700,
+                    size: buttontextSize,
+                    align: TextAlign.left,
+                    color: darkcolor)
+                : SizedBox()
+          ],
+        ),
+      ]),
+    ));
+    refreshpage.value = false;
   }
 }

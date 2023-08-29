@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yoldashapp/Controllers/AuthController.dart';
+import 'package:yoldashapp/Controllers/AutomobilsController.dart';
 import 'package:yoldashapp/models/rides.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
@@ -20,9 +22,12 @@ import '../../../../Theme/ThemeService.dart';
 import '../../../../models/automobils.dart';
 
 class HistoryShow extends StatelessWidget {
-  final HistoryController _controller = Get.find<HistoryController>();
-  final GoingController _goingcontroller = Get.find<GoingController>();
-  final MessagesController _messagesController = Get.find<MessagesController>();
+  final HistoryController _controller = Get.put(HistoryController());
+  final MessagesController _messagesController = Get.put(MessagesController());
+  final AuthController _authController = Get.put(AuthController());
+  final GoingController _goingController = Get.put(GoingController());
+  final AutomobilsController _automobilsController =
+      Get.put(AutomobilsController());
 
   List<Widget> addressWidgets = [];
 
@@ -77,7 +82,9 @@ class HistoryShow extends StatelessWidget {
                         top: 0,
                         left: 0,
                         right: 0,
-                        bottom: Get.width - 100,
+                        bottom: _controller.ontheway.value == true
+                            ? Get.width - 200
+                            : Get.width - 100,
                         child: GoogleMap(
                           padding: EdgeInsets.only(bottom: width / 2, top: 45),
                           mapType: MapType.terrain,
@@ -104,7 +111,8 @@ class HistoryShow extends StatelessWidget {
                             _controller.getridecoordsandmarks(context);
                           },
                         )),
-                    _controller.selectedRide.value?.coordinates != null
+                    _controller.selectedRide.value?.coordinates != null &&
+                            _controller.ontheway.value == false
                         ? Positioned(
                             top: 80,
                             left: 20,
@@ -166,8 +174,41 @@ class HistoryShow extends StatelessWidget {
                             ),
                           )
                         : SizedBox(),
+                    _controller.ontheway.value == true
+                        ? Positioned(
+                            top: 0,
+                            left: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                _controller.launchWaze(
+                                    _controller.markers.value?.first?.position
+                                        ?.latitude as double,
+                                    _controller.markers.value?.last?.position
+                                        ?.longitude as double);
+                              },
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                    color: whitecolor,
+                                    border: Border.all(
+                                        color: iconcolor,
+                                        style: BorderStyle.solid,
+                                        width: 2),
+                                    borderRadius: BorderRadius.circular(35)),
+                                child: ImageClass(
+                                  type: false,
+                                  url: "./assets/images/waze.png",
+                                  boxfit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
                     Positioned.fill(
-                        top: Get.width - 100,
+                        top: _controller.ontheway.value == true
+                            ? Get.width - 40
+                            : Get.width - 100,
                         bottom: 0,
                         left: 0,
                         right: 0,
@@ -196,28 +237,319 @@ class HistoryShow extends StatelessWidget {
                         ))
                   ]),
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        color: whitecolor,
-        margin: EdgeInsets.only(bottom: 15),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonElement(
-              text: _controller.authtype.value == "rider"
-                  ? "contact".tr
-                  : "startride".tr,
-              height: 50,
-              width: width - 100,
-              borderRadius: BorderRadius.circular(45),
-              onPressed: () => _controller.bottombutton(context)),
+      bottomNavigationBar: Obx(
+        ()=> Container(
+          height: 60,
+          color: whitecolor,
+          margin: EdgeInsets.only(bottom: 15),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ButtonElement(
+                text: _controller.authtype.value == "rider"
+                    ? "contact".tr
+                    : _controller.ontheway == true ||
+                            _controller.ontheway == 1
+                        ? "endride".tr
+                        : "startride".tr,
+                height: 50,
+                width: width - 100,
+                borderRadius: BorderRadius.circular(45),
+                bgColor: _controller.ontheway == true ||
+                        _controller.ontheway == 1
+                    ? errorcolor
+                    : primarycolor,
+                onPressed: () => _controller.bottombutton(context)),
+          ),
         ),
       ),
     );
   }
 
+  Queries? getQuery(List<Queries>? queries) {
+    if (queries != null && queries.length > 0) {
+      for (var i = 0; i < queries.length; i++) {
+        var query = queries[i];
+        if (query.userId == _controller.auth_id.value) {
+          return query;
+        }
+      }
+    }
+    return null;
+  }
+
   Widget _rendercontent(context) {
     if (_controller.authtype.value == "rider") {
-      return Container();
+      Queries? query = getQuery(_controller.selectedRide.value?.queries);
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Devider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _authController.driverpage.value =
+                          _controller.selectedRide.value?.user;
+                      _automobilsController.getautomobildata(
+                          _controller.selectedRide.value?.automobilId, context);
+                      if (_authController.driverpage.value != null &&
+                          _authController.driverpage.value?.id != null &&
+                          _authController.driverpage.value?.id != 0 &&
+                          _authController.driverpage.value?.id != '' &&
+                          _authController.driverpage.value?.id != ' ') {
+                        Get.toNamed(
+                            '/profiledriver/${_controller.selectedRide.value?.userId}');
+                      }
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: getimageurl(
+                          "user",
+                          'users',
+                          _controller
+                              .selectedRide.value?.user?.additionalinfo?.image),
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      imageBuilder: (context, imageProvider) => CircleAvatar(
+                        backgroundColor: primarycolor,
+                        foregroundColor: whitecolor,
+                        radius: 35,
+                        backgroundImage: imageProvider,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _authController.driverpage.value =
+                          _controller.selectedRide.value?.user;
+                      _automobilsController.getautomobildata(
+                          _controller.selectedRide.value?.automobilId, context);
+                      if (_authController.driverpage.value != null &&
+                          _authController.driverpage.value?.id != null &&
+                          _authController.driverpage.value?.id != 0 &&
+                          _authController.driverpage.value?.id != '' &&
+                          _authController.driverpage.value?.id != ' ') {
+                        Get.toNamed(
+                            '/profiledriver/${_controller.selectedRide.value?.userId}');
+                      }
+                    },
+                    child: StaticText(
+                      color: darkcolor,
+                      size: normaltextSize,
+                      weight: FontWeight.w400,
+                      align: TextAlign.left,
+                      text: _controller.selectedRide.value?.user?.nameSurname ??
+                          '',
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 85,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: () => _messagesController.createandredirectchat(
+                      _controller.auth_id.value,
+                      _controller.selectedRide.value?.userId,
+                      context),
+                  style: ElevatedButton.styleFrom(
+                    primary: primarycolor,
+                    onPrimary: whitecolor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(FeatherIcons.messageCircle,
+                          color: whitecolor, size: normaltextSize),
+                      StaticText(
+                        color: whitecolor,
+                        size: smalltextSize,
+                        weight: FontWeight.w400,
+                        align: TextAlign.center,
+                        text: " " + "chat".tr,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Devider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              query?.weight != null &&
+                      query?.weight != 0 &&
+                      query?.weight != 0.00 &&
+                      query?.weight != '0.00' &&
+                      query?.weight != '0'
+                  ? Row(
+                      children: [
+                        Icon(
+                          FeatherIcons.briefcase,
+                          color: primarycolor,
+                          size: normaltextSize,
+                        ),
+                        StaticText(
+                          color: iconcolor,
+                          size: smalltextSize,
+                          weight: FontWeight.w400,
+                          align: TextAlign.left,
+                          text: " ${query!.weight} kg",
+                        ),
+                      ],
+                    )
+                  : SizedBox(),
+              StaticText(
+                color: primarycolor,
+                size: buttontextSize,
+                weight: FontWeight.w500,
+                align: TextAlign.right,
+                text: "${query?.price} AZN",
+              ),
+            ],
+          ),
+          Devider(),
+          Center(
+            child: SizedBox(
+              height: 100,
+              width: Get.width - 40,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: query?.coordinates?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          CoordinatesRides coordinate =
+                              query!.coordinates![index];
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              StaticText(
+                                color: coordinate.type == "currentposition"
+                                    ? secondarycolor
+                                    : errorcolor,
+                                size: normaltextSize,
+                                text: "${coordinate.address}",
+                                weight: FontWeight.bold,
+                                align: TextAlign.left,
+                                maxline: 4,
+                                textOverflow: TextOverflow.clip,
+                              ),
+                              Devider(),
+                            ],
+                          );
+                        }),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Devider(),
+          query?.status == "accepted" ||
+                  query?.status == "changed" ||
+                  query?.status == "waiting" ||
+                  query?.status == "arrivedoncustomer"
+              ? Center(
+                  child: SizedBox(
+                    width: Get.width - 90,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (query?.id != null &&
+                            query?.id != 0 &&
+                            query?.id != '' &&
+                            query?.id != ' ') {
+                          _controller.settypequery(
+                              query!.id, "notaccepted", context);
+                          _goingController.getcurrentrides(context);
+                          Get.back();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: errorcolor,
+                        onPrimary: whitecolor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(FeatherIcons.x,
+                              color: whitecolor, size: normaltextSize),
+                          StaticText(
+                              text: " " + "cancel".tr,
+                              weight: FontWeight.w400,
+                              size: normaltextSize,
+                              color: whitecolor),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : Center(
+                  child: SizedBox(
+                    width: Get.width - 90,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (query?.ratingRide != 0 &&
+                            query?.ratingRide != null) {
+                          showToastMSG(
+                              secondarycolor, "yourratedbefore".tr, context);
+                        } else {
+                          _controller.rate(query?.id, context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary:
+                            query?.ratingRide != 0 && query?.ratingRide != null
+                                ? bodycolor
+                                : secondarycolor,
+                        onPrimary: whitecolor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(FeatherIcons.star,
+                              color: whitecolor, size: normaltextSize),
+                          StaticText(
+                              text: " " + "rate".tr,
+                              weight: FontWeight.w400,
+                              size: normaltextSize,
+                              color: whitecolor),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+          Devider(),
+        ],
+      );
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -449,7 +781,7 @@ class HistoryShow extends StatelessWidget {
                                               onPressed: () =>
                                                   _controller.settypequery(
                                                       query?.id,
-                                                      "accept",
+                                                      "accepted",
                                                       context),
                                               style: ElevatedButton.styleFrom(
                                                 primary: primarycolor,
@@ -516,7 +848,7 @@ class HistoryShow extends StatelessWidget {
                                               query?.status ==
                                                   "arrivedoncustomer"
                                           ? ElevatedButton(
-                                              onPressed: () => print("asd"),
+                                              onPressed: () => _controller.showroadinfo(query as Queries, context),
                                               style: ElevatedButton.styleFrom(
                                                 primary: secondarycolor,
                                                 onPrimary: whitecolor,

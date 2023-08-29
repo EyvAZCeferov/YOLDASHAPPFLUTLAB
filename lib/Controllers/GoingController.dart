@@ -35,6 +35,9 @@ class GoingController extends GetxController {
   late AutomobilsController _automobilscontroller =
       Get.put(AutomobilsController());
   Rx<bool> refreshpage = Rx<bool>(false);
+  RxList<TextEditingController> textEditingControllers =
+      RxList<TextEditingController>([]);
+
   Rx<TextEditingController> fromcontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> tocontroller =
@@ -83,6 +86,25 @@ class GoingController extends GetxController {
 
   GoingController() {
     getAuthId();
+  }
+
+  void addorremoveeditingcontroller(int? index, String? type) {
+    if (index != null &&
+        index >= 0 &&
+        index < textEditingControllers.value.length) {
+      textEditingControllers.value[index].dispose();
+      textEditingControllers.value.removeAt(index);
+    } else {
+      textEditingControllers.add(TextEditingController());
+    }
+  }
+
+  @override
+  void onClose() {
+    for (var controller in textEditingControllers.value) {
+      controller.dispose();
+    }
+    super.onClose();
   }
 
   void getAuthId() async {
@@ -439,6 +461,27 @@ class GoingController extends GetxController {
     }
   }
 
+  int getplacenullorfull(List<Queries>? queries, PlacesMark place, context) {
+    try {
+      if (queries != null && queries.length > 0) {
+        Queries? query = queries.firstWhere(
+            (element) => element.position == place.id,
+            orElse: () => Queries());
+
+        if (query != null) {
+          return query.rider!.additionalinfo!.gender!;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print(e.toString());
+      return 0;
+    }
+  }
+
   void selectplace(index, List places, Rides ride, BuildContext context) {
     selectedindex.value = index;
     if (index == 1) {
@@ -458,7 +501,7 @@ class GoingController extends GetxController {
             ),
             Devider(size: 25),
             Column(
-              children: groupAndSortPlaces(
+              children: groupAndSortPlaces(ride.queries as List<Queries>,
                   places as List<PlacesMark>, context as BuildContext),
             ),
             Devider(
@@ -474,7 +517,8 @@ class GoingController extends GetxController {
     }
   }
 
-  List<Widget> groupAndSortPlaces(List<PlacesMark> places, context) {
+  List<Widget> groupAndSortPlaces(
+      List<Queries>? queries, List<PlacesMark> places, context) {
     Map<int, List<PlacesMark>> rowGroups = {};
 
     for (var place in places) {
@@ -496,10 +540,18 @@ class GoingController extends GetxController {
     List<Widget> groupedItems = rowGroups.entries.map((entry) {
       List<Widget> rowWidgets = entry.value.map((place) {
         String imageUrl;
+        var getplaceinfo = getplacenullorfull(queries, place, context);
+
         if (place.type == "driver") {
           imageUrl = './assets/images/place_driver.png';
         } else {
-          imageUrl = './assets/images/place_rider.png';
+          if (getplaceinfo != 0 && getplaceinfo == 1) {
+            imageUrl = './assets/images/place_man.png';
+          } else if (getplaceinfo != 0 && getplaceinfo == 2) {
+            imageUrl = './assets/images/place_woman.png';
+          } else {
+            imageUrl = './assets/images/place_rider.png';
+          }
         }
 
         return GestureDetector(
@@ -753,6 +805,7 @@ class GoingController extends GetxController {
         resulttext.value = null;
 
         var response = await GetAndPost.postData("rides", body, context);
+        print(response);
         if (response != null) {
           String status = response['status'];
           String message = "";
@@ -1186,6 +1239,9 @@ class GoingController extends GetxController {
         },
       ],
     };
+    if (auth_id.value != null && auth_id.value != '' && auth_id.value != ' ') {
+      body['user_id'] = auth_id.value;
+    }
     var response =
         await GetAndPost.postData("rides_sendrequest", body, context);
     Get.back();
@@ -1232,27 +1288,31 @@ class GoingController extends GetxController {
   }
 
   void getcurrentrides(BuildContext context) async {
-    refreshpage.value = true;
-    Map<String, dynamic> body = {};
-    userlocations.value = [];
-    var response = await GetAndPost.fetchData("rides", context, body);
-    print(response);
-    if (response != null) {
-      String status = response['status'];
-      String message = '';
-      if (response['message'] != null) message = response['message'];
-      if (status == "success") {
-        currentrides.value = (response['data'] as List).map((dat) {
-          return Rides.fromMap(dat);
-        }).toList();
-      } else {
-        showToastMSG(errorcolor, message, context);
-      }
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
+    try {
+      refreshpage.value = true;
+      Map<String, dynamic> body = {};
       userlocations.value = [];
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      var response = await GetAndPost.fetchData("rides", context, body);
+      print(response);
+      if (response != null) {
+        String status = response['status'];
+        String message = '';
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          currentrides.value = (response['data'] as List).map((dat) {
+            return Rides.fromMap(dat);
+          }).toList();
+        } else {
+          showToastMSG(errorcolor, message, context);
+        }
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
+        userlocations.value = [];
+      }
+    } catch (e) {
+      print("-------------------------------------");
+      print(e.toString());
     }
   }
 

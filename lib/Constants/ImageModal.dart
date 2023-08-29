@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
@@ -42,10 +43,10 @@ class _ImageModalState extends State<ImageModal> {
           SizedBox(
             width: Get.width,
             height: Get.width - 100,
-            child: ImageClass(
-              type: true,
-              url: widget.image,
-              boxfit: BoxFit.contain,
+            child: CachedNetworkImage(
+              imageUrl: widget.image,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
         ],

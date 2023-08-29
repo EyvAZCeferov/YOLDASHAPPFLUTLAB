@@ -58,20 +58,34 @@ class CacheManager {
     return null;
   }
 
-  static dynamic? getvaluefromsharedprefences(String key) async {
+  static Future<dynamic?> getvaluefromsharedprefences(String key) async {
     try {
       var box = await _getBox();
-      var newdat = box.get(key) ?? null;
-      return newdat;
+      return box.get(key);
     } catch (e) {
-      print("Error Getting Value");
-      print(e.toString());
+      print("Error Getting Value: $e");
+      return null;
+    }
+  }
+
+  static Future<dynamic?> removevaluefromprefences(String key) async {
+    try {
+      var box = await _getBox();
+      return box.delete(key);
+    } catch (e) {
+      print("Error Deleting Value: $e");
+      return null;
     }
   }
 
   static Future<void> setvaluetoprefences(String key, dynamic value) async {
     try {
       var box = await _getBox();
+
+      if (box.containsKey(key)) {
+        await box.delete(key);
+      }
+
       await box.put(key, value);
     } catch (e) {
       print("Error Setting Value");
