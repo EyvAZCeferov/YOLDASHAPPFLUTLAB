@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -560,21 +562,22 @@ class _HomePageState extends State<HomePage> {
                                                         child: StaticText(
                                                           color: iconcolor,
                                                           size: normaltextSize,
-                                                          text: _controller
-                                                                          .fromcontroller
-                                                                          .value
-                                                                          .text !=
+                                                          text: _controller.addresscontrollers
+                                                                              .value[
+                                                                          'position_0'] !=
                                                                       null &&
                                                                   _controller
-                                                                          .fromcontroller
-                                                                          .value
+                                                                          .addresscontrollers
+                                                                          .value[
+                                                                              'position_0']
                                                                           .text
                                                                           .toString()
                                                                           .length >
                                                                       0
                                                               ? _controller
-                                                                  .fromcontroller
-                                                                  .value
+                                                                  .addresscontrollers
+                                                                  .value[
+                                                                      'position_0']
                                                                   .text
                                                                   .toString()
                                                               : "from".tr,
@@ -593,21 +596,22 @@ class _HomePageState extends State<HomePage> {
                                                         child: StaticText(
                                                           color: iconcolor,
                                                           size: normaltextSize,
-                                                          text: _controller
-                                                                          .tocontroller
-                                                                          .value
-                                                                          .text !=
+                                                          text: _controller.addresscontrollers
+                                                                              .value[
+                                                                          'position_1'] !=
                                                                       null &&
                                                                   _controller
-                                                                          .tocontroller
-                                                                          .value
+                                                                          .addresscontrollers
+                                                                          .value[
+                                                                              'position_1']
                                                                           .text
                                                                           .toString()
                                                                           .length >
                                                                       0
                                                               ? _controller
-                                                                  .tocontroller
-                                                                  .value
+                                                                  .addresscontrollers
+                                                                  .value[
+                                                                      'position_1']
                                                                   .text
                                                                   .toString()
                                                               : "to".tr,
@@ -644,6 +648,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
+                              margin: EdgeInsets.only(left: 10),
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
@@ -680,317 +685,109 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 10,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                // Expanded(
-                                //   child: ListView.builder(
-                                //       itemCount: _controller
-                                //           .textEditingControllers.value.length,
-                                //       itemBuilder: (context, index) {
-                                //         TextEditingController controller =
-                                //             _controller.textEditingControllers
-                                //                 .value[index];
-                                //         return Column(
-                                //           children: [
-                                //             Center(
-                                //               child: SizedBox(
-                                //                 width: width - 110,
-                                //                 child: InputElement(
-                                //                   accentColor: iconcolor,
-                                //                   controller: _controller
-                                //                       .fromcontroller.value,
-                                //                   placeholder: _controller
-                                //                                   .fromcontroller
-                                //                                   .value
-                                //                                   .text !=
-                                //                               null &&
-                                //                           _controller
-                                //                                   .fromcontroller
-                                //                                   .value
-                                //                                   .text
-                                //                                   .toString()
-                                //                                   .length >
-                                //                               0
-                                //                       ? _controller.fromcontroller
-                                //                           .value.text
-                                //                           .toString()
-                                //                       : "from".tr,
-                                //                   textColor: iconcolor,
-                                //                   cornerradius:
-                                //                       BorderRadius.circular(40),
-                                //                   inputType: TextInputType.text,
-                                //                   onchanged: (val) =>
-                                //                       _controller.findplaces(
-                                //                           val,
-                                //                           _controller
-                                //                               .fromcontroller
-                                //                               .value,
-                                //                           'currentposition',
-                                //                           context),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //             SizedBox(
-                                //               height: 20,
-                                //             ),
-                                //           ],
-                                //         );
-                                //       }),
-                                // ),
-                                Center(
-                                  child: SizedBox(
-                                    width: width - 110,
-                                    child: InputElement(
-                                      accentColor: iconcolor,
-                                      controller:
-                                          _controller.fromcontroller.value,
-                                      placeholder:
-                                          _controller.fromcontroller.value
-                                                          .text !=
-                                                      null &&
-                                                  _controller.fromcontroller
-                                                          .value.text
-                                                          .toString()
-                                                          .length >
-                                                      0
-                                              ? _controller
-                                                  .fromcontroller.value.text
-                                                  .toString()
-                                              : "from".tr,
-                                      textColor: iconcolor,
-                                      cornerradius: BorderRadius.circular(40),
-                                      inputType: TextInputType.text,
-                                      onchanged: (val) =>
-                                          _controller.findplaces(
-                                              val,
-                                              _controller.fromcontroller.value,
-                                              'currentposition',
-                                              context),
+                            Container(
+                              height: 190,
+                              width: width - 67,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: ListView.builder(
+                                      itemCount: _controller
+                                          .addresscontrollers.value.length,
+                                      itemBuilder: (context, index) {
+                                        TextEditingController controllernow =
+                                            _controller.addresscontrollers
+                                                .value['position_$index'];
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              height: 55,
+                                              width: width - 120,
+                                              child: InputElement(
+                                                accentColor: iconcolor,
+                                                controller: controllernow,
+                                                placeholder:
+                                                    controllernow.text !=
+                                                                null &&
+                                                            controllernow.text
+                                                                    .length >
+                                                                0
+                                                        ? controllernow.text
+                                                            .toString()
+                                                        : index == 0
+                                                            ? "from".tr
+                                                            : "to".tr,
+                                                textColor: iconcolor,
+                                                cornerradius:
+                                                    BorderRadius.circular(40),
+                                                inputType: TextInputType.text,
+                                                onchanged: (val) =>
+                                                    _controller.findplaces(
+                                                  val,
+                                                  controllernow,
+                                                  'position_${index}',
+                                                  context,
+                                                ),
+                                              ),
+                                            ),
+                                            index != 0
+                                                ? _controller.addresscontrollers[
+                                                            'position_${index + 1}'] ==
+                                                        null
+                                                    ? IconButton(
+                                                        onPressed: () {
+                                                          _controller
+                                                              .refreshpage
+                                                              .value = true;
+                                                          _controller
+                                                              .addorremoveeditingcontroller(
+                                                                  index + 1,
+                                                                  'add');
+                                                          _controller
+                                                              .refreshpage
+                                                              .value = false;
+                                                        },
+                                                        icon: Icon(
+                                                          FeatherIcons.plus,
+                                                          color: primarycolor,
+                                                          size: normaltextSize,
+                                                        ))
+                                                    : IconButton(
+                                                        onPressed: () {
+                                                          _controller
+                                                              .refreshpage
+                                                              .value = true;
+                                                          _controller
+                                                              .addorremoveeditingcontroller(
+                                                                  index,
+                                                                  'delete');
+                                                          _controller
+                                                              .refreshpage
+                                                              .value = false;
+                                                        },
+                                                        icon: Icon(
+                                                          FeatherIcons.minus,
+                                                          color: errorcolor,
+                                                          size: normaltextSize,
+                                                        ))
+                                                : SizedBox(),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Center(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: width - 110,
-                                        child: InputElement(
-                                          accentColor: iconcolor,
-                                          controller:
-                                              _controller.tocontroller.value,
-                                          placeholder: "to".tr,
-                                          textColor: iconcolor,
-                                          cornerradius:
-                                              BorderRadius.circular(40),
-                                          inputType: TextInputType.text,
-                                          onchanged: (val) =>
-                                              _controller.findplaces(
-                                                  val,
-                                                  _controller
-                                                      .tocontroller.value,
-                                                  'destinationposition',
-                                                  context),
-                                        ),
-                                      ),
-                                      IconButtonElement(
-                                        icon: _controller
-                                                    .addedsectionshow.value ==
-                                                false
-                                            ? FeatherIcons.plus
-                                            : FeatherIcons.minus,
-                                        onPressed: () =>
-                                            _controller.addsections(),
-                                        bgColor: Colors.transparent,
-                                        color: secondarycolor,
-                                        size: buttontextSize,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Devider(size: 5, type: false),
-                                _controller.authtype == "rider"
-                                    ? Center(
-                                        child: SizedBox(
-                                          width: width - 70,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () => _controller
-                                                    .createorselectlocation(
-                                                        'home', context),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      FeatherIcons.home,
-                                                      color: primarycolor,
-                                                      size: subHeadingSize,
-                                                    ),
-                                                    SizedBox(width: 7),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        StaticText(
-                                                            color: darkcolor,
-                                                            size:
-                                                                normaltextSize,
-                                                            weight:
-                                                                FontWeight.w500,
-                                                            align: TextAlign
-                                                                .center,
-                                                            text: "myhome".tr),
-                                                        StaticText(
-                                                            color: iconcolor,
-                                                            size: smalltextSize,
-                                                            weight:
-                                                                FontWeight.w400,
-                                                            align: TextAlign
-                                                                .center,
-                                                            text: () {
-                                                              var locationData =
-                                                                  _controller
-                                                                      .gettypeoflocationaddress(
-                                                                          'home',
-                                                                          context);
-                                                              if (locationData !=
-                                                                      null &&
-                                                                  locationData[
-                                                                          'name'] !=
-                                                                      null) {
-                                                                String
-                                                                    locationName =
-                                                                    locationData[
-                                                                            'name']
-                                                                        as String;
-                                                                if (locationName
-                                                                        .length >
-                                                                    15) {
-                                                                  String
-                                                                      shortenedLocationName =
-                                                                      locationName.substring(
-                                                                              0,
-                                                                              15) +
-                                                                          '...';
-                                                                  return shortenedLocationName;
-                                                                } else {
-                                                                  return locationName;
-                                                                }
-                                                              } else {
-                                                                return 'add'.tr;
-                                                              }
-                                                            }()),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(width: 7),
-                                              GestureDetector(
-                                                onTap: () => _controller
-                                                    .createorselectlocation(
-                                                        'work', context),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      FeatherIcons.briefcase,
-                                                      color: primarycolor,
-                                                      size: subHeadingSize,
-                                                    ),
-                                                    SizedBox(width: 7),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        StaticText(
-                                                            color: darkcolor,
-                                                            size:
-                                                                normaltextSize,
-                                                            weight:
-                                                                FontWeight.w500,
-                                                            align: TextAlign
-                                                                .center,
-                                                            text: "mywork".tr),
-                                                        StaticText(
-                                                            color: iconcolor,
-                                                            size: smalltextSize,
-                                                            weight:
-                                                                FontWeight.w400,
-                                                            align: TextAlign
-                                                                .center,
-                                                            text: () {
-                                                              var locationData =
-                                                                  _controller
-                                                                      .gettypeoflocationaddress(
-                                                                          'work',
-                                                                          context);
-                                                              if (locationData !=
-                                                                      null &&
-                                                                  locationData[
-                                                                          'name'] !=
-                                                                      null) {
-                                                                String
-                                                                    locationName =
-                                                                    locationData[
-                                                                            'name']
-                                                                        as String;
-                                                                if (locationName
-                                                                        .length >
-                                                                    15) {
-                                                                  String
-                                                                      shortenedLocationName =
-                                                                      locationName.substring(
-                                                                              0,
-                                                                              15) +
-                                                                          '...';
-                                                                  return shortenedLocationName;
-                                                                } else {
-                                                                  return locationName;
-                                                                }
-                                                              } else {
-                                                                return 'add'.tr;
-                                                              }
-                                                            }()),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox(),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),

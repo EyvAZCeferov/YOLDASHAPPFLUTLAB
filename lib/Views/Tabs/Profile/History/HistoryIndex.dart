@@ -19,6 +19,45 @@ class HistoryIndex extends StatefulWidget {
 class _HistoryIndexState extends State<HistoryIndex> {
   final HistoryController _controller = Get.find<HistoryController>();
 
+  Color getstatcolor(String? type) {
+    if (type == "waiting" || type == "changed") {
+      return Color(0xffffcc00);
+    } else if (type == "completed") {
+      return Color(0xff339900);
+    } else if (type == "notcompleted" || type == "cancelled") {
+      return Color(0xffcc3300);
+    } else if (type == "ontheway") {
+      return Color(0xffff9966);
+    } else {
+      return Color(0xffffcc00);
+    }
+  }
+
+  List<Widget> getaddress(Rides ride) {
+    if (ride.coordinates != null) {
+      List<Widget> elements = [];
+      for (var address in ride.coordinates!) {
+        elements.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StaticText(
+              color: secondarycolor,
+              size: smalltextSize,
+              text: address.address as String,
+              weight: FontWeight.bold,
+            ),
+            Devider(),
+          ],
+        ));
+      }
+
+      return elements;
+    } else {
+      List<Widget> elements = [];
+      return elements;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _controller.getRides(context);
@@ -53,7 +92,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
                           child: Center(
                               child: Container(
                             width: width - 40,
-                            height: width / 1.8,
+                            height: 300,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             margin: EdgeInsets.symmetric(vertical: 8),
@@ -79,21 +118,15 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                   width: 120,
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: index % 2 == 0
-                                        ? Color(0xffD9F4E5)
-                                        : Color(0xffFCCDD6),
+                                    color: getstatcolor(ride?.status),
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: StaticText(
-                                    color: index % 2 == 0
-                                        ? Color(0xff18C161)
-                                        : Color(0xffF52D56),
+                                    color: whitecolor,
                                     size: smalltextSize,
                                     weight: FontWeight.w500,
                                     align: TextAlign.center,
-                                    text: index % 2 == 0
-                                        ? "succed".tr
-                                        : "cancelled".tr,
+                                    text: "ride_${ride?.status}".tr,
                                   ),
                                 ),
                                 Devider(size: 3),
@@ -103,7 +136,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                   children: [
                                     SizedBox(
                                       width: 44,
-                                      height: 77,
+                                      height: 110,
                                       child: ImageClass(
                                           url:
                                               "assets/images/destinationicon.png",
@@ -112,31 +145,14 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        StaticText(
-                                          color: darkcolor,
-                                          size: smalltextSize,
-                                          weight: FontWeight.w400,
-                                          align: TextAlign.left,
-                                          text: "Bakı",
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        StaticText(
-                                          color: darkcolor,
-                                          size: smalltextSize,
-                                          weight: FontWeight.w400,
-                                          align: TextAlign.left,
-                                          text: "Xırdalan",
-                                        ),
-                                      ],
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: getaddress(ride),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -164,31 +180,12 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                             size: smalltextSize,
                                             align: TextAlign.left,
                                             weight: FontWeight.w400,
-                                            text: "yer_sayi"
-                                                .trParams({'counter': '2'}),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(FeatherIcons.briefcase,
-                                              color: primarycolor,
-                                              size: buttontextSize),
-                                          SizedBox(width: 5),
-                                          StaticText(
-                                            color: darkcolor,
-                                            size: smalltextSize,
-                                            align: TextAlign.left,
-                                            weight: FontWeight.w400,
-                                            text: "baqaj"
-                                                .trParams({'counter': '2'}),
+                                            text: "yer_sayi".trParams({
+                                              'counter': ride.automobil
+                                                      ?.autotype?.places
+                                                      .toString() ??
+                                                  '4'
+                                            }),
                                           ),
                                         ],
                                       ),
@@ -202,7 +199,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     StaticText(
-                                      text: "52AZN",
+                                      text: ride.priceOfWay.toString(),
                                       weight: FontWeight.w600,
                                       size: subHeadingSize,
                                       color: primarycolor,

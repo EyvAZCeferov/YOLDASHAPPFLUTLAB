@@ -37,11 +37,8 @@ class GoingController extends GetxController {
   Rx<bool> refreshpage = Rx<bool>(false);
   RxList<TextEditingController> textEditingControllers =
       RxList<TextEditingController>([]);
+  RxMap<String, dynamic> addresscontrollers = RxMap<String, dynamic>({});
 
-  Rx<TextEditingController> fromcontroller =
-      Rx<TextEditingController>(TextEditingController());
-  Rx<TextEditingController> tocontroller =
-      Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> weightcontroller =
       Rx<TextEditingController>(TextEditingController());
   Rx<TextEditingController> minimumpriceofwaycontroller =
@@ -60,7 +57,7 @@ class GoingController extends GetxController {
   final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
-  Rx<Position?> currentposition = Rx<Position?>(null);
+  Rx<Position?> position_0 = Rx<Position?>(null);
   RxList<SearchingLocations> searchinglocations = <SearchingLocations>[].obs;
   RxList<UserLocations> goinglocations = <UserLocations>[].obs;
   Rx<DistanceDetails?> directiondetails =
@@ -86,16 +83,17 @@ class GoingController extends GetxController {
 
   GoingController() {
     getAuthId();
+    addorremoveeditingcontroller(0, 'add');
+    addorremoveeditingcontroller(1, 'add');
   }
 
   void addorremoveeditingcontroller(int? index, String? type) {
-    if (index != null &&
-        index >= 0 &&
-        index < textEditingControllers.value.length) {
-      textEditingControllers.value[index].dispose();
-      textEditingControllers.value.removeAt(index);
+    if (type == "delete" && index != null) {
+      addresscontrollers.value.remove('position_$index');
     } else {
-      textEditingControllers.add(TextEditingController());
+      if (addresscontrollers.value['position_${index}'] == null) {
+        addresscontrollers.value['position_${index}'] = TextEditingController();
+      }
     }
   }
 
@@ -119,7 +117,7 @@ class GoingController extends GetxController {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         forceAndroidLocationManager: true);
-    currentposition.value = position;
+    position_0.value = position;
     LatLng latLngPosn = LatLng(position.latitude, position.longitude);
     CameraPosition cameraposition =
         new CameraPosition(target: latLngPosn, zoom: 14);
@@ -137,7 +135,7 @@ class GoingController extends GetxController {
         gettednameandplace_id['nameaddress'] as String,
         gettednameandplace_id['place_id'] as String,
         latLngPosn as LatLng,
-        'currentposition' as String,
+        'position_0' as String,
         context as BuildContext);
     fetchlocations(context);
     refreshpage.value = false;
@@ -148,9 +146,10 @@ class GoingController extends GetxController {
         gettednameandplace_id['nameaddress'] != ' ' &&
         gettednameandplace_id['nameaddress'] != '' &&
         userlocation != null) {
-      fromcontroller.value.text =
-          getLocalizedValue(userlocation.name, 'name') as String;
-
+      if (addresscontrollers.value.containsKey('position_0')) {
+        addresscontrollers.value['position_0'].text =
+            getLocalizedValue(userlocation.name, 'name') as String;
+      }
       goinglocations.value.add(userlocation);
 
       markers.value.add(Marker(
@@ -395,6 +394,7 @@ class GoingController extends GetxController {
                   response['result']['geometry']['location']['lng']),
               inptype.value,
               context);
+
           if (goinglocations.value.length > 0) {
             goinglocations.value
                 .removeWhere((element) => element.type == inptype.value);
@@ -414,7 +414,7 @@ class GoingController extends GetxController {
           markers.value.add(Marker(
             markerId: MarkerId(userlocation.type as String),
             icon: BitmapDescriptor.defaultMarkerWithHue(
-                userlocation.type == "currentposition"
+                userlocation.type == "position_0"
                     ? BitmapDescriptor.hueAzure
                     : BitmapDescriptor.hueRed),
             infoWindow: InfoWindow(
@@ -433,12 +433,11 @@ class GoingController extends GetxController {
                 userlocation.coordinates!.longitude!.toDouble()),
             radius: 15,
             strokeWidth: 4,
-            strokeColor: userlocation.type == "currentposition"
-                ? secondarycolor
-                : errorcolor,
+            strokeColor:
+                userlocation.type == "position_0" ? secondarycolor : errorcolor,
           ));
 
-          if (goinglocations.value.length == 2) {
+          if (goinglocations.value.length >= 2) {
             createroute(context);
           } else {
             refreshpage.value = false;
@@ -605,26 +604,34 @@ class GoingController extends GetxController {
     var language = await _maincontroller.getstoragedat('language');
     var url =
         "https://maps.googleapis.com/maps/api/directions/json?key=$mapsApiKey&language=$language";
-    LatLng? originCoordinates, destinationCoordinates;
+    List<LatLng>? destinations;
 
     for (var location in goinglocations.value) {
-      if (location.type == "currentposition") {
-        originCoordinates = LatLng(location.coordinates!.latitude as double,
-            location.coordinates!.longitude as double);
+      LatLng destination = LatLng(
+        location.coordinates!.latitude as double,
+        location.coordinates!.longitude as double,
+      );
+
+      if (destinations == null) {
+        destinations = [destination];
       } else {
-        destinationCoordinates = LatLng(
-            location.coordinates!.latitude as double,
-            location.coordinates!.longitude as double);
+        destinations.add(destination);
       }
     }
+    if (destinations != null && destinations.length > 1) {
+      var origin = destinations.first;
+      var destination = destinations.last;
 
-    if (originCoordinates != null && destinationCoordinates != null) {
       url = url +
-          "&origin=${originCoordinates.latitude},${originCoordinates.longitude}&destination=${destinationCoordinates.latitude},${destinationCoordinates.longitude}";
+          "&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}";
+
+      for (var i = 1; i < destinations.length - 1; i++) {
+        var waypoint = destinations[i];
+        url = url + "&waypoints=${waypoint.latitude},${waypoint.longitude}";
+      }
     } else {
       showToastMSG(errorcolor, "pleaseselectplaceandclick".tr, context);
     }
-
     var response = await GetAndPost.fetcOtherhData(url, context, {});
     if (response['status'] == "OK") {
       directiondetails.value = DistanceDetails(
@@ -656,45 +663,7 @@ class GoingController extends GetxController {
           endCap: Cap.roundCap,
           geodesic: true);
       polyline.add(polylinenew);
-      LatLngBounds latLngBounds;
-
-      if (originCoordinates!.latitude > destinationCoordinates!.latitude &&
-          originCoordinates.longitude > destinationCoordinates.longitude) {
-        latLngBounds = LatLngBounds(
-            southwest: destinationCoordinates, northeast: originCoordinates);
-      } else if (originCoordinates!.longitude >
-          destinationCoordinates!.longitude) {
-        latLngBounds = LatLngBounds(
-            southwest: LatLng(
-                originCoordinates.latitude, destinationCoordinates.longitude),
-            northeast: LatLng(
-                destinationCoordinates.latitude, originCoordinates.longitude));
-      } else if (originCoordinates.latitude > destinationCoordinates.latitude) {
-        latLngBounds = LatLngBounds(
-            southwest: LatLng(
-                destinationCoordinates.latitude, originCoordinates.longitude),
-            northeast: LatLng(
-                originCoordinates.latitude, destinationCoordinates.longitude));
-      } else {
-        latLngBounds = LatLngBounds(
-            southwest: originCoordinates, northeast: destinationCoordinates);
-      }
-
-      if (latLngBounds.contains(originCoordinates!) &&
-          latLngBounds.contains(destinationCoordinates!)) {
-        newgooglemapcontroller.value
-            ?.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
-      } else {
-        newgooglemapcontroller.value?.animateCamera(CameraUpdate.newLatLngZoom(
-            LatLng(
-                (originCoordinates.latitude + destinationCoordinates.latitude) /
-                    2,
-                (originCoordinates.longitude +
-                        destinationCoordinates.longitude) /
-                    2),
-            10));
-      }
-
+      
       refreshpage.value = false;
     } else {
       refreshpage.value = false;
@@ -735,48 +704,7 @@ class GoingController extends GetxController {
         });
 
         var body = {
-          "coordinates": [
-            {
-              "latitude": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value == "currentposition")!
-                  .position!
-                  .latitude
-                  .toString(),
-              "longitude": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value == "currentposition")!
-                  .position!
-                  .longitude
-                  .toString(),
-              "address": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value == "currentposition")!
-                  .infoWindow
-                  .title,
-              "type": "currentposition"
-            },
-            {
-              "latitude": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value != "destinationposition")!
-                  .position!
-                  .latitude
-                  .toString(),
-              "longitude": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value != "destinationposition")!
-                  .position!
-                  .longitude
-                  .toString(),
-              "address": markers.value
-                  .firstWhere((element) =>
-                      element?.markerId.value == "destinationposition")!
-                  .infoWindow
-                  .title,
-              "type": "destinationposition"
-            },
-          ],
+          "coordinates": <Map<String, dynamic>>[],
           'start_time': fromTime.value.toString() ?? null,
           'end_time': toTime.value.toString() ?? null,
           'kmofway': directiondetails.value!.distanceValue ?? 0,
@@ -804,8 +732,30 @@ class GoingController extends GetxController {
         };
         resulttext.value = null;
 
+        List<Map<String, dynamic>> coordinates = [];
+
+        addresscontrollers.value.forEach((key, value) {
+          coordinates.add({
+            "latitude": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .position!
+                .latitude
+                .toString(),
+            "longitude": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .position!
+                .longitude
+                .toString(),
+            "address": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .infoWindow
+                .title,
+            "type": key
+          });
+        });
+
+        body['coordinates'] = coordinates;
         var response = await GetAndPost.postData("rides", body, context);
-        print(response);
         if (response != null) {
           String status = response['status'];
           String message = "";
@@ -830,21 +780,23 @@ class GoingController extends GetxController {
                 selectedindex.value = 0;
                 weightcontroller.value = TextEditingController();
                 priceofwaycontroller.value = TextEditingController();
-                tocontroller.value = TextEditingController();
+                addresscontrollers.value.clear();
+                addorremoveeditingcontroller(0, "add");
+                addorremoveeditingcontroller(1, "add");
                 markers.removeWhere(
-                    (element) => element?.markerId != "currentposition");
+                    (element) => element?.markerId != "position_0");
                 circles.removeWhere(
-                    (element) => element?.circleId != "currentposition");
+                    (element) => element?.circleId != "position_0");
                 minimumpriceofwaycontroller.value = TextEditingController();
                 openmodal.value = false;
                 addedsectionshow.value = false;
                 loading.value = false;
                 fromTime.value = DateTime.now();
                 toTime.value = DateTime.now().add(Duration(days: 4));
-                goinglocations.removeWhere(
-                    (element) => element?.type != "currentposition");
+                goinglocations
+                    .removeWhere((element) => element?.type != "position_0");
                 polyline.value = {};
-                inptype.value = "to";
+                inptype.value = "position_1";
                 mapped?.value = {};
                 resulttext.value = null;
                 if (response['data'] != null) {
@@ -1201,20 +1153,17 @@ class GoingController extends GetxController {
       "coordinates": [
         {
           "latitude": markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
+              .firstWhere((element) => element?.markerId.value == "position_0")!
               .position!
               .latitude
               .toString(),
           "longitude": markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
+              .firstWhere((element) => element?.markerId.value == "position_0")!
               .position!
               .longitude
               .toString(),
           "address": markers.value
-              .firstWhere(
-                  (element) => element?.markerId.value == "currentposition")!
+              .firstWhere((element) => element?.markerId.value == "position_0")!
               .infoWindow
               .title
         },
@@ -1256,21 +1205,20 @@ class GoingController extends GetxController {
         selectedindex.value = 0;
         weightcontroller.value = TextEditingController();
         priceofwaycontroller.value = TextEditingController();
-        tocontroller.value = TextEditingController();
-        markers
-            .removeWhere((element) => element?.markerId != "currentposition");
-        circles
-            .removeWhere((element) => element?.circleId != "currentposition");
+        addresscontrollers.value.clear();
+        addorremoveeditingcontroller(0, "add");
+        addorremoveeditingcontroller(1, "add");
+        markers.removeWhere((element) => element?.markerId != "position_0");
+        circles.removeWhere((element) => element?.circleId != "position_0");
         minimumpriceofwaycontroller.value = TextEditingController();
         openmodal.value = false;
         addedsectionshow.value = false;
         loading.value = false;
         fromTime.value = DateTime.now();
         toTime.value = DateTime.now().add(Duration(days: 4));
-        goinglocations
-            .removeWhere((element) => element?.type != "currentposition");
+        goinglocations.removeWhere((element) => element?.type != "position_0");
         polyline.value = {};
-        inptype.value = "to";
+        inptype.value = "position_1";
         mapped?.value = {};
         resulttext.value = null;
         if (response['data'] != null) {
@@ -1293,7 +1241,6 @@ class GoingController extends GetxController {
       Map<String, dynamic> body = {};
       userlocations.value = [];
       var response = await GetAndPost.fetchData("rides", context, body);
-      print(response);
       if (response != null) {
         String status = response['status'];
         String message = '';
@@ -1433,17 +1380,17 @@ class GoingController extends GetxController {
     mapped?.value = mappeda;
     latLngPos.value = latlng;
     markers.value.add(Marker(
-        markerId: MarkerId("currentposition"),
+        markerId: MarkerId("position_0"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow:
             InfoWindow(title: "mylocation".tr, snippet: 'mylocation'.tr),
         position: latlng,
         draggable: true,
         onDrag: (newPosition) {
-          currentposition.value = newPosition as Position?;
+          position_0.value = newPosition as Position?;
         },
         onDragEnd: ((newPosition) {
-          currentposition.value = newPosition as Position?;
+          position_0.value = newPosition as Position?;
         })));
   }
 
@@ -1451,8 +1398,12 @@ class GoingController extends GetxController {
     var locationData = await gettypeoflocationaddress(type, context);
 
     if (locationData != null && locationData['name'] != null) {
-      tocontroller.value.text = locationData['name'] as String;
-      inptype.value = "destinationposition";
+      addresscontrollers.value[type].text = locationData['name'] as String;
+      if (addresscontrollers['position_1'] == null) {
+        inptype.value = "position_1";
+      } else {
+        inptype.value = "position_${addresscontrollers.value.length}";
+      }
       selectsearchedloc(locationData['place_id'], context);
     } else {
       showModalBottomSheet(

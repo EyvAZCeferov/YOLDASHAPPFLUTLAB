@@ -69,8 +69,8 @@ class TranslationAdditionals extends Translations {
           "personal_balance": "Fərdi balans",
           "succed": "Tamamlandı",
           "cancelled": "Ləğv edildi",
-          "yer_sayi": "Yer sayı: @counter boş",
-          "baqaj": "Baqaj: @counter boş",
+          "yer_sayi": "Yer sayı: @counter",
+          "baqaj": "Baqaj: @counter",
           "historydetail": "Gediş detalları",
           "customers": "Müştərilər",
           "total_price": "Ümumi məbləğ",
@@ -153,7 +153,13 @@ class TranslationAdditionals extends Translations {
           "accept": "Təsdiq et",
           "cancel": "Ləğv et",
           "rate": "Dəyərləndir",
-          "yourratedbefore": "Bu gedişi dəyərləndirmisiniz."
+          "yourratedbefore": "Bu gedişi dəyərləndirmisiniz.",
+          'ride_waiting': "Gözləmədə",
+          'ride_changed': "Dəyişdirildi",
+          'ride_completed': "Tamamlandı",
+          'ride_notcompleted': "Tamamlanmadı",
+          'ride_cancelled': "Ləğv edildi",
+          'ride_ontheway': "Yolda",
         }
       };
 }

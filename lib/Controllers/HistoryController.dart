@@ -867,7 +867,7 @@ class HistoryController extends GetxController {
                           text: coordinatesRides.address!,
                           weight: FontWeight.w500,
                           size: normaltextSize,
-                          color: coordinatesRides.type != "currentposition"
+                          color: coordinatesRides.type != "position_0"
                               ? errorcolor
                               : secondarycolor,
                           align: TextAlign.left,

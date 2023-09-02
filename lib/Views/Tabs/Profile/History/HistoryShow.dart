@@ -119,7 +119,7 @@ class HistoryShow extends StatelessWidget {
                             width: width - 40,
                             child: Container(
                               width: width - 40,
-                              height: width / 3.5,
+                              height: 160,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
                               margin: EdgeInsets.symmetric(vertical: 8),
@@ -149,7 +149,7 @@ class HistoryShow extends StatelessWidget {
                                     children: [
                                       SizedBox(
                                         width: 44,
-                                        height: 77,
+                                        height: 100,
                                         child: ImageClass(
                                           url:
                                               "assets/images/destinationicon.png",
@@ -425,7 +425,7 @@ class HistoryShow extends StatelessWidget {
           Devider(),
           Center(
             child: SizedBox(
-              height: 100,
+              height: 130,
               width: Get.width - 40,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -442,7 +442,7 @@ class HistoryShow extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               StaticText(
-                                color: coordinate.type == "currentposition"
+                                color: coordinate.type == "position_0"
                                     ? secondarycolor
                                     : errorcolor,
                                 size: normaltextSize,
@@ -630,7 +630,7 @@ class HistoryShow extends StatelessWidget {
                       if (query?.coordinates != null) {
                         query!.coordinates!
                             .where(
-                                (element) => element.type != "currentposition")
+                                (element) => element.type != "position_0")
                             .map((element) => element.address ?? '')
                             .toList();
                       }
