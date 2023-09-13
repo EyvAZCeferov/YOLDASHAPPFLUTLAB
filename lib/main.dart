@@ -5,6 +5,7 @@ import 'Controllers/MainController.dart';
 import 'Functions/CacheManager.dart';
 import 'Theme/Routes.dart';
 import 'Theme/TranslationAdditionals.dart';
+import '/Constants/LoaderScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ class Yoldash extends StatelessWidget {
         language != '' &&
         language != ' ') {
       selectedlang = language;
+      Get.updateLocale(Locale(selectedlang, '')); 
     }
   }
 
@@ -39,8 +41,8 @@ class Yoldash extends StatelessWidget {
       getPages: Routes,
       initialRoute: '/splash',
       translations: TranslationAdditionals(),
-      locale: Locale(selectedlang, selectedlang.toUpperCase()),
-      fallbackLocale: Locale(selectedlang, selectedlang.toUpperCase()),
+      locale: Locale(selectedlang, ''),
+      fallbackLocale: Locale('az', ''),
       enableLog: true,
       defaultTransition: Transition.cupertino,
       opaqueRoute: Get.isOpaqueRouteDefault,
@@ -49,3 +51,4 @@ class Yoldash extends StatelessWidget {
     );
   }
 }
+

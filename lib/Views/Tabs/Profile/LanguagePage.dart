@@ -15,11 +15,12 @@ class LanguagePage extends StatelessWidget {
   final MainController _controller = Get.put(MainController());
   void changelang(lang, context) {
     _controller.refreshpage.value = true;
-    Get.updateLocale(Locale(lang, lang.toUpperCase()));
     CacheManager.setvaluetoprefences('language', lang);
+    Get.updateLocale(Locale(lang,''));
     showToastMSG(primarycolor, "changedlang".tr, context);
     getCCD();
     _controller.refreshpage.value = false;
+    Get.back();
   }
 
   Future<String> getCCD() async {

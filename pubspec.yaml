@@ -48,7 +48,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/yoldash_favicon_bg_green.png"
+  image_path: "assets/images/yoldash_favicon_bg_green.png"
   min_sdk_android: 20
 
 flutter:

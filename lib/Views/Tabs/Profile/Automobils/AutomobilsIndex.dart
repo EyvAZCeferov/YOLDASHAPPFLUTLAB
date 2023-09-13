@@ -99,7 +99,7 @@ class AutomobilsIndex extends StatelessWidget {
                           : StaticText(
                             color: errorcolor,
                             size: normaltextSize,
-                            text: "waiting".tr,
+                            text: "ride_waiting".tr,
                             align: TextAlign.center,
                             weight: FontWeight.w500,
                             
