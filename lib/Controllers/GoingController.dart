@@ -88,13 +88,15 @@ class GoingController extends GetxController {
   }
 
   void addorremoveeditingcontroller(int? index, String? type) {
+    refreshpage.value=true;
     if (type == "delete" && index != null) {
       addresscontrollers.value.remove('position_$index');
     } else {
-      if (addresscontrollers.value['position_${index}'] == null) {
-        addresscontrollers.value['position_${index}'] = TextEditingController();
+      if (addresscontrollers.value['position_$index'] == null) {
+        addresscontrollers.value['position_$index'] = TextEditingController();
       }
     }
+    refreshpage.value = false;
   }
 
   @override
@@ -112,8 +114,14 @@ class GoingController extends GetxController {
 
   void getcurrentposition(context) async {
     refreshpage.value = true;
+    var statuslocation=  await handlepermissionreq(Permission.location, context);
+
+    if(statuslocation.isDenied){
+      var statuslocation=  await handlepermissionreq(Permission.location, context);
+    }
+
     getcurrentrides(context);
-    await handlepermissionreq(Permission.location, context);
+    
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         forceAndroidLocationManager: true);
@@ -238,10 +246,13 @@ class GoingController extends GetxController {
     }
   }
 
-  void changeindex(index) {
+  void changeindex(index,BuildContext context) {
     selectedindex.value = 0;
     selectedindex.value = index;
-    Get.bottomSheet(Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
       height: 1000,
       color: Colors.white,
       child: SingleChildScrollView(
@@ -338,7 +349,7 @@ class GoingController extends GetxController {
           ],
         ),
       ),
-    ));
+    );});
   }
 
   void findplaces(String placename, TextEditingController controller,
@@ -484,7 +495,10 @@ class GoingController extends GetxController {
   void selectplace(index, List places, Rides ride, BuildContext context) {
     selectedindex.value = index;
     if (index == 1) {
-      Get.bottomSheet(Container(
+      showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
         height: 500,
         color: Colors.white,
         child: Column(
@@ -508,7 +522,7 @@ class GoingController extends GetxController {
             ),
           ],
         ),
-      ));
+      );});
     } else {
       selectedplace.value = 0;
       Get.back();
@@ -860,7 +874,10 @@ class GoingController extends GetxController {
   void lookmore(Rides ride, BuildContext context) {
     _authController.getalldataoncache(context);
     priceofwaycontroller.value.text = ride.priceOfWay!;
-    Get.bottomSheet(Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
       height: 400,
       color: Colors.white,
       child: Column(
@@ -1140,7 +1157,7 @@ class GoingController extends GetxController {
           Devider()
         ],
       ),
-    ));
+    );});
   }
 
   void getrequestforride(Rides ride, BuildContext context) async {

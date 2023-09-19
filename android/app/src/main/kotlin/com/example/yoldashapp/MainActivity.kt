@@ -1,4 +1,4 @@
-package az.globalmart.yoldash
+package az.globalmartgroup.yoldash
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -34,7 +34,7 @@ def keystoreProperties = new Properties()
 
 
 android {
-    namespace "az.globalmart.yoldash"
+    namespace "az.globalmartgroup.yoldash"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

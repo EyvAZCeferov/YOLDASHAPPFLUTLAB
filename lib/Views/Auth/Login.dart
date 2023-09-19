@@ -5,7 +5,6 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/Devider.dart';
-import '../../Constants/ImageButton.dart';
 import '../../Constants/ImageClass.dart';
 import '../../Constants/LoaderScreen.dart';
 import '../../Constants/StaticText.dart';
@@ -122,48 +121,48 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(45),
                               onPressed: () => _controller.login(context)),
                           Devider(size: 25),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ImageButton(
-                                image: AssetImage('./assets/images/glogo.png'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed Google");
-                                },
-                              ),
-                              Devider(type: false),
-                              ImageButton(
-                                image:
-                                    AssetImage('./assets/images/facebook.webp'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed Facebook");
-                                },
-                              ),
-                              Devider(type: false),
-                              ImageButton(
-                                image: AssetImage('./assets/images/apple.png'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed apple");
-                                },
-                              )
-                            ],
-                          ),
-                          Devider(
-                            size: 30,
-                          ),
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.center,
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     ImageButton(
+                          //       image: AssetImage('./assets/images/glogo.png'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed Google");
+                          //       },
+                          //     ),
+                          //     Devider(type: false),
+                          //     ImageButton(
+                          //       image:
+                          //           AssetImage('./assets/images/facebook.webp'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed Facebook");
+                          //       },
+                          //     ),
+                          //     Devider(type: false),
+                          //     ImageButton(
+                          //       image: AssetImage('./assets/images/apple.png'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed apple");
+                          //       },
+                          //     )
+                          //   ],
+                          // ),
+                          // Devider(
+                          //   size: 30,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,

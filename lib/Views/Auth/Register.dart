@@ -7,7 +7,6 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/DateElement.dart';
 import '../../Constants/Devider.dart';
-import '../../Constants/ImageButton.dart';
 import '../../Constants/ImageClass.dart';
 import '../../Constants/InputElement.dart';
 import '../../Constants/LoaderScreen.dart';
@@ -24,89 +23,10 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final AuthController _controller = Get.put(AuthController());
-  Map<int, String> items = {
-    1: 'male',
-    2: 'female',
-  };
-  var selectedgender;
-
+  
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    // setState(() {
-    selectedgender = _controller.gender.value;
-    // });
-    void _showgendermodal(context) {
-      Get.bottomSheet(Container(
-        height: 240,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Devider(),
-            StaticText(
-              color: secondarycolor,
-              size: buttontextSize,
-              text: "gender".tr,
-              weight: FontWeight.w500,
-              align: TextAlign.center,
-            ),
-            Devider(),
-            SizedBox(
-              width: width,
-              height: 120,
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    var keysList = items.keys.toList();
-                    var valuesList = items.values.toList();
-
-                    var key = keysList[index];
-
-                    var value = valuesList[index];
-
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ListTile(
-                          title: StaticText(
-                            color: darkcolor,
-                            size: normaltextSize,
-                            text: "gender_$value".tr,
-                            weight: FontWeight.w500,
-                            align: TextAlign.left,
-                          ),
-                          trailing: Radio<bool>(
-                            value: true,
-                            activeColor: primarycolor,
-                            focusColor: primarycolor,
-                            hoverColor: primarycolor,
-                            toggleable: true,
-                            visualDensity:
-                                VisualDensity.adaptivePlatformDensity,
-                            groupValue: selectedgender == key ? true : false,
-                            onChanged: (value) {
-                              _controller.gender.value = key;
-                              setState(() {
-                                selectedgender = key;
-                              });
-                              Get.back();
-                            },
-                          ),
-                        ),
-                        Devider(),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-            Devider(),
-          ],
-        ),
-      ));
-    }
 
     return Scaffold(
         backgroundColor: bodycolor,
@@ -236,7 +156,7 @@ class _RegisterState extends State<Register> {
                           ),
                           Devider(size: 15),
                           GestureDetector(
-                            onTap: () => _showgendermodal(context),
+                            onTap: () => _controller.showgendermodal(context),
                             child: Container(
                               width: width - 40,
                               height: 53,
@@ -278,6 +198,7 @@ class _RegisterState extends State<Register> {
                                 _controller.birthdaycontroller.value =
                                     selectedDate.toString();
                               },
+                              
                             ),
                           ),
                           Devider(size: 15),
@@ -648,7 +569,7 @@ class _RegisterState extends State<Register> {
                                   ),
                                   TextButton(
                                       onPressed: () => launchUrlTOSITE(
-                                          "https://yoldash.app/en/pages/termofuse"),
+                                          "https://yoldash.app/az/pages/terms-of-use"),
                                       child: StaticText(
                                         color: secondarycolor,
                                         size: normaltextSize,
@@ -667,48 +588,48 @@ class _RegisterState extends State<Register> {
                               borderRadius: BorderRadius.circular(45),
                               onPressed: () => _controller.register(context)),
                           Devider(size: 25),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ImageButton(
-                                image: AssetImage('./assets/images/glogo.png'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed Google");
-                                },
-                              ),
-                              Devider(type: false),
-                              ImageButton(
-                                image:
-                                    AssetImage('./assets/images/facebook.webp'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed Facebook");
-                                },
-                              ),
-                              Devider(type: false),
-                              ImageButton(
-                                image: AssetImage('./assets/images/apple.png'),
-                                bgColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(40),
-                                width: 40,
-                                padding: EdgeInsets.all(5),
-                                onPressed: () {
-                                  print("Pressed apple");
-                                },
-                              )
-                            ],
-                          ),
-                          Devider(
-                            size: 20,
-                          ),
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.center,
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     ImageButton(
+                          //       image: AssetImage('./assets/images/glogo.png'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed Google");
+                          //       },
+                          //     ),
+                          //     Devider(type: false),
+                          //     ImageButton(
+                          //       image:
+                          //           AssetImage('./assets/images/facebook.webp'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed Facebook");
+                          //       },
+                          //     ),
+                          //     Devider(type: false),
+                          //     ImageButton(
+                          //       image: AssetImage('./assets/images/apple.png'),
+                          //       bgColor: Colors.transparent,
+                          //       borderRadius: BorderRadius.circular(40),
+                          //       width: 40,
+                          //       padding: EdgeInsets.all(5),
+                          //       onPressed: () {
+                          //         print("Pressed apple");
+                          //       },
+                          //     )
+                          //   ],
+                          // ),
+                          // Devider(
+                          //   size: 20,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,

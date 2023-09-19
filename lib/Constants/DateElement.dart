@@ -82,8 +82,8 @@ class _DateElementState extends State<DateElement> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2090),
+      firstDate: DateTime(1945),
+      lastDate: DateTime(2190),
     );
 
     if (pickedDate != null) {

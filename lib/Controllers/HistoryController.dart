@@ -320,7 +320,10 @@ class HistoryController extends GetxController {
   void selectplace(index, List places, Rides ride, BuildContext context) {
     selectedindex.value = index;
     if (index == 1) {
-      Get.bottomSheet(Container(
+      showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
         height: 500,
         color: Colors.white,
         child: Column(
@@ -344,7 +347,7 @@ class HistoryController extends GetxController {
             ),
           ],
         ),
-      ));
+      );});
     } else {
       selectedplace.value = 0;
       Get.back();
@@ -354,7 +357,10 @@ class HistoryController extends GetxController {
 
   void lookmore(Rides ride, BuildContext context) {
     priceofwaycontroller.value.text = ride.priceOfWay!;
-    Get.bottomSheet(Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
       height: 700,
       color: Colors.white,
       child: SingleChildScrollView(
@@ -618,7 +624,7 @@ class HistoryController extends GetxController {
           ],
         ),
       ),
-    ));
+    );});
   }
 
   void sendrequest(BuildContext context) async {
@@ -739,7 +745,10 @@ class HistoryController extends GetxController {
   }
 
   void rate(id, context) async {
-    Get.bottomSheet(Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
       height: 100,
       color: Colors.white,
       child: Column(
@@ -762,7 +771,7 @@ class HistoryController extends GetxController {
           ),
         ],
       ),
-    ));
+    );});
   }
 
   void rateride(id, rating, context) async {
@@ -835,7 +844,10 @@ class HistoryController extends GetxController {
 
   void showroadinfo(Queries query, context) async {
     refreshpage.value = true;
-    Get.bottomSheet(Container(
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+    return Container(
       height: 300,
       color: Colors.white,
       child: Column(children: [
@@ -897,7 +909,7 @@ class HistoryController extends GetxController {
           ],
         ),
       ]),
-    ));
+    );});
     refreshpage.value = false;
   }
 }

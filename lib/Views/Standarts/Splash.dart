@@ -17,7 +17,7 @@ class Splash extends StatelessWidget {
 
   Future<void> init() async {
     var token = await _maincontroller.getstoragedat('token');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 2));
     if (token != null) {
       if (token.isNotEmpty) {
         Get.offAllNamed('/mainscreen');

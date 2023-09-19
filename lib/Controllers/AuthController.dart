@@ -11,6 +11,8 @@ import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/users.dart';
 import 'MainController.dart';
+import '../Constants/StaticText.dart';
+import '../Constants/Devider.dart';
 
 class AuthController extends GetxController {
   final MainController _maincontroller = Get.put(MainController());
@@ -32,7 +34,10 @@ class AuthController extends GetxController {
   Rx<Users?> userdatas = Rx<Users?>(null);
   RxBool agreeterms = RxBool(false);
   Rx<Users?> driverpage = Rx<Users?>(null);
-
+  Map<int, String> items = {
+    1: 'male',
+    2: 'female',
+  };
   AuthController() {
     init();
   }
@@ -356,7 +361,7 @@ class AuthController extends GetxController {
           CacheManager.removevaluefromprefences('name_surname');
           CacheManager.removevaluefromprefences('email');
           CacheManager.removevaluefromprefences('phone');
-        CacheManager.removevaluefromprefences('authtype');
+          CacheManager.removevaluefromprefences('authtype');
           CacheManager.removevaluefromprefences('profilepicture');
           authType.value = '';
           Get.offAllNamed(
@@ -438,5 +443,79 @@ class AuthController extends GetxController {
       refreshpage.value = false;
       showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
+  }
+
+  void showgendermodal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 240,
+          color: Colors.white,
+          child: Column(
+            children: [
+              Devider(),
+              StaticText(
+                color: secondarycolor,
+                size: buttontextSize,
+                text: "gender".tr,
+                weight: FontWeight.w500,
+                align: TextAlign.center,
+              ),
+              Devider(),
+              SizedBox(
+                width: Get.width,
+                height: 120,
+                child: Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      var keysList = items.keys.toList();
+                      var valuesList = items.values.toList();
+
+                      var key = keysList[index];
+
+                      var value = valuesList[index];
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ListTile(
+                            title: StaticText(
+                              color: darkcolor,
+                              size: normaltextSize,
+                              text: "gender_$value".tr,
+                              weight: FontWeight.w500,
+                              align: TextAlign.left,
+                            ),
+                            trailing: Radio<bool>(
+                              value: true,
+                              activeColor: primarycolor,
+                              focusColor: primarycolor,
+                              hoverColor: primarycolor,
+                              toggleable: true,
+                              visualDensity:
+                                  VisualDensity.adaptivePlatformDensity,
+                              groupValue: gender.value == key ? true : false,
+                              onChanged: (value) {
+                                gender.value = key;
+                                Get.back();
+                              },
+                            ),
+                          ),
+                          Devider(),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Devider(),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

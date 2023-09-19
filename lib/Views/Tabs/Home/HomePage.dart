@@ -702,6 +702,7 @@ class _HomePageState extends State<HomePage> {
                                         TextEditingController controllernow =
                                             _controller.addresscontrollers
                                                 .value['position_$index'];
+                                                if(controllernow!=null){
                                         return Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
@@ -765,15 +766,9 @@ class _HomePageState extends State<HomePage> {
                                                     : IconButton(
                                                         onPressed: () {
                                                           _controller
-                                                              .refreshpage
-                                                              .value = true;
-                                                          _controller
                                                               .addorremoveeditingcontroller(
                                                                   index,
                                                                   'delete');
-                                                          _controller
-                                                              .refreshpage
-                                                              .value = false;
                                                         },
                                                         icon: Icon(
                                                           FeatherIcons.minus,
@@ -783,6 +778,7 @@ class _HomePageState extends State<HomePage> {
                                                 : SizedBox(),
                                           ],
                                         );
+                                        }
                                       },
                                     ),
                                   ),
@@ -909,7 +905,7 @@ class _HomePageState extends State<HomePage> {
                                           width: width - 70,
                                           child: GestureDetector(
                                             onTap: () =>
-                                                _controller.changeindex(1),
+                                                _controller.changeindex(1,context),
                                             child: Container(
                                               width: 90,
                                               height: 35,
