@@ -55,9 +55,10 @@ class _SearchedLocationItemsState extends State<SearchedLocationItems> {
                   color: darkcolor,
                   size: smalltextSize + 2,
                   weight: FontWeight.w600,
-                  text: widget.searchedlocation.main_text.toString(),
+                  text: widget.searchedlocation.main_text.toString().length>35 ? widget.searchedlocation.main_text.toString().substring(0,35)+'...' : widget.searchedlocation.main_text.toString(),
                   align: TextAlign.left,
-                  textOverflow: TextOverflow.ellipsis,
+                  textOverflow: TextOverflow.clip,
+                  maxline: 3,
                 ),
                 StaticText(
                   color: secondarycolor,

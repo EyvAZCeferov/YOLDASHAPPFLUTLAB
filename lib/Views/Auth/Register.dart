@@ -23,16 +23,17 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final AuthController _controller = Get.put(AuthController());
-  
+
   @override
   Widget build(BuildContext context) {
+    
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: bodycolor,
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: Container(
+            color: bodycolor,
             child: Obx(
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
@@ -198,7 +199,6 @@ class _RegisterState extends State<Register> {
                                 _controller.birthdaycontroller.value =
                                     selectedDate.toString();
                               },
-                              
                             ),
                           ),
                           Devider(size: 15),

@@ -77,8 +77,8 @@ class HistoryController extends GetxController {
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         data.value = (response['data'] as List).map((dat) {
-                return Rides.fromMap(dat);
-              }).toList();
+          return Rides.fromMap(dat);
+        }).toList();
 
         refreshpage.value = false;
       } else {
@@ -321,33 +321,34 @@ class HistoryController extends GetxController {
     selectedindex.value = index;
     if (index == 1) {
       showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-        height: 500,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Devider(size: 25),
-            StaticText(
-              color: secondarycolor,
-              size: buttontextSize,
-              text: "pleaseselectplaceandclick".tr,
-              weight: FontWeight.w500,
-              align: TextAlign.center,
-              maxline: 2,
-            ),
-            Devider(size: 25),
-            Column(
-              children: groupAndSortPlaces(
-                  places as List<PlacesMark>, context as BuildContext),
-            ),
-            Devider(
-              size: 25,
-            ),
-          ],
-        ),
-      );});
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 500,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Devider(size: 25),
+                  StaticText(
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "pleaseselectplaceandclick".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
+                    maxline: 2,
+                  ),
+                  Devider(size: 25),
+                  Column(
+                    children: groupAndSortPlaces(
+                        places as List<PlacesMark>, context as BuildContext),
+                  ),
+                  Devider(
+                    size: 25,
+                  ),
+                ],
+              ),
+            );
+          });
     } else {
       selectedplace.value = 0;
       Get.back();
@@ -358,175 +359,194 @@ class HistoryController extends GetxController {
   void lookmore(Rides ride, BuildContext context) {
     priceofwaycontroller.value.text = ride.priceOfWay!;
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-      height: 700,
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Devider(),
-            StaticText(
-              color: secondarycolor,
-              size: buttontextSize,
-              text: "add".tr,
-              weight: FontWeight.w500,
-              align: TextAlign.center,
-            ),
-            Devider(),
-            Container(
-              width: Get.width - 40,
-              height: 53,
-              decoration: BoxDecoration(
-                  color: whitecolor,
-                  borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: InputElement(
-                  placeholder: "wayofprice".tr,
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  inputType: TextInputType.number,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: priceofwaycontroller.value),
-            ),
-            Devider(),
-            Container(
-              width: Get.width - 40,
-              height: 53,
-              decoration: BoxDecoration(
-                  color: whitecolor,
-                  borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: InputElement(
-                  placeholder: "name_surname".tr,
-                  accentColor: primarycolor,
-                  textColor: bodycolor,
-                  inputType: TextInputType.text,
-                  cornerradius: BorderRadius.all(Radius.circular(50)),
-                  controller: namesurnamecontroller.value),
-            ),
-            Devider(),
-            Container(
-              width: Get.width - 40,
-              height: 53,
-              decoration: BoxDecoration(
-                  color: whitecolor,
-                  borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: IntlPhoneField(
-                cursorColor: primarycolor,
-                searchText: "search".tr,
-                dropdownIcon: Icon(FeatherIcons.arrowDown,
-                    color: secondarycolor, size: smalltextSize),
-                decoration: InputDecoration(
-                  hintText: "mobile_phone".tr,
-                  fillColor: Colors.white,
-                  contentPadding:
-                      EdgeInsets.only(left: 15, top: 10, bottom: 10),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.red,
-                      width: 1.0,
-                      style: BorderStyle.solid,
-                    ),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 700,
+            color: whitecolor,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Devider(),
+                  StaticText(
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "add".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: primarycolor,
-                      width: 1.0,
-                    ),
+                  Devider(),
+                  Container(
+                    width: Get.width - 40,
+                    height: 53,
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: InputElement(
+                        placeholder: "wayofprice".tr,
+                        accentColor: primarycolor,
+                        textColor: bodycolor,
+                        inputType: TextInputType.number,
+                        cornerradius: BorderRadius.all(Radius.circular(50)),
+                        controller: priceofwaycontroller.value),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: primarycolor,
-                      width: 1.0,
-                    ),
+                  Devider(),
+                  Container(
+                    width: Get.width - 40,
+                    height: 53,
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: InputElement(
+                        placeholder: "name_surname".tr,
+                        accentColor: primarycolor,
+                        textColor: bodycolor,
+                        inputType: TextInputType.text,
+                        cornerradius: BorderRadius.all(Radius.circular(50)),
+                        controller: namesurnamecontroller.value),
                   ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.red,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                initialCountryCode: 'AZ',
-                onChanged: (phone) {
-                  var phonenumb = phone.countryCode + phone.number;
-                  phonecontroller.value.text = phonenumb.toString();
-                },
-              ),
-            ),
-            Devider(),
-            SizedBox(
-              width: Get.width - 40,
-              height: 120,
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    var keysList = items.keys.toList();
-                    var valuesList = items.values.toList();
-
-                    var key = keysList[index];
-
-                    var value = valuesList[index];
-
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ListTile(
-                          title: StaticText(
-                            color: darkcolor,
-                            size: normaltextSize,
-                            text: "gender_$value".tr,
-                            weight: FontWeight.w500,
-                            align: TextAlign.left,
-                          ),
-                          trailing: Radio<bool>(
-                            value: true,
-                            activeColor: primarycolor,
-                            focusColor: primarycolor,
-                            hoverColor: primarycolor,
-                            toggleable: true,
-                            visualDensity:
-                                VisualDensity.adaptivePlatformDensity,
-                            groupValue: selectedgender == key ? true : false,
-                            onChanged: (value) {
-                              selectedgender.value = key;
-                              Get.back();
-                              lookmore(ride, context);
-                            },
+                  Devider(),
+                  Container(
+                    width: Get.width - 40,
+                    height: 53,
+                    decoration: BoxDecoration(
+                        color: whitecolor,
+                        borderRadius: BorderRadius.all(Radius.circular(50))),
+                    child: IntlPhoneField(
+                      cursorColor: primarycolor,
+                      searchText: "search".tr,
+                      dropdownIcon: Icon(FeatherIcons.arrowDown,
+                          color: secondarycolor, size: smalltextSize),
+                      decoration: InputDecoration(
+                        hintText: "mobile_phone".tr,
+                        fillColor: Colors.white,
+                        contentPadding:
+                            EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 1.0,
+                            style: BorderStyle.solid,
                           ),
                         ),
-                        Devider(size: 5),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-            Devider(),
-            Center(
-              child: Container(
-                width: Get.width - 40,
-                height: 70,
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ride.automobil?.autotype?.placesMark != null
-                        ? GestureDetector(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          borderSide: BorderSide(
+                            color: primarycolor,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          borderSide: BorderSide(
+                            color: primarycolor,
+                            width: 1.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      initialCountryCode: 'AZ',
+                      onChanged: (phone) {
+                        var phonenumb = phone.countryCode + phone.number;
+                        phonecontroller.value.text = phonenumb.toString();
+                      },
+                    ),
+                  ),
+                  Devider(),
+                  ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      var keysList = items.keys.toList();
+                      var valuesList = items.values.toList();
+
+                      var key = keysList[index];
+                      var value = valuesList[index];
+
+                      return ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        title: StaticText(
+                          color: darkcolor,
+                          size: normaltextSize,
+                          text: "gender_$value".tr,
+                          weight: FontWeight.w500,
+                          align: TextAlign.left,
+                        ),
+                        trailing: Radio<bool>(
+                          value: true,
+                          activeColor: primarycolor,
+                          focusColor: primarycolor,
+                          hoverColor: primarycolor,
+                          toggleable: true,
+                          visualDensity: VisualDensity.adaptivePlatformDensity,
+                          groupValue: selectedgender == key ? true : false,
+                          onChanged: (value) {
+                            selectedgender.value = key;
+                            Get.back();
+                            lookmore(ride, context);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  Devider(),
+                  Center(
+                    child: Container(
+                      width: Get.width - 40,
+                      height: 70,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ride.automobil?.autotype?.placesMark != null
+                              ? GestureDetector(
+                                  onTap: () => selectplace(
+                                      1,
+                                      ride.automobil?.autotype?.placesMark ??
+                                          [],
+                                      ride as Rides,
+                                      context as BuildContext),
+                                  child: Container(
+                                    width: 110,
+                                    height: 35,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: primarycolor,
+                                            style: BorderStyle.solid,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(35),
+                                        color: selectedindex.value != null &&
+                                                selectedindex.value == 1
+                                            ? primarycolor
+                                            : whitecolor),
+                                    child: StaticText(
+                                        color: selectedindex.value != null &&
+                                                selectedindex.value == 1
+                                            ? whitecolor
+                                            : darkcolor,
+                                        size: normaltextSize,
+                                        weight: FontWeight.w500,
+                                        align: TextAlign.center,
+                                        text: "choiseplace".tr),
+                                  ),
+                                )
+                              : SizedBox(),
+                          GestureDetector(
                             onTap: () => selectplace(
-                                1,
+                                2,
                                 ride.automobil?.autotype?.placesMark ?? [],
                                 ride as Rides,
                                 context as BuildContext),
                             child: Container(
-                              width: 110,
+                              width: 150,
                               height: 35,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -536,95 +556,64 @@ class HistoryController extends GetxController {
                                       width: 1),
                                   borderRadius: BorderRadius.circular(35),
                                   color: selectedindex.value != null &&
-                                          selectedindex.value == 1
+                                          selectedindex.value == 2
                                       ? primarycolor
                                       : whitecolor),
                               child: StaticText(
                                   color: selectedindex.value != null &&
-                                          selectedindex.value == 1
+                                          selectedindex.value == 2
                                       ? whitecolor
                                       : darkcolor,
                                   size: normaltextSize,
                                   weight: FontWeight.w500,
                                   align: TextAlign.center,
-                                  text: "choiseplace".tr),
+                                  text: "fullreservation".tr),
                             ),
-                          )
-                        : SizedBox(),
-                    GestureDetector(
-                      onTap: () => selectplace(
-                          2,
-                          ride.automobil?.autotype?.placesMark ?? [],
-                          ride as Rides,
-                          context as BuildContext),
-                      child: Container(
-                        width: 150,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: primarycolor,
-                                style: BorderStyle.solid,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(35),
-                            color: selectedindex.value != null &&
-                                    selectedindex.value == 2
-                                ? primarycolor
-                                : whitecolor),
-                        child: StaticText(
-                            color: selectedindex.value != null &&
-                                    selectedindex.value == 2
-                                ? whitecolor
-                                : darkcolor,
-                            size: normaltextSize,
-                            weight: FontWeight.w500,
-                            align: TextAlign.center,
-                            text: "fullreservation".tr),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Devider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ButtonElement(
+                        text: "close".tr,
+                        width: 90,
+                        onPressed: () {
+                          selectedplace.value = 0;
+                          selectedindex.value = 0;
+                          Get.back();
+                        },
+                        bgColor: primarycolor,
+                        borderRadius: BorderRadius.circular(45),
+                        fontsize: normaltextSize,
+                        height: 45,
+                        textColor: whitecolor,
+                      ),
+                      SizedBox(
+                        width: 7,
+                      ),
+                      ButtonElement(
+                        text: "add".tr,
+                        width: 160,
+                        onPressed: () => sendrequest(context),
+                        bgColor: primarycolor,
+                        borderRadius: BorderRadius.circular(80),
+                        fontsize: normaltextSize,
+                        height: 45,
+                        textColor: whitecolor,
+                      ),
+                    ],
+                  ),
+                  Devider()
+                ],
               ),
             ),
-            Devider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ButtonElement(
-                  text: "close".tr,
-                  width: 90,
-                  onPressed: () {
-                    selectedplace.value = 0;
-                    selectedindex.value = 0;
-                    Get.back();
-                  },
-                  bgColor: primarycolor,
-                  borderRadius: BorderRadius.circular(45),
-                  fontsize: normaltextSize,
-                  height: 45,
-                  textColor: whitecolor,
-                ),
-                SizedBox(
-                  width: 7,
-                ),
-                ButtonElement(
-                  text: "add".tr,
-                  width: 160,
-                  onPressed: () => sendrequest(context),
-                  bgColor: primarycolor,
-                  borderRadius: BorderRadius.circular(80),
-                  fontsize: normaltextSize,
-                  height: 45,
-                  textColor: whitecolor,
-                ),
-              ],
-            ),
-            Devider()
-          ],
-        ),
-      ),
-    );});
+          );
+        });
   }
 
   void sendrequest(BuildContext context) async {
@@ -746,32 +735,33 @@ class HistoryController extends GetxController {
 
   void rate(id, context) async {
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-      height: 100,
-      color: Colors.white,
-      child: Column(
-        children: [
-          Devider(size: 25),
-          RatingBar.builder(
-            initialRating: 5,
-            minRating: 1,
-            direction: Axis.horizontal,
-            allowHalfRating: false,
-            itemCount: 5,
-            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-            itemBuilder: (context, _) => Icon(
-              Icons.star,
-              color: Colors.amber,
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 100,
+            color: Colors.white,
+            child: Column(
+              children: [
+                Devider(size: 25),
+                RatingBar.builder(
+                  initialRating: 5,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    rateride(id, rating, context);
+                  },
+                ),
+              ],
             ),
-            onRatingUpdate: (rating) {
-              rateride(id, rating, context);
-            },
-          ),
-        ],
-      ),
-    );});
+          );
+        });
   }
 
   void rateride(id, rating, context) async {
@@ -842,74 +832,81 @@ class HistoryController extends GetxController {
     }
   }
 
-  void showroadinfo(Queries query, context) async {
+  void showroadinfo(Queries query, BuildContext context) async {
     refreshpage.value = true;
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-      height: 300,
-      color: Colors.white,
-      child: Column(children: [
-        Devider(size: 25),
-        StaticText(
-          color: secondarycolor,
-          size: buttontextSize,
-          text: "historydetail".tr,
-          weight: FontWeight.w500,
-          align: TextAlign.center,
-          maxline: 2,
+        context: context,
+        barrierColor: Colors.white.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25),
+          ),
         ),
-        Devider(size: 25),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 100,
-              width: Get.width - 40,
-              child: Column(
+        builder: (BuildContext context) {
+          return Container(
+            height: 300,
+            color: Colors.white,
+            child: Column(children: [
+              Devider(size: 25),
+              StaticText(
+                color: secondarycolor,
+                size: buttontextSize,
+                text: "historydetail".tr,
+                weight: FontWeight.w500,
+                align: TextAlign.center,
+                maxline: 2,
+              ),
+              Devider(size: 25),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        CoordinatesRides coordinatesRides =
-                            query.coordinates![index];
-                        return StaticText(
-                          text: coordinatesRides.address!,
-                          weight: FontWeight.w500,
-                          size: normaltextSize,
-                          color: coordinatesRides.type != "position_0"
-                              ? errorcolor
-                              : secondarycolor,
-                          align: TextAlign.left,
-                          maxline: 3,
-                          textOverflow: TextOverflow.clip,
-                        );
-                      },
-                      itemCount: query.coordinates!.length,
+                  SizedBox(
+                    height: 100,
+                    width: Get.width - 40,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              CoordinatesRides coordinatesRides =
+                                  query.coordinates![index];
+                              return StaticText(
+                                text: coordinatesRides.address!,
+                                weight: FontWeight.w500,
+                                size: normaltextSize,
+                                color: coordinatesRides.type != "position_0"
+                                    ? errorcolor
+                                    : secondarycolor,
+                                align: TextAlign.left,
+                                maxline: 3,
+                                textOverflow: TextOverflow.clip,
+                              );
+                            },
+                            itemCount: query.coordinates!.length,
+                          ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
+                  Devider(),
+                  query.position != null &&
+                          query.position != 0 &&
+                          query.position != '' &&
+                          query.position != ' '
+                      ? StaticText(
+                          text: getLocalizedValue(query.place!.name!, 'name')
+                              .toString(),
+                          weight: FontWeight.w700,
+                          size: buttontextSize,
+                          align: TextAlign.left,
+                          color: darkcolor)
+                      : SizedBox()
                 ],
               ),
-            ),
-            Devider(),
-            query.position != null &&
-                    query.position != 0 &&
-                    query.position != '' &&
-                    query.position != ' '
-                ? StaticText(
-                    text: getLocalizedValue(query.place!.name!, 'name')
-                        .toString(),
-                    weight: FontWeight.w700,
-                    size: buttontextSize,
-                    align: TextAlign.left,
-                    color: darkcolor)
-                : SizedBox()
-          ],
-        ),
-      ]),
-    );});
+            ]),
+          );
+        });
     refreshpage.value = false;
   }
 }

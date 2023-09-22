@@ -447,8 +447,14 @@ class AuthController extends GetxController {
 
   void showgendermodal(BuildContext context) {
     showModalBottomSheet(
+      barrierColor: Colors.white.withOpacity(0.1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25),
+                    ),
+                  ),
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return Container(
           height: 240,
           color: Colors.white,
@@ -463,52 +469,48 @@ class AuthController extends GetxController {
                 align: TextAlign.center,
               ),
               Devider(),
-              SizedBox(
-                width: Get.width,
-                height: 120,
-                child: Expanded(
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      var keysList = items.keys.toList();
-                      var valuesList = items.values.toList();
+              Expanded(
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    var keysList = items.keys.toList();
+                    var valuesList = items.values.toList();
 
-                      var key = keysList[index];
+                    var key = keysList[index];
 
-                      var value = valuesList[index];
+                    var value = valuesList[index];
 
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ListTile(
-                            title: StaticText(
-                              color: darkcolor,
-                              size: normaltextSize,
-                              text: "gender_$value".tr,
-                              weight: FontWeight.w500,
-                              align: TextAlign.left,
-                            ),
-                            trailing: Radio<bool>(
-                              value: true,
-                              activeColor: primarycolor,
-                              focusColor: primarycolor,
-                              hoverColor: primarycolor,
-                              toggleable: true,
-                              visualDensity:
-                                  VisualDensity.adaptivePlatformDensity,
-                              groupValue: gender.value == key ? true : false,
-                              onChanged: (value) {
-                                gender.value = key;
-                                Get.back();
-                              },
-                            ),
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ListTile(
+                          title: StaticText(
+                            color: darkcolor,
+                            size: normaltextSize,
+                            text: "gender_$value".tr,
+                            weight: FontWeight.w500,
+                            align: TextAlign.left,
                           ),
-                          Devider(),
-                        ],
-                      );
-                    },
-                  ),
+                          trailing: Radio<bool>(
+                            value: true,
+                            activeColor: primarycolor,
+                            focusColor: primarycolor,
+                            hoverColor: primarycolor,
+                            toggleable: true,
+                            visualDensity:
+                                VisualDensity.adaptivePlatformDensity,
+                            groupValue: gender.value == key ? true : false,
+                            onChanged: (value) {
+                              gender.value = key;
+                              Get.back();
+                            },
+                          ),
+                        ),
+                        Devider(),
+                      ],
+                    );
+                  },
                 ),
               ),
               Devider(),

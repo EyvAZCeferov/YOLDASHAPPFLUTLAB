@@ -790,8 +790,7 @@ class _HomePageState extends State<HomePage> {
                         Devider(
                           size: 5,
                         ),
-                        _controller.addedsectionshow.value == true
-                            ? Column(
+                         Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -952,38 +951,34 @@ class _HomePageState extends State<HomePage> {
                                   Devider(),
                                 ],
                               )
-                            : SizedBox(),
+                          ,
                         _controller.searchinglocations.value.length > 0
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 16),
-                                child: SizedBox(
-                                  height: 200,
-                                  child: Expanded(
-                                    child: ListView.separated(
-                                        separatorBuilder: (context, index) =>
-                                            Devider(
-                                              size: 5,
-                                            ),
-                                        itemBuilder: (context, index) {
-                                          SearchingLocations
-                                              searchedlocationitem = _controller
-                                                  .searchinglocations
-                                                  .value[index];
-                                          if (searchedlocationitem != null) {
-                                            print(searchedlocationitem);
+    ? SizedBox(
+        height: 200,
+        child: ListView.builder(
+          itemCount: _controller.searchinglocations.value.length,
+          itemBuilder: (context, index) {
+            SearchingLocations searchedlocationitem =
+                _controller.searchinglocations.value[index];
+            if (searchedlocationitem != null) {
+              return Column(
+                children: [
+                  SearchedLocationItems(
+                    searchedlocation: searchedlocationitem,
+                  ),
+                  Divider(
+                    height: 5,
+                  ),
+                ],
+              );
+            } else {
+              return Container(); // Null değerler için boş bir Container döndürün
+            }
+          },
+        ),
+      )
+    : Container(),
 
-                                            return SearchedLocationItems(
-                                                searchedlocation:
-                                                    searchedlocationitem);
-                                          }
-                                        },
-                                        itemCount: _controller
-                                            .searchinglocations.value.length),
-                                  ),
-                                ),
-                              )
-                            : Container(),
                         _controller.loading.value == true
                             ? Center(
                                 child: Column(
