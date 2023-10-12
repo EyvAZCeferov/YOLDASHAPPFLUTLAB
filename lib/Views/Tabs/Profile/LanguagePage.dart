@@ -13,9 +13,10 @@ import '../../../Theme/ThemeService.dart';
 
 class LanguagePage extends StatelessWidget {
   final MainController _controller = Get.put(MainController());
-  void changelang(lang, context) {
+  void changelang(lang, context) async{
     _controller.refreshpage.value = true;
     CacheManager.setvaluetoprefences('language', lang);
+    _controller.currentlang.value=lang;
     Get.updateLocale(Locale(lang,''));
     showToastMSG(primarycolor, "changedlang".tr, context);
     getCCD();

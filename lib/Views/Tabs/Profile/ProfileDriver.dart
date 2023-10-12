@@ -7,9 +7,7 @@ import 'package:get/get.dart';
 import 'package:yoldashapp/Constants/IconButtonElement.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
 import 'package:yoldashapp/models/automobils.dart';
-
 import '../../../Constants/BaseAppBar.dart';
-import '../../../Constants/ButtonElement.dart';
 import '../../../Constants/Devider.dart';
 import '../../../Constants/ImageModal.dart';
 import '../../../Constants/StaticText.dart';
@@ -158,75 +156,6 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                     ),
                                   ]),
                               Devider(),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  _controller.driverpage.value?.email != null &&
-                                          _controller.driverpage.value?.email !=
-                                              '' &&
-                                          _controller.driverpage.value?.email !=
-                                              ' '
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            launchUrlTOSITE(
-                                                "mailto:${_controller.driverpage.value?.email}");
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                FeatherIcons.mail,
-                                                color: iconcolor,
-                                                size: subHeadingSize,
-                                              ),
-                                              Devider(size: 8, type: false),
-                                              StaticText(
-                                                text:
-                                                    "${_controller.driverpage.value?.email}",
-                                                weight: FontWeight.w500,
-                                                size: smalltextSize,
-                                                color: iconcolor,
-                                                align: TextAlign.left,
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      : SizedBox(),
-                                  GestureDetector(
-                                    onTap: () {
-                                      launchUrlTOSITE(
-                                          "tel:${_controller.driverpage.value?.phone}");
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          FeatherIcons.phone,
-                                          color: iconcolor,
-                                          size: subHeadingSize,
-                                        ),
-                                        Devider(size: 8, type: false),
-                                        StaticText(
-                                          text:
-                                              "calling".tr,
-                                          weight: FontWeight.w500,
-                                          size: smalltextSize,
-                                          color: iconcolor,
-                                          align: TextAlign.left,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
                               Devider(),
                               _controller.driverpage.value?.additionalinfo
                                               ?.description !=
@@ -292,6 +221,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                           scrollDirection: Axis.horizontal),
                                       items: [
                                         ListView.builder(
+                                          scrollDirection: Axis.horizontal,
                                           itemCount: _automobilsController
                                                   .selectedAutomobil
                                                   .value
@@ -313,24 +243,29 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                                   showimagemodal = true;
                                                 });
                                               },
-                                              child: CachedNetworkImage(
-                                                imageUrl: getimageurl(
-                                                    'automobil',
-                                                    'automobils/types',
-                                                    image?.image),
-                                                placeholder: (context, url) =>
-                                                    CircularProgressIndicator(),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.error),
-                                                imageBuilder:
-                                                    (context, imageProvider) =>
-                                                        CircleAvatar(
-                                                  backgroundColor: primarycolor,
-                                                  foregroundColor: whitecolor,
-                                                  radius: 35,
-                                                  backgroundImage:
-                                                      imageProvider,
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 5),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: getimageurl(
+                                                      'automobil',
+                                                      'automobils/types',
+                                                      image?.image),
+                                                  placeholder: (context, url) =>
+                                                      CircularProgressIndicator(),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.error),
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      CircleAvatar(
+                                                    backgroundColor:
+                                                        primarycolor,
+                                                    foregroundColor: whitecolor,
+                                                    radius: 35,
+                                                    backgroundImage:
+                                                        imageProvider,
+                                                  ),
                                                 ),
                                               ),
                                             );
@@ -352,12 +287,34 @@ class _ProfileDriverState extends State<ProfileDriver> {
           color: primarycolor,
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: IconButtonElement(
-              icon: FeatherIcons.messageCircle,
-              bgColor: primarycolor,
-              color: whitecolor,
-              size: 22,
-                onPressed: () => Get.toNamed("/messages/1")),
+            child: GestureDetector(
+              onTap: () {
+                Get.toNamed("/messages/${_controller.driverpage.value?.id}");
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButtonElement(
+                      icon: FeatherIcons.messageCircle,
+                      bgColor: primarycolor,
+                      color: whitecolor,
+                      size: 22,
+                      onPressed: () => Get.toNamed(
+                          "/messages/${_controller.driverpage.value?.id}")),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  StaticText(
+                    text: "chat".tr,
+                    weight: FontWeight.w600,
+                    size: normaltextSize,
+                    color: whitecolor,
+                    align: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
           ),
         ));
   }

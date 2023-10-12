@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart';
 import '../../../Constants/ImageClass.dart';
 import '../../../Functions/helpers.dart';
-
 import '../../../Constants/StaticText.dart';
 import '../../../Theme/ThemeService.dart';
 
@@ -86,7 +84,11 @@ class MessageBubble extends StatelessWidget {
                           coords: coords,
                           title: title,
                         ),
-                        title: StaticText(color: darkcolor, size: normaltextSize, text: map.mapName, weight: FontWeight.bold),
+                        title: StaticText(
+                            color: darkcolor,
+                            size: normaltextSize,
+                            text: map.mapName,
+                            weight: FontWeight.bold),
                         leading: SvgPicture.asset(
                           map.icon,
                           height: 30.0,
@@ -105,6 +107,19 @@ class MessageBubble extends StatelessWidget {
     }
   }
 
+  openimagemodal(context, image) {
+    return SizedBox(
+      width: Get.width,
+      height: Get.height,
+      child: ImageClass(
+        url: image,
+        type: true,
+        boxfit: BoxFit.contain,
+        radius: 0,
+      ),
+    );
+  }
+
   createmessagecontent(context, type, message, isMine) {
     final Completer<GoogleMapController> googlemapcontroller = Completer();
     GoogleMapController newgooglemapcontroller;
@@ -118,19 +133,31 @@ class MessageBubble extends StatelessWidget {
           weight: FontWeight.w400,
         );
       } else if (type == "IMAGE") {
-        return SizedBox(
-            width: Get.width / 2,
-            height: Get.width / 2,
-            child: ImageClass(
-              url: getimageurl(
-                "messages",
-                "messages",
-                message,
-              ),
-              type: true,
-              boxfit: BoxFit.contain,
-              radius: 0,
-            ));
+        return GestureDetector(
+          onTap: () async {
+            await showDialog(
+                context: context,
+                builder: (_) => ImageDialog(
+                        image: getimageurl(
+                      "messages",
+                      "messages",
+                      message,
+                    )));
+          },
+          child: SizedBox(
+              width: Get.width / 2,
+              height: Get.width / 2,
+              child: ImageClass(
+                url: getimageurl(
+                  "messages",
+                  "messages",
+                  message,
+                ),
+                type: true,
+                boxfit: BoxFit.contain,
+                radius: 0,
+              )),
+        );
       } else if (type == "LOCATION") {
         var position = message.split(',');
         var latitude = double.parse(position[0]);
@@ -148,29 +175,35 @@ class MessageBubble extends StatelessWidget {
           )
         };
 
-        return SizedBox(
-          width: Get.width / 2,
-          height: Get.width / 3,
-          child: GestureDetector(
-            onTap: () async {
-              await openMapsSheet(context, latitude, longitude);
-            },
-            child: GoogleMap(
-              myLocationButtonEnabled: false,
-              zoomGesturesEnabled: true,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              myLocationEnabled: false,
-              markers: markers.isNotEmpty ? Set<Marker>.from(markers) : {},
-              onMapCreated: (GoogleMapController controller) {
-                googlemapcontroller.complete(controller);
-                newgooglemapcontroller = controller;
+        return GestureDetector(
+          onTap: () async {
+            await openMapsSheet(context, latitude, longitude);
+          },
+          child: SizedBox(
+            width: Get.width / 2,
+            height: Get.width / 2.5,
+            child: GestureDetector(
+              onTap: () async {
+                await openMapsSheet(context, latitude, longitude);
               },
-              initialCameraPosition:
-                  CameraPosition(target: LatLng(latitude, longitude), zoom: 15),
-              onTap: (LatLng latlng) async {
-                await openMapsSheet(context, latlng.latitude, latlng.longitude);
-              },
+              child: GoogleMap(
+                myLocationButtonEnabled: false,
+                zoomGesturesEnabled: true,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                myLocationEnabled: false,
+                markers: markers.isNotEmpty ? Set<Marker>.from(markers) : {},
+                onMapCreated: (GoogleMapController controller) {
+                  googlemapcontroller.complete(controller);
+                  newgooglemapcontroller = controller;
+                },
+                initialCameraPosition: CameraPosition(
+                    target: LatLng(latitude, longitude), zoom: 15),
+                onTap: (LatLng latlng) async {
+                  await openMapsSheet(
+                      context, latlng.latitude, latlng.longitude);
+                },
+              ),
             ),
           ),
         );
@@ -186,5 +219,23 @@ class MessageBubble extends StatelessWidget {
     } catch (e) {
       print("ERROR: ${e.toString()}");
     }
+  }
+}
+
+class ImageDialog extends StatelessWidget {
+  final String image;
+
+  ImageDialog({required this.image});
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: Get.width,
+        height: Get.width,
+        decoration: BoxDecoration(
+            image:
+                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+      ),
+    );
   }
 }

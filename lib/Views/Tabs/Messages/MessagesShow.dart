@@ -172,15 +172,18 @@ class MessagesShow extends StatelessWidget {
                                         _controller.auth_id.value as int,
                                         context as BuildContext);
                                   }
-
-                                  return MessageBubble(
-                                    type: item?.messageelementtype ?? 'TEXT',
-                                    message: item?.message,
-                                    isMine: _controller.auth_id.value ==
-                                            item?.userId
-                                        ? true
-                                        : false,
-                                  );
+                                  if (item?.message != null &&
+                                      item?.message != '' &&
+                                      item?.message != ' ') {
+                                    return MessageBubble(
+                                      type: item?.messageelementtype ?? 'TEXT',
+                                      message: item?.message,
+                                      isMine: _controller.auth_id.value ==
+                                              item?.userId
+                                          ? true
+                                          : false,
+                                    );
+                                  }
                                 }),
                           ),
                           SizedBox(height: 10),

@@ -182,6 +182,7 @@ class AuthController extends GetxController {
     } else {
       body['type'] = "rider";
     }
+    
     var response = await GetAndPost.postData("auth/change_type", body, context);
     if (response != null) {
       String status = response['status'];
@@ -191,12 +192,12 @@ class AuthController extends GetxController {
           response['message'] != ' ') message = response['message'];
       if (status == "success") {
         getalldataoncache(context);
-        _maincontroller.restartapp();
+        refreshpage.value=false;
       } else {
+        refreshpage.value=false;
         showToastMSG(errorcolor, message, context);
       }
 
-      refreshpage.value = false;
     } else {
       refreshpage.value = false;
     }

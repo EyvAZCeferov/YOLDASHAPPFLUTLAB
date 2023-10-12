@@ -6,8 +6,9 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
-import 'package:yoldashapp/Controllers/AuthController.dart';
+import 'package:web_socket_channel/status.dart' as status;
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
@@ -30,7 +31,6 @@ class MessagesController extends GetxController {
     'replies.iamwaiting'.tr
   ];
   late MainController _maincontroller = Get.put(MainController());
-  final AuthController _authcontroller = Get.put(AuthController());
   final GoingController _goingController = Get.put(GoingController());
   Rx<ScrollController> scrollController =
       Rx<ScrollController>(ScrollController());
@@ -46,9 +46,22 @@ class MessagesController extends GetxController {
     target: LatLng(40.409264, 49.867092),
     zoom: 17.4746,
   );
+  WebSocketChannel? channel;
 
   MessagesController() {
     getAuthId();
+  }
+
+  void connectandreadsocket() async {
+    final wsUrl = Uri.parse('ws://localhost:1234');
+    var channel = WebSocketChannel.connect(wsUrl);
+    print("--------------------------------------------Connection is started");
+
+    channel.stream.listen((message) {
+      print("--------------------------------------------new Message Getted");
+      channel.sink.add('received!');
+      channel.sink.close(status.goingAway);
+    });
   }
 
   void getcurrentposition(context) async {
@@ -330,7 +343,7 @@ class MessagesController extends GetxController {
 
   void createandredirectchat(sender_id, receiver_id, context) async {
     try {
-      _goingController.refreshpage.value=true;
+      _goingController.refreshpage.value = true;
       refreshpage.value = true;
       var body = {
         'sender_id': sender_id,
@@ -345,7 +358,7 @@ class MessagesController extends GetxController {
         if (status == "success") {
           await getMessages(context, response['data']);
           refreshpage.value = false;
-          _goingController.refreshpage.value=false;
+          _goingController.refreshpage.value = false;
           Get.toNamed('/messages/${response['data']}',
               arguments: selectedMessageGroup.value);
         }

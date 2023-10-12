@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import '../../../Constants/AddableWidget.dart';
 import '../../../Constants/BaseAppBar.dart';
 import '../../../Constants/ButtonElement.dart';
