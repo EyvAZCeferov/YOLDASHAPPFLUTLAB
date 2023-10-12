@@ -40,17 +40,15 @@ Widget build_menu_items(String authtype) {
               ),
               "changelanguage".tr,
               () => Get.toNamed('/language')),
-          // if (authtype == "driver")
-          //   list_items(
-          //       Icon(
-          //         LineIcons.wallet,
-          //         color: iconcolor,
-          //         size: subHeadingSize,
-          //       ),
-          //       "mywallet".tr,
-          //       () => print("A"))
-          // else
-          //   Container()
+            list_items(
+                Icon(
+                  FeatherIcons.phone,
+                  color: iconcolor,
+                  size: subHeadingSize,
+                ),
+                "contact".tr,
+                () => Get.toNamed('/contactus'))
+          
         ],
       ),
     ),

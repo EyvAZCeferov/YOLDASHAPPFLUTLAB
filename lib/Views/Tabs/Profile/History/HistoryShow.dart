@@ -180,7 +180,7 @@ class HistoryShow extends StatelessWidget {
                             left: 0,
                             child: GestureDetector(
                               onTap: () {
-                                _controller.launchWaze(
+                                _controller.launchWaze(context,
                                     _controller.markers.value?.first?.position
                                         ?.latitude as double,
                                     _controller.markers.value?.last?.position
@@ -198,7 +198,7 @@ class HistoryShow extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(35)),
                                 child: ImageClass(
                                   type: false,
-                                  url: "./assets/images/waze.png",
+                                  url: "./assets/images/yoldash_favicon_bg_white.png",
                                   boxfit: BoxFit.contain,
                                 ),
                               ),
@@ -641,7 +641,7 @@ class HistoryShow extends StatelessWidget {
                         children: [
                           Container(
                             width: Get.width - 40,
-                            height: 145,
+                            height: 245,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: whitecolor,

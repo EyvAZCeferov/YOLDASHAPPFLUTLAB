@@ -1,9 +1,12 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:yoldashapp/Functions/GetAndPost.dart';
 
 import '../Constants/StaticText.dart';
 import '../Theme/ThemeService.dart';
@@ -220,4 +223,15 @@ String convertToSlug(String text) {
   text = text.replaceAll(RegExp(r'\s+'), '-');
   text = text.replaceAll(RegExp(r'-+'), '-');
   return text;
+}
+
+void FirebaseMessageCall(BuildContext context) {
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
+  firebaseMessaging.getToken().then((value) async{
+     Map<String, dynamic> body = {
+          'token': value,
+        };
+    var response = await GetAndPost.postData("auth/set_token", body, context);
+  });
 }

@@ -88,7 +88,7 @@ class GoingController extends GetxController {
   }
 
   void addorremoveeditingcontroller(int? index, String? type) {
-    refreshpage.value=true;
+    refreshpage.value = true;
     if (type == "delete" && index != null) {
       addresscontrollers.value.remove('position_$index');
     } else {
@@ -114,14 +114,16 @@ class GoingController extends GetxController {
 
   void getcurrentposition(context) async {
     refreshpage.value = true;
-    var statuslocation=  await handlepermissionreq(Permission.location, context);
+    var statuslocation =
+        await handlepermissionreq(Permission.location, context);
 
-    if(statuslocation.isDenied){
-      var statuslocation=  await handlepermissionreq(Permission.location, context);
+    if (statuslocation.isDenied) {
+      var statuslocation =
+          await handlepermissionreq(Permission.location, context);
     }
 
     getcurrentrides(context);
-    
+
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         forceAndroidLocationManager: true);
@@ -246,110 +248,112 @@ class GoingController extends GetxController {
     }
   }
 
-  void changeindex(index,BuildContext context) {
+  void changeindex(index, BuildContext context) {
     selectedindex.value = 0;
     selectedindex.value = index;
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-      height: 1000,
-      color: Colors.white,
-      child: SingleChildScrollView(
-        controller: ScrollController(),
-        physics: const ScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Devider(),
-            StaticText(
-              color: secondarycolor,
-              size: buttontextSize,
-              text: "choisetime".tr,
-              weight: FontWeight.w500,
-              align: TextAlign.center,
-            ),
-            Devider(),
-            Obx(
-              () => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 1000,
+            color: Colors.white,
+            child: SingleChildScrollView(
+              controller: ScrollController(),
+              physics: const ScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              child: Column(
                 children: [
+                  Devider(),
                   StaticText(
-                      text: "choisestarttime".tr,
-                      weight: FontWeight.w600,
-                      size: normaltextSize,
-                      color: darkcolor,
-                      align: TextAlign.center,
-                      textOverflow: TextOverflow.ellipsis),
-                  SizedBox(
-                    height: 10,
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "choisetime".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
                   ),
-                  SizedBox(
-                    height: 250,
-                    width: Get.width - 50,
-                    child: CupertinoDatePicker(
-                      use24hFormat: true,
-                      minimumDate: fromTime.value,
-                      mode: CupertinoDatePickerMode.dateAndTime,
-                      backgroundColor: bodycolor,
-                      maximumDate: fromTime.value.add(Duration(days: 5)),
-                      initialDateTime: fromTime.value,
-                      onDateTimeChanged: (DateTime newDate) {
-                        fromTime.value = newDate;
-                      },
-                    ),
-                  ),
-                  authtype.value == "rider"
-                      ? StaticText(
-                          text: "choiseendtime".tr,
-                          weight: FontWeight.w600,
-                          size: normaltextSize,
-                          color: darkcolor,
-                          align: TextAlign.center,
-                          textOverflow: TextOverflow.ellipsis)
-                      : SizedBox(),
-                  authtype.value == "rider"
-                      ? SizedBox(
+                  Devider(),
+                  Obx(
+                    () => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        StaticText(
+                            text: "choisestarttime".tr,
+                            weight: FontWeight.w600,
+                            size: normaltextSize,
+                            color: darkcolor,
+                            align: TextAlign.center,
+                            textOverflow: TextOverflow.ellipsis),
+                        SizedBox(
                           height: 10,
-                        )
-                      : SizedBox(),
-                  authtype.value == "rider"
-                      ? SizedBox(
+                        ),
+                        SizedBox(
                           height: 250,
                           width: Get.width - 50,
                           child: CupertinoDatePicker(
                             use24hFormat: true,
-                            minimumDate: toTime.value,
+                            minimumDate: fromTime.value,
                             mode: CupertinoDatePickerMode.dateAndTime,
                             backgroundColor: bodycolor,
-                            maximumDate: toTime.value.add(Duration(days: 5)),
-                            initialDateTime: toTime.value,
+                            maximumDate: fromTime.value.add(Duration(days: 5)),
+                            initialDateTime: fromTime.value,
                             onDateTimeChanged: (DateTime newDate) {
-                              toTime.value = newDate;
+                              fromTime.value = newDate;
                             },
                           ),
-                        )
-                      : SizedBox(),
+                        ),
+                        authtype.value == "rider"
+                            ? StaticText(
+                                text: "choiseendtime".tr,
+                                weight: FontWeight.w600,
+                                size: normaltextSize,
+                                color: darkcolor,
+                                align: TextAlign.center,
+                                textOverflow: TextOverflow.ellipsis)
+                            : SizedBox(),
+                        authtype.value == "rider"
+                            ? SizedBox(
+                                height: 10,
+                              )
+                            : SizedBox(),
+                        authtype.value == "rider"
+                            ? SizedBox(
+                                height: 250,
+                                width: Get.width - 50,
+                                child: CupertinoDatePicker(
+                                  use24hFormat: true,
+                                  minimumDate: toTime.value,
+                                  mode: CupertinoDatePickerMode.dateAndTime,
+                                  backgroundColor: bodycolor,
+                                  maximumDate:
+                                      toTime.value.add(Duration(days: 5)),
+                                  initialDateTime: toTime.value,
+                                  onDateTimeChanged: (DateTime newDate) {
+                                    toTime.value = newDate;
+                                  },
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                  ),
+                  Devider(),
+                  ButtonElement(
+                    text: "choise".tr,
+                    width: 90,
+                    onPressed: () => Get.back(),
+                    bgColor: primarycolor,
+                    borderRadius: BorderRadius.circular(45),
+                    fontsize: normaltextSize,
+                    height: 45,
+                    textColor: whitecolor,
+                  ),
+                  Devider(),
                 ],
               ),
             ),
-            Devider(),
-            ButtonElement(
-              text: "choise".tr,
-              width: 90,
-              onPressed: () => Get.back(),
-              bgColor: primarycolor,
-              borderRadius: BorderRadius.circular(45),
-              fontsize: normaltextSize,
-              height: 45,
-              textColor: whitecolor,
-            ),
-            Devider(),
-          ],
-        ),
-      ),
-    );});
+          );
+        });
   }
 
   void findplaces(String placename, TextEditingController controller,
@@ -496,33 +500,34 @@ class GoingController extends GetxController {
     selectedindex.value = index;
     if (index == 1) {
       showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-        height: 500,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Devider(size: 25),
-            StaticText(
-              color: secondarycolor,
-              size: buttontextSize,
-              text: "pleaseselectplaceandclick".tr,
-              weight: FontWeight.w500,
-              align: TextAlign.center,
-              maxline: 2,
-            ),
-            Devider(size: 25),
-            Column(
-              children: groupAndSortPlaces(ride.queries as List<Queries>,
-                  places as List<PlacesMark>, context as BuildContext),
-            ),
-            Devider(
-              size: 25,
-            ),
-          ],
-        ),
-      );});
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 500,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Devider(size: 25),
+                  StaticText(
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "pleaseselectplaceandclick".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
+                    maxline: 2,
+                  ),
+                  Devider(size: 25),
+                  Column(
+                    children: groupAndSortPlaces(ride.queries as List<Queries>,
+                        places as List<PlacesMark>, context as BuildContext),
+                  ),
+                  Devider(
+                    size: 25,
+                  ),
+                ],
+              ),
+            );
+          });
     } else {
       selectedplace.value = 0;
       Get.back();
@@ -677,7 +682,7 @@ class GoingController extends GetxController {
           endCap: Cap.roundCap,
           geodesic: true);
       polyline.add(polylinenew);
-      
+
       refreshpage.value = false;
     } else {
       refreshpage.value = false;
@@ -875,341 +880,361 @@ class GoingController extends GetxController {
     _authController.getalldataoncache(context);
     priceofwaycontroller.value.text = ride.priceOfWay!;
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-    return Container(
-      height: 400,
-      color: Colors.white,
-      child: Column(
-        children: [
-          Devider(),
-          StaticText(
-            color: secondarycolor,
-            size: buttontextSize,
-            text: "informationforride".tr,
-            weight: FontWeight.w500,
-            align: TextAlign.center,
-          ),
-          Devider(),
-          Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Devider(),
-              SizedBox(
-                width: Get.width - 30,
-                child: ride.userId != auth_id?.value
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                            GestureDetector(
-                              onTap: () {
-                                _authController.driverpage.value = ride.user;
-                                _automobilscontroller.getautomobildata(
-                                    ride.automobilId, context);
-                                if (_authController.driverpage.value != null &&
-                                    _authController.driverpage.value?.id !=
-                                        null &&
-                                    _authController.driverpage.value?.id != 0 &&
-                                    _authController.driverpage.value?.id !=
-                                        '' &&
-                                    _authController.driverpage.value?.id !=
-                                        ' ') {
-                                  Get.toNamed('/profiledriver/${ride.userId}');
-                                }
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: primarycolor,
-                                foregroundColor: whitecolor,
-                                radius: 25,
-                                backgroundImage: NetworkImage(getimageurl(
-                                    "user",
-                                    'users',
-                                    ride.user?.additionalinfo?.image)),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                _authController.driverpage.value = ride.user;
-                                _automobilscontroller.getautomobildata(
-                                    ride.automobilId, context);
-                                if (_authController.driverpage.value != null &&
-                                    _authController.driverpage.value?.id !=
-                                        null &&
-                                    _authController.driverpage.value?.id != 0 &&
-                                    _authController.driverpage.value?.id !=
-                                        '' &&
-                                    _authController.driverpage.value?.id !=
-                                        ' ') {
-                                  Get.toNamed('/profiledriver/${ride.userId}');
-                                }
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 400,
+            color: Colors.white,
+            child: Column(
+              children: [
+                Devider(),
+                StaticText(
+                  color: secondarycolor,
+                  size: buttontextSize,
+                  text: "informationforride".tr,
+                  weight: FontWeight.w500,
+                  align: TextAlign.center,
+                ),
+                Devider(),
+                Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Devider(),
+                    SizedBox(
+                      width: Get.width - 30,
+                      child: ride.userId != auth_id?.value
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      _authController.driverpage.value =
+                                          ride.user;
+                                      _automobilscontroller.getautomobildata(
+                                          ride.automobilId, context);
+                                      if (_authController
+                                                  .driverpage.value !=
+                                              null &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              null &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              0 &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              '' &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              ' ') {
+                                        Get.toNamed(
+                                            '/profiledriver/${ride.userId}');
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: primarycolor,
+                                      foregroundColor: whitecolor,
+                                      radius: 25,
+                                      backgroundImage: NetworkImage(getimageurl(
+                                          "user",
+                                          'users',
+                                          ride.user?.additionalinfo?.image)),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _authController.driverpage.value =
+                                          ride.user;
+                                      _automobilscontroller.getautomobildata(
+                                          ride.automobilId, context);
+                                      if (_authController
+                                                  .driverpage.value !=
+                                              null &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              null &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              0 &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              '' &&
+                                          _authController
+                                                  .driverpage.value?.id !=
+                                              ' ') {
+                                        Get.toNamed(
+                                            '/profiledriver/${ride.userId}');
+                                      }
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            StaticText(
+                                                text: ride.user?.nameSurname ??
+                                                    ' ',
+                                                weight: FontWeight.w600,
+                                                size: normaltextSize,
+                                                color: darkcolor),
+                                            SizedBox(width: 4),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: Get.width / 2.2,
+                                          child: StaticText(
+                                              align: TextAlign.left,
+                                              maxline: 2,
+                                              textOverflow: TextOverflow.clip,
+                                              text: getrideCardata(ride),
+                                              weight: FontWeight.w500,
+                                              size: smalltextSize,
+                                              color: iconcolor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      StaticText(
-                                          text: ride.user?.nameSurname ?? ' ',
-                                          weight: FontWeight.w600,
-                                          size: normaltextSize,
-                                          color: darkcolor),
-                                      SizedBox(width: 4),
+                                      SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          onPressed: () => _messagescontroller
+                                              .callpageredirect('call',
+                                                  ride.user?.phone, context),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: primarycolor,
+                                            onPrimary: whitecolor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                          ),
+                                          child: Icon(FeatherIcons.phoneCall,
+                                              color: whitecolor,
+                                              size: normaltextSize),
+                                        ),
+                                      ),
+                                      SizedBox(width: 3),
+                                      SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          onPressed: () => _messagescontroller
+                                              .createandredirectchat(
+                                                  auth_id?.value,
+                                                  ride.userId,
+                                                  context),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: primarycolor,
+                                            onPrimary: whitecolor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                              FeatherIcons.messageCircle,
+                                              color: whitecolor,
+                                              size: normaltextSize),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    width: Get.width / 2.2,
-                                    child: StaticText(
-                                        align: TextAlign.left,
-                                        maxline: 2,
-                                        textOverflow: TextOverflow.clip,
-                                        text: getrideCardata(ride),
-                                        weight: FontWeight.w500,
-                                        size: smalltextSize,
-                                        color: iconcolor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () =>
-                                        _messagescontroller.callpageredirect(
-                                            'call', ride.user?.phone, context),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: primarycolor,
-                                      onPrimary: whitecolor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                    ),
-                                    child: Icon(FeatherIcons.phoneCall,
-                                        color: whitecolor,
-                                        size: normaltextSize),
-                                  ),
-                                ),
-                                SizedBox(width: 3),
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () => _messagescontroller
-                                        .createandredirectchat(auth_id?.value,
-                                            ride.userId, context),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: primarycolor,
-                                      onPrimary: whitecolor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                    ),
-                                    child: Icon(FeatherIcons.messageCircle,
-                                        color: whitecolor,
-                                        size: normaltextSize),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ])
-                    : SizedBox(),
-              ),
-              Devider(),
-            ],
-          )),
-          Devider(),
-          Container(
-            width: Get.width - 40,
-            height: 53,
-            decoration: BoxDecoration(
-                color: whitecolor,
-                borderRadius: BorderRadius.all(Radius.circular(50))),
-            child: InputElement(
-                placeholder: "wayofprice".tr,
-                accentColor: primarycolor,
-                textColor: bodycolor,
-                inputType: TextInputType.text,
-                cornerradius: BorderRadius.all(Radius.circular(50)),
-                controller: priceofwaycontroller.value),
-          ),
-          Devider(),
-          Center(
-            child: Container(
-              width: Get.width - 40,
-              height: 70,
-              margin: const EdgeInsets.symmetric(vertical: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => selectplace(
-                        1,
-                        ride.automobil?.autotype?.placesMark ?? [],
-                        ride as Rides,
-                        context as BuildContext),
-                    child: Container(
-                      width: 110,
-                      height: 35,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: primarycolor,
-                              style: BorderStyle.solid,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(35),
-                          color: selectedindex.value != null &&
-                                  selectedindex.value == 1
-                              ? primarycolor
-                              : whitecolor),
-                      child: StaticText(
-                          color: selectedindex.value != null &&
-                                  selectedindex.value == 1
-                              ? whitecolor
-                              : darkcolor,
-                          size: normaltextSize,
-                          weight: FontWeight.w500,
-                          align: TextAlign.center,
-                          text: "choiseplace".tr),
+                                ])
+                          : SizedBox(),
+                    ),
+                    Devider(),
+                  ],
+                )),
+                Devider(),
+                Container(
+                  width: Get.width - 40,
+                  height: 53,
+                  decoration: BoxDecoration(
+                      color: whitecolor,
+                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                  child: InputElement(
+                      placeholder: "wayofprice".tr,
+                      accentColor: primarycolor,
+                      textColor: bodycolor,
+                      inputType: TextInputType.text,
+                      cornerradius: BorderRadius.all(Radius.circular(50)),
+                      controller: priceofwaycontroller.value),
+                ),
+                Devider(),
+                Center(
+                  child: Container(
+                    width: Get.width - 40,
+                    height: 70,
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => selectplace(
+                              1,
+                              ride.automobil?.autotype?.placesMark ?? [],
+                              ride as Rides,
+                              context as BuildContext),
+                          child: Container(
+                            width: 110,
+                            height: 35,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: primarycolor,
+                                    style: BorderStyle.solid,
+                                    width: 1),
+                                borderRadius: BorderRadius.circular(35),
+                                color: selectedindex.value != null &&
+                                        selectedindex.value == 1
+                                    ? primarycolor
+                                    : whitecolor),
+                            child: StaticText(
+                                color: selectedindex.value != null &&
+                                        selectedindex.value == 1
+                                    ? whitecolor
+                                    : darkcolor,
+                                size: normaltextSize,
+                                weight: FontWeight.w500,
+                                align: TextAlign.center,
+                                text: "choiseplace".tr),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => selectplace(
+                              2,
+                              ride.automobil?.autotype?.placesMark ?? [],
+                              ride as Rides,
+                              context as BuildContext),
+                          child: Container(
+                            width: 150,
+                            height: 35,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: primarycolor,
+                                    style: BorderStyle.solid,
+                                    width: 1),
+                                borderRadius: BorderRadius.circular(35),
+                                color: selectedindex.value != null &&
+                                        selectedindex.value == 2
+                                    ? primarycolor
+                                    : whitecolor),
+                            child: StaticText(
+                                color: selectedindex.value != null &&
+                                        selectedindex.value == 2
+                                    ? whitecolor
+                                    : darkcolor,
+                                size: normaltextSize,
+                                weight: FontWeight.w500,
+                                align: TextAlign.center,
+                                text: "fullreservation".tr),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => selectplace(
-                        2,
-                        ride.automobil?.autotype?.placesMark ?? [],
-                        ride as Rides,
-                        context as BuildContext),
-                    child: Container(
-                      width: 150,
-                      height: 35,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: primarycolor,
-                              style: BorderStyle.solid,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(35),
-                          color: selectedindex.value != null &&
-                                  selectedindex.value == 2
-                              ? primarycolor
-                              : whitecolor),
-                      child: StaticText(
-                          color: selectedindex.value != null &&
-                                  selectedindex.value == 2
-                              ? whitecolor
-                              : darkcolor,
-                          size: normaltextSize,
-                          weight: FontWeight.w500,
-                          align: TextAlign.center,
-                          text: "fullreservation".tr),
+                ),
+                Devider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ButtonElement(
+                      text: "close".tr,
+                      width: 90,
+                      onPressed: () {
+                        selectedplace.value = 0;
+                        selectedindex.value = 0;
+                        Get.back();
+                      },
+                      bgColor: primarycolor,
+                      borderRadius: BorderRadius.circular(45),
+                      fontsize: normaltextSize,
+                      height: 45,
+                      textColor: whitecolor,
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(
+                      width: 7,
+                    ),
+                    ButtonElement(
+                      text: "reguestnow".tr,
+                      width: 160,
+                      onPressed: () => getrequestforride(
+                          ride as Rides, context as BuildContext),
+                      bgColor: primarycolor,
+                      borderRadius: BorderRadius.circular(80),
+                      fontsize: normaltextSize,
+                      height: 45,
+                      textColor: whitecolor,
+                    ),
+                  ],
+                ),
+                Devider()
+              ],
             ),
-          ),
-          Devider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ButtonElement(
-                text: "close".tr,
-                width: 90,
-                onPressed: () {
-                  selectedplace.value = 0;
-                  selectedindex.value = 0;
-                  Get.back();
-                },
-                bgColor: primarycolor,
-                borderRadius: BorderRadius.circular(45),
-                fontsize: normaltextSize,
-                height: 45,
-                textColor: whitecolor,
-              ),
-              SizedBox(
-                width: 7,
-              ),
-              ButtonElement(
-                text: "reguestnow".tr,
-                width: 160,
-                onPressed: () =>
-                    getrequestforride(ride as Rides, context as BuildContext),
-                bgColor: primarycolor,
-                borderRadius: BorderRadius.circular(80),
-                fontsize: normaltextSize,
-                height: 45,
-                textColor: whitecolor,
-              ),
-            ],
-          ),
-          Devider()
-        ],
-      ),
-    );});
+          );
+        });
   }
 
   void getrequestforride(Rides ride, BuildContext context) async {
     refreshpage.value = true;
+
     Map<String, dynamic> body = {
       "ride_id": ride.id,
       "price": priceofwaycontroller.value.text ?? 0,
       "weight": weightcontroller.value.text ?? 0,
       "position": selectedplace.value ?? null,
-      "coordinates": [
-        {
-          "latitude": markers.value
-              .firstWhere((element) => element?.markerId.value == "position_0")!
-              .position!
-              .latitude
-              .toString(),
-          "longitude": markers.value
-              .firstWhere((element) => element?.markerId.value == "position_0")!
-              .position!
-              .longitude
-              .toString(),
-          "address": markers.value
-              .firstWhere((element) => element?.markerId.value == "position_0")!
-              .infoWindow
-              .title
-        },
-        {
-          "latitude": markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value != "destinationposition")!
-              .position!
-              .latitude
-              .toString(),
-          "longitude": markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value != "destinationposition")!
-              .position!
-              .longitude
-              .toString(),
-          "address": markers.value
-              .firstWhere((element) =>
-                  element?.markerId.value == "destinationposition")!
-              .infoWindow
-              .title
-        },
-      ],
+      "coordinates": <Map<String, dynamic>>[],
     };
+
+    List<Map<String, dynamic>> coordinates = [];
+
+    addresscontrollers.value.forEach((key, value) {
+      coordinates.add({
+        "latitude": markers.value
+            .firstWhere((element) => element?.markerId.value == key)!
+            .position!
+            .latitude
+            .toString(),
+        "longitude": markers.value
+            .firstWhere((element) => element?.markerId.value == key)!
+            .position!
+            .longitude
+            .toString(),
+        "address": markers.value
+            .firstWhere((element) => element?.markerId.value == key)!
+            .infoWindow
+            .title,
+        "type": key
+      });
+    });
+
+    body['coordinates'] = coordinates;
+
     if (auth_id.value != null && auth_id.value != '' && auth_id.value != ' ') {
       body['user_id'] = auth_id.value;
     }
     var response =
         await GetAndPost.postData("rides_sendrequest", body, context);
+
     Get.back();
 
     if (response != null) {
@@ -1275,7 +1300,6 @@ class GoingController extends GetxController {
         userlocations.value = [];
       }
     } catch (e) {
-      print("-------------------------------------");
       print(e.toString());
     }
   }

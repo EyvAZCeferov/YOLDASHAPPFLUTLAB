@@ -4,13 +4,13 @@ import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Constants/IconButtonElement.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
 import 'package:yoldashapp/models/automobils.dart';
 
 import '../../../Constants/BaseAppBar.dart';
 import '../../../Constants/ButtonElement.dart';
 import '../../../Constants/Devider.dart';
-import '../../../Constants/ImageClass.dart';
 import '../../../Constants/ImageModal.dart';
 import '../../../Constants/StaticText.dart';
 import '../../../Controllers/AuthController.dart';
@@ -216,7 +216,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                         Devider(size: 8, type: false),
                                         StaticText(
                                           text:
-                                              "${_controller.driverpage.value?.phone}",
+                                              "calling".tr,
                                           weight: FontWeight.w500,
                                           size: smalltextSize,
                                           color: iconcolor,
@@ -349,13 +349,14 @@ class _ProfileDriverState extends State<ProfileDriver> {
         bottomNavigationBar: Container(
           height: 60,
           margin: EdgeInsets.only(bottom: 15),
+          color: primarycolor,
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: ButtonElement(
-                text: "contact".tr,
-                height: 50,
-                width: width - 100,
-                borderRadius: BorderRadius.circular(45),
+            child: IconButtonElement(
+              icon: FeatherIcons.messageCircle,
+              bgColor: primarycolor,
+              color: whitecolor,
+              size: 22,
                 onPressed: () => Get.toNamed("/messages/1")),
           ),
         ));

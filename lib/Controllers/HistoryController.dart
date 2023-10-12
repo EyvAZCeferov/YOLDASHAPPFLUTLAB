@@ -4,9 +4,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:map_launcher/map_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 import 'package:yoldashapp/models/rides.dart';
@@ -817,18 +819,42 @@ class HistoryController extends GetxController {
     }
   }
 
-  void launchWaze(double lat, double lng) async {
-    var url = 'waze://?ll=${lat.toString()},${lng.toString()}';
-    var fallbackUrl =
-        'https://waze.com/ul?ll=${lat.toString()},${lng.toString()}&navigate=yes';
+  void launchWaze(context, latitude, longitude) async {
     try {
-      bool launched =
-          await launch(url, forceSafariVC: false, forceWebView: false);
-      if (!launched) {
-        await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
-      }
+      final coords = Coords(latitude, longitude);
+      final title = "Gedəcəyim məkan";
+      final availableMaps = await MapLauncher.installedMaps;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    for (var map in availableMaps)
+                      ListTile(
+                        onTap: () => map.showMarker(
+                          coords: coords,
+                          title: title,
+                        ),
+                        title: StaticText(color: darkcolor, size: normaltextSize, text: map.mapName, weight: FontWeight.bold),
+                        leading: SvgPicture.asset(
+                          map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
     } catch (e) {
-      await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
+      print(e);
     }
   }
 

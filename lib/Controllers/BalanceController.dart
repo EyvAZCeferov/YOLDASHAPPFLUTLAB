@@ -43,17 +43,14 @@ class BalanceController extends GetxController {
       if (response != null) {
         String status = response['status'];
         String message = "";
-        if (response['message'] != null) message = response['message'];
+        if (response['message'] != null) message = response['message'] ?? '';
         if (status == "success") {
           if (response['data'] != null) {
-            if (response['data'] != null) {
-              userbalances.value = (response['data'] as List).map((dat) {
-                var data = UserBalances.fromMap(dat);
-                return data;
-              }).toList();
-            }
+            userbalances.value = (response['data'] as List).map((dat) {
+              var data = UserBalances.fromMap(dat);
+              return data;
+            }).toList();
           }
-
           totalprice.value = response['price'];
         } else {
           showToastMSG(errorcolor, message, context);
@@ -74,15 +71,19 @@ class BalanceController extends GetxController {
     }
   }
 
-  Future<void> fetchTypes(context) async {
+  void fetchTypes(context) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
     var response =
         await GetAndPost.fetchData("balance_actions/create", context, body);
+    balancetypes.value = [];
+    selectedType.value = BalanceTypes();
     if (response != null) {
       String status = response['status'];
-      String message = response['message'];
+      String message = "";
+      if (response['message'] != null) message = response['message'] ?? '';
       if (status == "success") {
+        refreshpage.value = true;
         List<String> groups = response['data'].keys.toList();
         for (String group in groups) {
           List<dynamic> elements = response['data'][group];

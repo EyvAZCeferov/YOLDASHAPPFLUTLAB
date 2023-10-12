@@ -27,7 +27,6 @@ class CacheManager {
       String jsonString = jsonEncode(model.toJson());
       await box.put(key, jsonString);
     } catch (e) {
-      print("Error Caching Model");
       print(e.toString());
     }
   }
@@ -42,7 +41,6 @@ class CacheManager {
       }
       return null;
     } catch (e) {
-      print("Error getting Caching Model");
       print(e.toString());
     }
   }
@@ -63,7 +61,6 @@ class CacheManager {
       var box = await _getBox();
       return box.get(key);
     } catch (e) {
-      print("Error Getting Value: $e");
       return null;
     }
   }
@@ -88,7 +85,6 @@ class CacheManager {
 
       await box.put(key, value);
     } catch (e) {
-      print("Error Setting Value");
       print(e.toString());
     }
   }
@@ -98,7 +94,6 @@ class CacheManager {
       var box = await _getBox();
       return box.containsKey(key);
     } catch (e) {
-      print('Error Contains Value');
       print(e.toString());
       return false;
     }

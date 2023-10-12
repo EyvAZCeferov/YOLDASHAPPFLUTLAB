@@ -79,14 +79,12 @@ class MessagesIndex extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   CachedNetworkImage(
-                                    imageUrl: _controller.auth_id.value !=
-                                                      item.receiverId
-                                        ? imageurl +
-                                            (item.receiverImage ??
-                                                'users/noprofilepicture.webp')
-                                        : imageurl +
-                                            (item.senderImage ??
-                                                'users/noprofilepicture.webp'),
+                                    imageUrl: getimageurl(
+                                        "user",
+                                        "users",
+                                        _controller.authtype == 'rider'
+                                            ? item.receiverImage ?? null
+                                            : item.senderImage ?? null),
                                     placeholder: (context, url) =>
                                         CircularProgressIndicator(),
                                     errorWidget: (context, url, error) =>
@@ -106,27 +104,24 @@ class MessagesIndex extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       StaticText(
-                                          text:
-                                              _controller.auth_id.value !=
-                                                      item.receiverId
+                                          text: _controller.auth_id.value !=
+                                                  item.receiverId
+                                              ? item.receiverName
+                                                          .toString()
+                                                          .length >
+                                                      15
                                                   ? item.receiverName
-                                                              .toString()
-                                                              .length >
-                                                          15
-                                                      ? item.receiverName
+                                                      .toString()
+                                                      .substring(0, 15)
+                                                  : item.receiverName.toString()
+                                              : item.senderName
                                                           .toString()
-                                                          .substring(0, 15)
-                                                      : item.receiverName
-                                                          .toString()
-                                                  : item.senderName
-                                                              .toString()
-                                                              .length >
-                                                          15
-                                                      ? item.senderName
-                                                          .toString()
-                                                          .substring(0, 15)
-                                                      : item.senderName
-                                                          .toString(),
+                                                          .length >
+                                                      15
+                                                  ? item.senderName
+                                                      .toString()
+                                                      .substring(0, 15)
+                                                  : item.senderName.toString(),
                                           weight: FontWeight.w500,
                                           size: normaltextSize,
                                           color: darkcolor,

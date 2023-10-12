@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
 import '../Functions/CacheManager.dart';
 
 class MainController extends GetxController {
@@ -86,4 +85,5 @@ class MainController extends GetxController {
     WidgetsFlutterBinding.ensureInitialized();
     await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
   }
-}
+
+  }

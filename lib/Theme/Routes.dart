@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:yoldashapp/Views/Tabs/Profile/ContactUs.dart';
 import '../Controllers/BalanceController.dart';
 import '../Controllers/CallingController.dart';
 import '../Controllers/CardsController.dart';
@@ -120,5 +121,9 @@ final List<GetPage> Routes = [
   GetPage(
     name: '/language',
     page: () => LanguagePage(),
+  ),
+  GetPage(
+    name: '/contactus',
+    page: () => ContactUs(),
   ),
 ];

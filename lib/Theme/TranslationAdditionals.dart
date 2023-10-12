@@ -159,6 +159,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Tamamlanmadı",
           'ride_cancelled': "Ləğv edildi",
           'ride_ontheway': "Yolda",
+          'subject': "Mövzu",
         },
         'ru_RU': {
           'login': 'Входить',
@@ -316,6 +317,8 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "неполный",
           'ride_cancelled': "Отменено",
           'ride_ontheway': "на дороге",
+          'subject': "Предмет",
+
         },
         'en_EN': {
           'login': 'Login',
@@ -473,6 +476,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Not completed",
           'ride_cancelled': "Cancelled",
           'ride_ontheway': "On The Way",
+          'subject': "Subject",
         },
         'tr_TR': {
           'login': 'Giriş yapın',
@@ -630,6 +634,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Tamamlanmadı",
           'ride_cancelled': "İptal edildi",
           'ride_ontheway': "Yolda",
+          'subject': "Mevzu",
         },
       };
 }

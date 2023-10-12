@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_launcher/map_launcher.dart';
 import '../../../Constants/ImageClass.dart';
 import '../../../Functions/helpers.dart';
 
@@ -41,7 +43,7 @@ class MessageBubble extends StatelessWidget {
       ),
       child: Align(
         alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
-        child: createmessagecontent(type, message, isMine),
+        child: createmessagecontent(context, type, message, isMine),
       ),
     );
   }
@@ -64,7 +66,46 @@ class MessageBubble extends StatelessWidget {
     }
   }
 
-  createmessagecontent(type, message, isMine) {
+  openMapsSheet(context, latitude, longitude) async {
+    try {
+      final coords = Coords(latitude, longitude);
+      final title = "Gedəcəyim məkan";
+      final availableMaps = await MapLauncher.installedMaps;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    for (var map in availableMaps)
+                      ListTile(
+                        onTap: () => map.showMarker(
+                          coords: coords,
+                          title: title,
+                        ),
+                        title: StaticText(color: darkcolor, size: normaltextSize, text: map.mapName, weight: FontWeight.bold),
+                        leading: SvgPicture.asset(
+                          map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  createmessagecontent(context, type, message, isMine) {
     final Completer<GoogleMapController> googlemapcontroller = Completer();
     GoogleMapController newgooglemapcontroller;
     try {
@@ -94,6 +135,7 @@ class MessageBubble extends StatelessWidget {
         var position = message.split(',');
         var latitude = double.parse(position[0]);
         var longitude = double.parse(position[1]);
+
         Set<Marker> markers = {
           Marker(
             markerId: MarkerId("pickup"),
@@ -110,12 +152,10 @@ class MessageBubble extends StatelessWidget {
           width: Get.width / 2,
           height: Get.width / 3,
           child: GestureDetector(
-            onTap: () {
-              launchUrlTOSITE(
-                  'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+            onTap: () async {
+              await openMapsSheet(context, latitude, longitude);
             },
             child: GoogleMap(
-              mapType: MapType.terrain,
               myLocationButtonEnabled: false,
               zoomGesturesEnabled: true,
               zoomControlsEnabled: false,
@@ -128,9 +168,8 @@ class MessageBubble extends StatelessWidget {
               },
               initialCameraPosition:
                   CameraPosition(target: LatLng(latitude, longitude), zoom: 15),
-              onTap: (LatLng latlng) {
-                launchUrlTOSITE(
-                    'https://www.google.com/maps/search/?api=1&query=${latlng.latitude},${latlng.longitude}');
+              onTap: (LatLng latlng) async {
+                await openMapsSheet(context, latlng.latitude, latlng.longitude);
               },
             ),
           ),

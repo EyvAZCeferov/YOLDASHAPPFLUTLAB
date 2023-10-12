@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:yoldashapp/Constants/LoaderScreen.dart';
 
 import '../../../../Constants/AccordionTemplate.dart';
 import '../../../../Constants/BaseAppBar.dart';
@@ -201,7 +200,7 @@ class AutomobilsCreate extends StatelessWidget {
                             )
                           ],
                         ))),
-                Devider(),
+                Devider(), 
                 // Obx(() => _controller.refreshpage.value == true
                 //     ? LoaderScreen()
                 //     :

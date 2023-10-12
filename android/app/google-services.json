@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "121697903403",
+    "project_id": "yoldash-783a4",
+    "storage_bucket": "yoldash-783a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121697903403:android:f4a40a34c9118fb48f9b6e",
+        "android_client_info": {
+          "package_name": "az.globalmartgroup.yoldash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYvxG0cjlXGJ9LAXIowgE7kxnGucQ_BsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

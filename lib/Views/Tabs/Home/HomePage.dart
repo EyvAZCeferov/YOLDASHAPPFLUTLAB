@@ -1219,7 +1219,7 @@ class _HomePageState extends State<HomePage> {
                                               url: "assets/images/findcar.png"),
                                     ),
                                   ),
-                        Devider(size: 5),
+                        Devider(size: 10),
                         Center(
                           child: ButtonElement(
                               bgColor: primarycolor,

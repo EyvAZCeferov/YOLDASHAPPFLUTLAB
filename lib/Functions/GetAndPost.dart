@@ -40,14 +40,20 @@ class GetAndPost {
         if (status == 'success') {
           return jsonData;
         } else if (status == 'error') {
-          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+          if(context!=null){
+            showToastMSG(errorcolor, "errordatanotfound".tr, context);
+          }
         }
       } else {
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        if(context!=null){
+          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        }
       }
     } catch (e) {
       print(e.toString());
-      showToastMSG(errorcolor, e.toString(), context);
+      if(context!=null){
+        showToastMSG(errorcolor, e.toString(), context);
+      }
     }
   }
 
@@ -90,7 +96,12 @@ class GetAndPost {
     context,
   ) async {
     try {
-      var apiUrl = Uri.parse('$baseapiurl/$url');
+      var apiUrl = Uri();
+      if (url != "https://yoldash.app/contact") {
+        apiUrl = Uri.parse('$baseapiurl/$url');
+      } else {
+        apiUrl = Uri.parse(url);
+      }
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
 
@@ -100,11 +111,8 @@ class GetAndPost {
         headers['Authorization'] = 'Bearer $token';
       }
 
-      print(token);
-
       var response = await http.post(apiUrl, headers: headers, body: jsonBody);
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
       var status = jsonData['status'];
 
       if (status == 'success') {

@@ -50,39 +50,6 @@ class CardsController extends GetxController {
           );
         }
       }
-
-      // if ((cardNumberController.value.text != null &&
-      //         cardNumberController.value.text != '') &&
-      //     (validityDateController.value.text != null &&
-      //         validityDateController.value.text != '') &&
-      //     (cvvController.value.text != null &&
-      //         cvvController.value.text != '') &&
-      //     (holderNameController.value.text != null &&
-      //         holderNameController.value.text != '')) {
-      //   refreshpage.value = true;
-      //   var language =
-      //       await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
-      //   var body = {
-      //     'cardnumber': cardNumberController.value.text,
-      //     'language': language,
-      //     'validitydate': validityDateController.value.text,
-      //     'cvv': cvvController.value.text,
-      //     'holdername': holderNameController.value.text
-      //   };
-      //   var response = await GetAndPost.postData("cards", body, context);
-      //   if (response['status'] == "success") {
-      //     fetchDatas(context);
-      //     refreshpage.value = false;
-      //     Get.offAllNamed('cards');
-      //   } else {
-      //     refreshpage.value = false;
-      //     showToastMSG(errorcolor, response['message'], context);
-      //   }
-      // } else {
-      //   refreshpage.value = true;
-      //   showToastMSG(errorcolor, "fillthefield".tr, context);
-      //   refreshpage.value = false;
-      // }
     } catch (e) {
       refreshpage.value = false;
       print("Card page error: $e");

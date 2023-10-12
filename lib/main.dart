@@ -1,14 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:yoldashapp/Functions/helpers.dart';
 import 'Controllers/MainController.dart';
 import 'Functions/CacheManager.dart';
 import 'Theme/Routes.dart';
 import 'Theme/TranslationAdditionals.dart';
-import '/Constants/LoaderScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+    appId: '1:121697903403:android:f4a40a34c9118fb48f9b6e',
+    apiKey: 'AIzaSyDYvxG0cjlXGJ9LAXIowgE7kxnGucQ_BsU',
+    messagingSenderId: '121697903403',
+    projectId: 'yoldash-783a4',
+  ));
   await CacheManager.createSharedPref();
 
   runApp(Yoldash());
@@ -29,12 +36,13 @@ class Yoldash extends StatelessWidget {
         language != '' &&
         language != ' ') {
       selectedlang = language;
-      Get.updateLocale(Locale(selectedlang, '')); 
+      Get.updateLocale(Locale(selectedlang, ''));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    FirebaseMessageCall(context);
     return GetMaterialApp(
       title: 'Yoldash',
       debugShowCheckedModeBanner: false,
@@ -48,7 +56,7 @@ class Yoldash extends StatelessWidget {
       opaqueRoute: Get.isOpaqueRouteDefault,
       popGesture: Get.isPopGestureEnable,
       transitionDuration: Duration(milliseconds: 1000),
+      
     );
   }
 }
-
