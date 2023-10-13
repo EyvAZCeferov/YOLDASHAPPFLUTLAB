@@ -38,6 +38,10 @@ class AuthController extends GetxController {
     1: 'male',
     2: 'female',
   };
+  List social_statuses = ['sehid', 'telebe', ''];
+  Rx<String?> socialstatus = Rx<String>('');
+  Rx<String?> submitting_document = Rx<String?>(null);
+
   AuthController() {
     init();
   }
@@ -124,6 +128,25 @@ class AuthController extends GetxController {
     }
   }
 
+  void pickImageTesdigleyici(type, context) async {
+    refreshpage.value = false;
+    await handlepermissionreq(Permission.photos, context);
+    final picker = ImagePicker();
+    final source = ImageSource.gallery;
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      refreshpage.value = false;
+
+      final image = File(pickedFile.path);
+      var response = await GetAndPost.uploadfile(
+          "users_sendphoto/{$type}", image, context);
+      print(response);
+      if (type == "submitting_document") {
+        submitting_document.value = response['data'];
+      }
+    }
+  }
+
   void updateprofiledata(context) async {
     if (phonecontroller.value.text != null &&
         phonecontroller.value.text.length > 0 &&
@@ -182,7 +205,7 @@ class AuthController extends GetxController {
     } else {
       body['type'] = "rider";
     }
-    
+
     var response = await GetAndPost.postData("auth/change_type", body, context);
     if (response != null) {
       String status = response['status'];
@@ -192,12 +215,11 @@ class AuthController extends GetxController {
           response['message'] != ' ') message = response['message'];
       if (status == "success") {
         getalldataoncache(context);
-        refreshpage.value=false;
+        refreshpage.value = false;
       } else {
-        refreshpage.value=false;
+        refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
-
     } else {
       refreshpage.value = false;
     }
@@ -229,6 +251,8 @@ class AuthController extends GetxController {
           'name_surname': namesurnamecontroller.value.text,
           'birthday': birthdaycontroller.value,
           'type': authType.value,
+          'socialstatus':socialstatus.value??'',
+          'submitting_document':submitting_document.value??'',
           'language': 'az',
         };
 
@@ -449,11 +473,11 @@ class AuthController extends GetxController {
   void showgendermodal(BuildContext context) {
     showModalBottomSheet(
       barrierColor: Colors.white.withOpacity(0.1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(25),
-                    ),
-                  ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
       context: context,
       builder: (context) {
         return Container(

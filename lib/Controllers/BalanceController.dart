@@ -71,40 +71,45 @@ class BalanceController extends GetxController {
     }
   }
 
-  void fetchTypes(context) async {
+  Future<void> fetchTypes(context) async {
     refreshpage.value = true;
-    Map<String, dynamic> body = {};
-    var response =
-        await GetAndPost.fetchData("balance_actions/create", context, body);
-    balancetypes.value = [];
-    selectedType.value = BalanceTypes();
-    if (response != null) {
-      String status = response['status'];
-      String message = "";
-      if (response['message'] != null) message = response['message'] ?? '';
-      if (status == "success") {
-        refreshpage.value = true;
-        List<String> groups = response['data'].keys.toList();
-        for (String group in groups) {
-          List<dynamic> elements = response['data'][group];
-          List<BalanceElement> balanceElements = elements.map((element) {
-            return BalanceElement.fromMap(element);
-          }).toList();
-
-          balancetypes.value.add(BalanceTypes(
-            type: group,
-            elements: balanceElements,
-          ));
-        }
-      } else {
-        showToastMSG(errorcolor, message, context);
-      }
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
+    try {
+      Map<String, dynamic> body = {};
+      var response =
+          await GetAndPost.fetchData("balance_actions/create", context, body);
       balancetypes.value = [];
       selectedType.value = BalanceTypes();
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'] ?? '';
+        if (status == "success") {
+          refreshpage.value = true;
+          List<String> groups = response['data'].keys.toList();
+          for (String group in groups) {
+            List<dynamic> elements = response['data'][group];
+            List<BalanceElement> balanceElements = elements.map((element) {
+              return BalanceElement.fromMap(element);
+            }).toList();
+
+            balancetypes.value.add(BalanceTypes(
+              type: group,
+              elements: balanceElements,
+            ));
+          }
+        } else {
+          refreshpage.value = true;
+          showToastMSG(errorcolor, message, context);
+        }
+      } else {
+        refreshpage.value = false;
+        balancetypes.value = [];
+        selectedType.value = BalanceTypes();
+        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+      }
+    } catch (e) {
+      print("Balance Fetch Type Error------------------------------------");
+      print(e.toString());
     }
   }
 

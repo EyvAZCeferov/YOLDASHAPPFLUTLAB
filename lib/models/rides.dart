@@ -115,6 +115,7 @@ class Queries {
     this.riderId,
     this.status,
     this.price,
+    this.priceEndirim,
     this.weight,
     this.position,
     this.gender,
@@ -129,6 +130,7 @@ class Queries {
     this.reason,
     this.ratingRide,
     this.place,
+    this.usedEndirim
   });
 
   factory Queries.fromMap(Map<String, dynamic> map) => Queries(
@@ -139,6 +141,7 @@ class Queries {
         riderId: map['rider_id'],
         status: map['status'],
         price: map['price'],
+        priceEndirim:map['price_endirim'],
         weight: map['weight'],
         position: map['position'],
         gender: map['gender'],
@@ -153,6 +156,7 @@ class Queries {
         reason: map['reason'],
         ratingRide: map['rating_ride'],
         place: map['place'] == null ? null : PlacesMark.fromMap(map['place']),
+        usedEndirim:map['used_endirim']
       );
 
   factory Queries.fromJson(String str) => Queries.fromMap(json.decode(str));
@@ -164,6 +168,7 @@ class Queries {
   final int? riderId;
   final String? status;
   final String? price;
+  final String? priceEndirim;
   final String? weight;
   final int? position;
   final int? gender;
@@ -178,6 +183,7 @@ class Queries {
   final Reason? reason;
   final int? ratingRide;
   final PlacesMark? place;
+  final String? usedEndirim;
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -187,6 +193,7 @@ class Queries {
         'rider_id': riderId,
         'status': status,
         'price': price,
+        'price_endirim':priceEndirim,
         'weight': weight,
         'position': position,
         'gender': gender,
@@ -201,6 +208,7 @@ class Queries {
         'reason': reason,
         'rating_ride': ratingRide,
         'place': place?.toMap(),
+        'used_endirim':usedEndirim,
       };
 
   String toJson() => json.encode(toMap());

@@ -11,14 +11,9 @@ import '../../../../Functions/helpers.dart';
 import '../../../../Theme/ThemeService.dart';
 import '../../../../models/balance_types.dart';
 
-class BalanceCreate extends StatefulWidget {
-  @override
-  State<BalanceCreate> createState() => _BalanceCreateState();
-}
-
-class _BalanceCreateState extends State<BalanceCreate> {
-  final BalanceController _controller = Get.find<BalanceController>();
-
+class BalanceCreate extends StatelessWidget {
+  final BalanceController _controller = Get.put(BalanceController());
+  
   @override
   Widget build(BuildContext context) {
     _controller.fetchTypes(context);

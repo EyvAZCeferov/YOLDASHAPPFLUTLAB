@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 import 'package:yoldashapp/models/rides.dart';
 
@@ -359,12 +358,12 @@ class HistoryController extends GetxController {
   }
 
   void lookmore(Rides ride, BuildContext context) {
-    priceofwaycontroller.value.text = ride.priceOfWay!;
+    priceofwaycontroller.value.text = ride.minimalPriceOfWay ?? ride.priceOfWay!;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return Container(
-            height: 700,
+            height: 400,
             color: whitecolor,
             child: SingleChildScrollView(
               child: Column(
@@ -462,40 +461,45 @@ class HistoryController extends GetxController {
                     ),
                   ),
                   Devider(),
-                  ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      var keysList = items.keys.toList();
-                      var valuesList = items.values.toList();
-
-                      var key = keysList[index];
-                      var value = valuesList[index];
-
-                      return ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 5),
-                        title: StaticText(
-                          color: darkcolor,
-                          size: normaltextSize,
-                          text: "gender_$value".tr,
-                          weight: FontWeight.w500,
-                          align: TextAlign.left,
-                        ),
-                        trailing: Radio<bool>(
-                          value: true,
-                          activeColor: primarycolor,
-                          focusColor: primarycolor,
-                          hoverColor: primarycolor,
-                          toggleable: true,
-                          visualDensity: VisualDensity.adaptivePlatformDensity,
-                          groupValue: selectedgender == key ? true : false,
-                          onChanged: (value) {
-                            selectedgender.value = key;
-                            Get.back();
-                            lookmore(ride, context);
-                          },
-                        ),
-                      );
-                    },
+                  SizedBox(
+                    height: 100,
+                    width: Get.width-50,
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        var keysList = items.keys.toList();
+                        var valuesList = items.values.toList();
+                  
+                        var key = keysList[index];
+                        var value = valuesList[index];
+                  
+                        return ListTile(
+                          contentPadding: EdgeInsets.symmetric(vertical: 5),
+                          title: StaticText(
+                            color: darkcolor,
+                            size: normaltextSize,
+                            text: "gender_$value".tr,
+                            weight: FontWeight.w500,
+                            align: TextAlign.left,
+                          ),
+                          trailing: Radio<bool>(
+                            value: true,
+                            activeColor: primarycolor,
+                            focusColor: primarycolor,
+                            hoverColor: primarycolor,
+                            toggleable: true,
+                            visualDensity: VisualDensity.adaptivePlatformDensity,
+                            groupValue: selectedgender == key ? true : false,
+                            onChanged: (value) {
+                              selectedgender.value = key;
+                              Get.back();
+                              lookmore(ride, context);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  
                   ),
                   Devider(),
                   Center(

@@ -39,14 +39,18 @@ class AutomobilsController extends GetxController {
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
           refreshpage.value = false;
-          if (response['data'] != null) {
+          if (response['data'] != null && response['data'].length>0 && response['data'] !='' && response['data'] !=' ') {
             data.value = (response['data'] as List).map((dat) {
               return Automobils.fromMap(dat);
             }).toList();
 
-            selectedAutomobil.value = data.firstWhere(
-                (automobil) => automobil.selected == true,
-                orElse: () => Automobils());
+            if (data != null && data.length>0) {
+              selectedAutomobil.value = data.firstWhere(
+                  (automobil) => automobil.selected == true,
+                  orElse: () => Automobils());
+            } else {
+              selectedAutomobil.value = Automobils();
+            }
             refreshpage.value = false;
           }
           refreshpage.value = false;

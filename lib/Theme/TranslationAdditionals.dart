@@ -160,6 +160,10 @@ class TranslationAdditionals extends Translations {
           'ride_cancelled': "Ləğv edildi",
           'ride_ontheway': "Yolda",
           'subject': "Mövzu",
+          'social_status':"Sosial statusunuz",
+          'social_status_telebe':"Tələbə",
+          'social_status_sehid':"Şəhid",
+          'social_status_no':"Heçbiri",
         },
         'ru_RU': {
           'login': 'Входить',
@@ -318,7 +322,10 @@ class TranslationAdditionals extends Translations {
           'ride_cancelled': "Отменено",
           'ride_ontheway': "на дороге",
           'subject': "Предмет",
-
+          'social_status':"Социальный статус",
+          'social_status_telebe':"Студент",
+          'social_status_sehid':"Мученик",
+          'social_status_no':"Никто",
         },
         'en_EN': {
           'login': 'Login',
@@ -477,6 +484,10 @@ class TranslationAdditionals extends Translations {
           'ride_cancelled': "Cancelled",
           'ride_ontheway': "On The Way",
           'subject': "Subject",
+          'social_status':"Social status",
+          'social_status_telebe':"Student",
+          'social_status_sehid':"Martyr",
+          'social_status_no':"Nothing",
         },
         'tr_TR': {
           'login': 'Giriş yapın',
@@ -635,6 +646,10 @@ class TranslationAdditionals extends Translations {
           'ride_cancelled': "İptal edildi",
           'ride_ontheway': "Yolda",
           'subject': "Mevzu",
+          'social_status':"Sosial statu",
+          'social_status_telebe':"Öğrenci",
+          'social_status_sehid':"Şehit",
+          'social_status_no':"Hiçbiri",
         },
       };
 }

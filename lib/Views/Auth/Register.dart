@@ -7,6 +7,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../Constants/ButtonElement.dart';
 import '../../Constants/DateElement.dart';
 import '../../Constants/Devider.dart';
+import '../../Constants/DocumentRow.dart';
 import '../../Constants/ImageClass.dart';
 import '../../Constants/InputElement.dart';
 import '../../Constants/LoaderScreen.dart';
@@ -26,7 +27,6 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -278,7 +278,70 @@ class _RegisterState extends State<Register> {
                           ),
                           Devider(size: 10),
                           _controller.authType.value == "rider"
-                              ? SizedBox()
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    StaticText(
+                                      text: "social_status".tr,
+                                      weight: FontWeight.bold,
+                                      size: subHeadingSize,
+                                      color: darkcolor,
+                                      align: TextAlign.left,
+                                      textOverflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 190,
+                                      width: width - 50,
+                                      child: ListView.builder(
+                                          itemCount: _controller
+                                              .social_statuses.length,
+                                          scrollDirection: Axis.vertical,
+                                          itemBuilder: (context, index) {
+                                            var val = _controller
+                                                .social_statuses[index];
+                                            return ListTile(
+                                              title: StaticText(
+                                                color: darkcolor,
+                                                size: normaltextSize,
+                                                text: val == ''
+                                                    ? 'social_status_no'.tr
+                                                    : "social_status_$val".tr,
+                                                weight: FontWeight.w500,
+                                                align: TextAlign.left,
+                                              ),
+                                              trailing: Radio<bool>(
+                                                value: true,
+                                                activeColor: primarycolor,
+                                                focusColor: primarycolor,
+                                                hoverColor: primarycolor,
+                                                toggleable: true,
+                                                visualDensity: VisualDensity
+                                                    .adaptivePlatformDensity,
+                                                groupValue: _controller
+                                                            .socialstatus
+                                                            .value ==
+                                                        val
+                                                    ? true
+                                                    : false,
+                                                onChanged: (value) {
+                                                  _controller
+                                                      .socialstatus.value = val;
+                                                },
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    Devider(),
+                                    DocumentRow(
+                                      title: 'Təsdiqləyici sənəd',
+                                      subtitle: "uploadimage".tr,
+                                      onPressed: () => _controller.pickImageTesdigleyici("submitting_document",context),
+                                      data:
+                                          _controller.submitting_document.value,
+                                    ),
+                                  ],
+                                )
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,

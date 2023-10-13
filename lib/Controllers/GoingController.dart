@@ -108,8 +108,8 @@ class GoingController extends GetxController {
   }
 
   void getAuthId() async {
-    auth_id.value = await _maincontroller.getstoragedat('auth_id');
-    authtype.value = await _maincontroller.getstoragedat('authtype');
+    auth_id.value = await _maincontroller.getstoragedat('auth_id')??'';
+    authtype.value = await _maincontroller.getstoragedat('authtype')??'';
   }
 
   void getcurrentposition(context) async {
@@ -878,7 +878,7 @@ class GoingController extends GetxController {
 
   void lookmore(Rides ride, BuildContext context) {
     _authController.getalldataoncache(context);
-    priceofwaycontroller.value.text = ride.priceOfWay!;
+    priceofwaycontroller.value.text = ride.minimalPriceOfWay ?? ride.priceOfWay!;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {

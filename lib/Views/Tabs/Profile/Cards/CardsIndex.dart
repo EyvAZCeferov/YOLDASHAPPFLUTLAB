@@ -84,7 +84,7 @@ class CardsIndex extends StatelessWidget {
         }
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed('/cards/add'),
+        onPressed: () => _controller.addcard(context),
         backgroundColor: whitecolor,
         child:
             Icon(FeatherIcons.plus, color: secondarycolor, size: headingSize),

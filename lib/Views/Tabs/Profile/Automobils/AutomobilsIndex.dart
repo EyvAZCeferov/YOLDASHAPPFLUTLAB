@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:yoldashapp/models/automobils.dart';
-import 'package:yoldashapp/models/cards.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
 import '../../../../Constants/Devider.dart';
