@@ -15,9 +15,12 @@ import '../../../../Theme/ThemeService.dart';
 class AutomobilsIndex extends StatelessWidget {
   final AutomobilsController _controller = Get.put(AutomobilsController());
 
+  AutomobilsIndex() {
+    _controller.fetchDatas(null);
+  }
+
   @override
   Widget build(BuildContext context) {
-    _controller.fetchDatas(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,
@@ -96,13 +99,12 @@ class AutomobilsIndex extends StatelessWidget {
                               },
                             )
                           : StaticText(
-                            color: errorcolor,
-                            size: normaltextSize,
-                            text: "ride_waiting".tr,
-                            align: TextAlign.center,
-                            weight: FontWeight.w500,
-                            
-                          ),
+                              color: errorcolor,
+                              size: normaltextSize,
+                              text: "ride_waiting".tr,
+                              align: TextAlign.center,
+                              weight: FontWeight.w500,
+                            ),
                     ),
                     Devider(),
                   ],

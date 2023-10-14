@@ -33,6 +33,7 @@ class AutomobilsController extends GetxController {
       refreshpage.value = true;
       Map<String, dynamic> body = {};
       var response = await GetAndPost.fetchData("automobils", context, body);
+
       if (response != null) {
         String status = response['status'];
         String message = "";
@@ -56,20 +57,20 @@ class AutomobilsController extends GetxController {
           refreshpage.value = false;
         } else {
           refreshpage.value = false;
-          showToastMSG(errorcolor, message, context);
+          // showToastMSG(errorcolor, message, context);
         }
         refreshpage.value = false;
       } else {
         refreshpage.value = false;
         data.value = [];
         selectedAutomobil.value = Automobils();
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
       refreshpage.value = false;
       print("AUTOMOBILS ERROR");
       print(e.toString());
-      showToastMSG(errorcolor, e.toString(), context);
+      // showToastMSG(errorcolor, e.toString(), context);
     }
   }
 

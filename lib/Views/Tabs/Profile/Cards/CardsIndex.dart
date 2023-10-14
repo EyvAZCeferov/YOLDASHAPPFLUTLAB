@@ -13,9 +13,12 @@ import '../../../../Theme/ThemeService.dart';
 class CardsIndex extends StatelessWidget {
   final CardsController _controller = Get.find<CardsController>();
 
+  CardsIndex() {
+    _controller.fetchDatas(null);
+  }
+
   @override
   Widget build(BuildContext context) {
-    _controller.fetchDatas(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,

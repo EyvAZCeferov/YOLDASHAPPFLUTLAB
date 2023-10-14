@@ -182,6 +182,7 @@ String getimageurl(String type, String clasore, String? path) {
       return imageurl + clasore + '/' + path!;
     }
   } catch (e) {
+    print('-+++++++++++++++++++++++++++++Şəkil xətası-+++++++++++++++++++++++++++');
     print(e.toString());
     return e.toString();
   }

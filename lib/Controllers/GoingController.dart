@@ -52,6 +52,9 @@ class GoingController extends GetxController {
   final selectedindex = 0.obs;
   final Rx<DateTime> fromTime = DateTime.now().obs;
   final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 4)).obs;
+
+  final Rx<DateTime> fromTimeSelectable = DateTime.now().obs;
+  final Rx<DateTime> toTimeSelectable = DateTime.now().add(Duration(days: 4)).obs;
   Rx<int> selectedplace = Rx<int>(0);
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
   final Completer<GoogleMapController> googlemapcontroller = Completer();
@@ -298,7 +301,7 @@ class GoingController extends GetxController {
                             maximumDate: fromTime.value.add(Duration(days: 5)),
                             initialDateTime: fromTime.value,
                             onDateTimeChanged: (DateTime newDate) {
-                              fromTime.value = newDate;
+                              fromTimeSelectable.value = newDate;
                             },
                           ),
                         ),
@@ -322,14 +325,14 @@ class GoingController extends GetxController {
                                 width: Get.width - 50,
                                 child: CupertinoDatePicker(
                                   use24hFormat: true,
-                                  minimumDate: toTime.value,
+                                  minimumDate: fromTime.value,
                                   mode: CupertinoDatePickerMode.dateAndTime,
                                   backgroundColor: bodycolor,
                                   maximumDate:
                                       toTime.value.add(Duration(days: 5)),
                                   initialDateTime: toTime.value,
                                   onDateTimeChanged: (DateTime newDate) {
-                                    toTime.value = newDate;
+                                    toTimeSelectable.value = newDate;
                                   },
                                 ),
                               )
@@ -724,8 +727,8 @@ class GoingController extends GetxController {
 
         var body = {
           "coordinates": <Map<String, dynamic>>[],
-          'start_time': fromTime.value.toString() ?? null,
-          'end_time': toTime.value.toString() ?? null,
+          'start_time': fromTimeSelectable.value.toString() ?? null,
+          'end_time': toTimeSelectable.value.toString() ?? null,
           'kmofway': directiondetails.value!.distanceValue ?? 0,
           'durationofway': directiondetails.value!.durationValue ?? 0,
           "polyline_points": points,
@@ -812,6 +815,8 @@ class GoingController extends GetxController {
                 loading.value = false;
                 fromTime.value = DateTime.now();
                 toTime.value = DateTime.now().add(Duration(days: 4));
+                fromTimeSelectable.value = DateTime.now();
+                toTimeSelectable.value = DateTime.now().add(Duration(days: 4));
                 goinglocations
                     .removeWhere((element) => element?.type != "position_0");
                 polyline.value = {};
@@ -1258,6 +1263,8 @@ class GoingController extends GetxController {
         loading.value = false;
         fromTime.value = DateTime.now();
         toTime.value = DateTime.now().add(Duration(days: 4));
+        fromTimeSelectable.value = DateTime.now();
+        toTimeSelectable.value = DateTime.now().add(Duration(days: 4));
         goinglocations.removeWhere((element) => element?.type != "position_0");
         polyline.value = {};
         inptype.value = "position_1";
@@ -1283,6 +1290,8 @@ class GoingController extends GetxController {
       Map<String, dynamic> body = {};
       userlocations.value = [];
       var response = await GetAndPost.fetchData("rides", context, body);
+      print("------------------------------------------------------------------");
+      print(response);
       if (response != null) {
         String status = response['status'];
         String message = '';

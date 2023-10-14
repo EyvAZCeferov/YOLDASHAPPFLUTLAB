@@ -26,7 +26,8 @@ class _AddableWidgetState extends State<AddableWidget> {
   final CardsController _cardscontroller = Get.put(CardsController());
   final AutomobilsController _automobilscontroller =
       Get.put(AutomobilsController());
-  dynamic data;
+  dynamic data_automobils;
+  dynamic data_cards;
 
   @override
   void initState() {
@@ -35,17 +36,19 @@ class _AddableWidgetState extends State<AddableWidget> {
   }
 
   void initFunction(BuildContext context) {
-    dynamic dat;
+    dynamic dat_automobils;
+    dynamic dat_cards;
     if (widget.type == "cards") {
       _cardscontroller.fetchDatas(context);
-      dat = _cardscontroller.data;
+      dat_cards = _cardscontroller.data;
     } else {
       _automobilscontroller.fetchDatas(context);
-      dat = _automobilscontroller.data;
+      dat_automobils = _automobilscontroller.data;
     }
 
     setState(() {
-      data = dat;
+      data_automobils = dat_automobils;
+      data_cards = dat_cards;
     });
   }
 
@@ -54,7 +57,7 @@ class _AddableWidgetState extends State<AddableWidget> {
     return Center(
       child: Container(
         width: widget.width - 40,
-        height: data.length > 0 ? 110 : widget.width / 1.8,
+        height: widget.type=='cards'? data_cards.length > 0 ? 160 : widget.width / 1.8 : data_automobils.length > 0 ? 160 : widget.width / 1.8,
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: whitecolor,
@@ -203,9 +206,9 @@ class _AddableWidgetState extends State<AddableWidget> {
           () => _automobilscontroller.refreshpage.value == true
               ? LoaderScreen()
               : ListView.builder(
-                  itemCount: data.length,
+                  itemCount: _automobilscontroller.data.length,
                   itemBuilder: (context, index) {
-                    final item = data[index];
+                    final item = _automobilscontroller.data[index];
                     return Container(
                       margin: EdgeInsets.only(bottom: 10),
                       child: Row(
@@ -223,7 +226,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                             ),
                             child: CachedNetworkImage(
                               imageUrl: getimageurl("models",
-                                  'automobils/types', item.autotype.icon),
+                                  'automobils/types', item.autotype?.icon),
                               placeholder: (context, url) =>
                                   CircularProgressIndicator(),
                               errorWidget: (context, url, error) =>

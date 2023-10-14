@@ -120,7 +120,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Get.toNamed("/profileinformation"))
                                   ],
                                 ),
-                               
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
