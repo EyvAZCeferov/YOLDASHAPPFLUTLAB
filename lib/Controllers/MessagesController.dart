@@ -131,7 +131,7 @@ class MessagesController extends GetxController {
           if (response['data'] != null) {
             if (selectedGroupId != null && selectedGroupId > 0) {
               selectedMessageGroup.value =
-                  MessageGroups.fromJson(response['data']);
+                  MessageGroups.fromMap(response['data']);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
                   scrollDown();

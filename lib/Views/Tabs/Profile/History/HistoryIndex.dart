@@ -35,7 +35,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
   }
 
   List<Widget> getaddress(ride) {
-    if (ride.coordinates != null) {
+    if (ride?.coordinates != null) {
       List<Widget> elements = [];
       for (var address in ride.coordinates!) {
         elements.add(Column(
@@ -88,7 +88,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
             ? LoaderScreen()
             : _controller.data.length > 0
                 ? RefreshIndicator(
-                    onRefresh: () => _controller.getRides(context, null),
+                    onRefresh: () => _controller.getRides(context, null,true),
                     color: secondarycolor,
                     strokeWidth: 2,
                     triggerMode: RefreshIndicatorTriggerMode.anywhere,
@@ -97,12 +97,11 @@ class _HistoryIndexState extends State<HistoryIndex> {
                       itemCount: _controller.data.length,
                       itemBuilder: (context, index) {
                         Rides ride = _controller.data[index]!;
-
                         Queries? query = getQuery(ride.queries);
                         return GestureDetector(
                           onTap: () {
                             _controller.selectedRide.value = ride;
-                            _controller.getRides(context, ride.id);
+                            _controller.getRides(context, ride.id,false);
                             Get.toNamed('/history/${ride.id}');
                           },
                           child: Center(

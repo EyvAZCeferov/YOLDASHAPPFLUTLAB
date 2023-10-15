@@ -88,7 +88,6 @@ class HistoryController extends GetxController {
     }
 
       getreasons(context);
-
     if (response != null) {
       String status = response['status'];
       String message = '';
@@ -102,11 +101,11 @@ class HistoryController extends GetxController {
             ridedriver.value = true;
           }
 
-          print(ridedriver.value);
         } else {
           data.value = (response['data'] as List).map((dat) {
             return Rides.fromMap(dat);
           }).toList();
+
         }
 
         refreshpage.value = false;

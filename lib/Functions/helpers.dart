@@ -220,11 +220,15 @@ String converttimedayandmonth(DateTime dateTime) {
 }
 
 String convertStringToTime(timestamp) {
-  DateTime dateTime = DateTime.parse(timestamp);
-  int year = dateTime.year;
-  int month = dateTime.month;
-  int day = dateTime.day;
-  return "${day}.${month}.${year}";
+  if (timestamp != null && timestamp != '' && timestamp != ' ') {
+    DateTime dateTime = DateTime.parse(timestamp);
+    int year = dateTime.year;
+    int month = dateTime.month;
+    int day = dateTime.day;
+    return "${day}.${month}.${year}";
+  } else {
+    return "";
+  }
 }
 
 String convertToSlug(String text) {

@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                 return GestureDetector(
                   onTap: () {
                     _historycontroller.selectedRide.value=ride;
-                    _historycontroller.getRides(context, ride.id);
+                    _historycontroller.getRides(context, ride.id,false);
                     Get.toNamed('/history/${ride.id}');
                   },
                   child: Center(
