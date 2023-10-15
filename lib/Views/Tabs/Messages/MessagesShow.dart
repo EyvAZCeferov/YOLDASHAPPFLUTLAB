@@ -17,7 +17,7 @@ class MessagesShow extends StatelessWidget {
 
   String getNameToShow() {
     String name = '';
-    if (_controller.authtype.value == 'rider') {
+    if (_controller.auth_id.value == _controller.selectedMessageGroup.value?.senderId) {
       name = _controller.selectedMessageGroup.value?.receiverName ?? '';
     } else {
       name = _controller.selectedMessageGroup.value?.senderName ?? '';
@@ -103,6 +103,7 @@ class MessagesShow extends StatelessWidget {
                   size: buttontextSize,
                   onPressed: () {
                     _controller.selectedMessageGroup.value = null;
+                    _controller.getMessages(context,null);
                     Get.back();
                   }),
             ),
@@ -145,9 +146,7 @@ class MessagesShow extends StatelessWidget {
         if (selectedgroup == null) {
           return LoaderScreen();
         } else {
-          return _controller.refreshpage.value == true
-              ? LoaderScreen()
-              : Column(
+          return Column(
                   children: [
                     Expanded(
                       child: Column(
@@ -155,9 +154,10 @@ class MessagesShow extends StatelessWidget {
                           Expanded(
                             child: ListView.builder(
                                 scrollDirection: Axis.vertical,
-                                reverse: true,
+                                reverse: false,
                                 shrinkWrap: true,
-                                controller: _controller.scrollController.value,
+                                controller: _controller.scrollController,
+                                physics: const ScrollPhysics(),
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 itemCount: _controller
                                     .selectedMessageLists.value.length,

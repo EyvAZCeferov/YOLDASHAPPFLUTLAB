@@ -182,7 +182,8 @@ String getimageurl(String type, String clasore, String? path) {
       return imageurl + clasore + '/' + path!;
     }
   } catch (e) {
-    print('-+++++++++++++++++++++++++++++Şəkil xətası-+++++++++++++++++++++++++++');
+    print(
+        '-+++++++++++++++++++++++++++++Şəkil xətası-+++++++++++++++++++++++++++');
     print(e.toString());
     return e.toString();
   }
@@ -218,6 +219,14 @@ String converttimedayandmonth(DateTime dateTime) {
   return '$day $month';
 }
 
+String convertStringToTime(timestamp) {
+  DateTime dateTime = DateTime.parse(timestamp);
+  int year = dateTime.year;
+  int month = dateTime.month;
+  int day = dateTime.day;
+  return "${day}.${month}.${year}";
+}
+
 String convertToSlug(String text) {
   text = text.toLowerCase();
   text = text.replaceAll(RegExp(r'[^a-z0-9\s-]'), '');
@@ -229,10 +238,10 @@ String convertToSlug(String text) {
 void FirebaseMessageCall(BuildContext context) {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  firebaseMessaging.getToken().then((value) async{
-     Map<String, dynamic> body = {
-          'token': value,
-        };
+  firebaseMessaging.getToken().then((value) async {
+    Map<String, dynamic> body = {
+      'token': value,
+    };
     var response = await GetAndPost.postData("auth/set_token", body, context);
   });
 }

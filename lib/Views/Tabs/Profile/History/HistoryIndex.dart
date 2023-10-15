@@ -8,6 +8,7 @@ import '../../../../Constants/ImageClass.dart';
 import '../../../../Constants/LoaderScreen.dart';
 import '../../../../Constants/StaticText.dart';
 import '../../../../Controllers/HistoryController.dart';
+import '../../../../Functions/helpers.dart';
 import '../../../../Theme/ThemeService.dart';
 import '../../../../models/rides.dart';
 
@@ -33,7 +34,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
     }
   }
 
-  List<Widget> getaddress(Rides ride) {
+  List<Widget> getaddress(ride) {
     if (ride.coordinates != null) {
       List<Widget> elements = [];
       for (var address in ride.coordinates!) {
@@ -58,9 +59,21 @@ class _HistoryIndexState extends State<HistoryIndex> {
     }
   }
 
+  Queries? getQuery(List<Queries>? queries) {
+    if (queries != null && queries.length > 0) {
+      for (var i = 0; i < queries.length; i++) {
+        var query = queries[i];
+        if (query.userId == _controller.auth_id.value) {
+          return query;
+        }
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    _controller.getRides(context);
+    _controller.getRides(context, null);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -75,7 +88,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
             ? LoaderScreen()
             : _controller.data.length > 0
                 ? RefreshIndicator(
-                    onRefresh: () => _controller.getRides(context),
+                    onRefresh: () => _controller.getRides(context, null),
                     color: secondarycolor,
                     strokeWidth: 2,
                     triggerMode: RefreshIndicatorTriggerMode.anywhere,
@@ -84,9 +97,12 @@ class _HistoryIndexState extends State<HistoryIndex> {
                       itemCount: _controller.data.length,
                       itemBuilder: (context, index) {
                         Rides ride = _controller.data[index]!;
+
+                        Queries? query = getQuery(ride.queries);
                         return GestureDetector(
                           onTap: () {
                             _controller.selectedRide.value = ride;
+                            _controller.getRides(context, ride.id);
                             Get.toNamed('/history/${ride.id}');
                           },
                           child: Center(
@@ -118,7 +134,9 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                   width: 120,
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: getstatcolor(ride?.status),
+                                    color: ride?.userId == _controller.auth_id
+                                        ? getstatcolor(ride?.status)
+                                        : getstatcolor(query?.status),
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: StaticText(
@@ -126,7 +144,9 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                     size: smalltextSize,
                                     weight: FontWeight.w500,
                                     align: TextAlign.center,
-                                    text: "ride_${ride?.status}".tr,
+                                    text: ride?.userId == _controller.auth_id
+                                        ? "ride_${ride?.status}".tr
+                                        : "ride_${query?.status}".tr,
                                   ),
                                 ),
                                 Devider(size: 3),
@@ -151,7 +171,10 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                             MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: getaddress(ride),
+                                        children:
+                                            ride?.userId == _controller.auth_id
+                                                ? getaddress(ride)
+                                                : getaddress(query),
                                       ),
                                     ),
                                   ],
@@ -180,13 +203,29 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                             size: smalltextSize,
                                             align: TextAlign.left,
                                             weight: FontWeight.w400,
-                                            text: "yer_sayi".trParams({
-                                              'counter': ride.automobil
-                                                      ?.autotype?.places
-                                                      .toString() ??
-                                                  '4'
-                                            }),
-                                          ),
+                                            text: () {
+                                              if (ride?.userId ==
+                                                  _controller.auth_id) {
+                                                final places = ride?.automobil
+                                                        ?.autotype?.places
+                                                        ?.toString() ??
+                                                    '4';
+                                                return "yer_sayi".trParams(
+                                                    {'counter': places});
+                                              } else {
+                                                if (query?.place != null &&
+                                                    query?.place!.name !=
+                                                        null) {
+                                                  return getLocalizedValue(
+                                                          query?.place?.name,
+                                                          'name') ??
+                                                      '';
+                                                } else {
+                                                  return 'fullreservation'.tr;
+                                                }
+                                              }
+                                            }(),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -199,14 +238,20 @@ class _HistoryIndexState extends State<HistoryIndex> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     StaticText(
-                                      text: ride.priceOfWay.toString(),
+                                      text: ride?.userId == _controller.auth_id
+                                          ? ride.priceOfWay.toString() + ' AZN'
+                                          : (query?.priceEndirim ??
+                                                      query?.price)
+                                                  .toString() +
+                                              ' AZN',
                                       weight: FontWeight.w600,
                                       size: subHeadingSize,
                                       color: primarycolor,
                                       align: TextAlign.left,
                                     ),
                                     StaticText(
-                                      text: "02/05/2023",
+                                      text: ride?.userId == _controller.auth_id
+                                          ? convertStringToTime(ride.createdAt) : convertStringToTime(query?.createdAt),
                                       weight: FontWeight.w400,
                                       size: smalltextSize,
                                       color: iconcolor,

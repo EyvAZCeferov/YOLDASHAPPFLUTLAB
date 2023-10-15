@@ -85,35 +85,29 @@ class CardsController extends GetxController {
       } else {
         refreshpage.value = false;
         data.value = [];
-        
+
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
+
       Cards cashmethod = Cards(
         id: 0,
         cardholdername: "nagd".tr,
         cardnumber: "nagd".tr,
         cardtype: "nagd",
-        selected: data.value.every((element) {
-          if (element.id != 0) {
-            return !element.selected!;
-          } else {
-            return false;
-          }
-        }),
+        selected: selectedCards.value!.id == null ||
+                selectedCards.value!.id == '' ||
+                selectedCards.value!.id == ' ' ||
+                selectedCards.value!.id == 0 ||
+                selectedCards.value!.id == '0'
+            ? true
+            : false,
         userId: auth_id.value,
       );
 
       data.value.add(cashmethod);
 
-      if (selectedCards.value!.id == null ||
-          selectedCards.value!.id != '' ||
-          selectedCards.value!.id != ' ') {
-        print("selectedCards.value!.id is empty");
-        print(data.length);
+      if (cashmethod.selected == true) {
         selectedCards.value = cashmethod;
-      } else {
-        print(
-            "selectedCards.value!.id is not empty: ${selectedCards.value!.id}");
       }
     } catch (e) {
       refreshpage.value = false;
@@ -124,41 +118,28 @@ class CardsController extends GetxController {
   Future<void> updateSelection(int index, bool value, context) async {
     refreshpage.value = true;
     var selectedelement;
-    if (index != 0) {
-      selectedelement = data.firstWhere((element) => element.id == index,
-          orElse: () => Cards());
-
-      var body = {};
-      var response = await GetAndPost.patchData(
-          "cards/${selectedelement.id}", body, context);
-      if (response != null) {
-        String status = response['status'];
-        String message = "";
-        if (response['message'] != null) message = response['message'];
+    selectedelement = data.firstWhere((element) => element.id == index,
+        orElse: () => Cards());
+    var body = {};
+    var response = await GetAndPost.patchData(
+        "cards/${selectedelement.id}", body, context);
+    if (response != null) {
+      String status = response['status'];
+      String message = "";
+      if (response['message'] != null) message = response['message'];
+      fetchDatas(context).then((value) {
         if (status == "success") {
           refreshpage.value = false;
-          fetchDatas(context);
         } else {
           refreshpage.value = false;
           showToastMSG(errorcolor, message, context);
         }
-        refreshpage.value = false;
-      } else {
-        refreshpage.value = false;
-        data.value = [];
-        selectedCards.value = Cards();
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
-      }
+      });
     } else {
-      if (data.value != null && data.value.length > 1) {
-        for (var element in data.value) {
-          if (element.id != 0) {
-            updateSelection(element.id!, false, context);
-          }
-        }
-        fetchDatas(context);
-      }
       refreshpage.value = false;
+      data.value = [];
+      selectedCards.value = Cards();
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
   }
 

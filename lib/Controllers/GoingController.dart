@@ -54,7 +54,8 @@ class GoingController extends GetxController {
   final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 4)).obs;
 
   final Rx<DateTime> fromTimeSelectable = DateTime.now().obs;
-  final Rx<DateTime> toTimeSelectable = DateTime.now().add(Duration(days: 4)).obs;
+  final Rx<DateTime> toTimeSelectable =
+      DateTime.now().add(Duration(days: 4)).obs;
   Rx<int> selectedplace = Rx<int>(0);
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
   final Completer<GoogleMapController> googlemapcontroller = Completer();
@@ -78,6 +79,7 @@ class GoingController extends GetxController {
   RxMap? mapped = RxMap();
   Rx<String?> resulttext = Rx<String?>(null);
   RxList<Rides> currentrides = <Rides>[].obs;
+  late CardsController cardscontroller = Get.put(CardsController());
 
   CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(40.409264, 49.867092),
@@ -111,8 +113,8 @@ class GoingController extends GetxController {
   }
 
   void getAuthId() async {
-    auth_id.value = await _maincontroller.getstoragedat('auth_id')??'';
-    authtype.value = await _maincontroller.getstoragedat('authtype')??'';
+    auth_id.value = await _maincontroller.getstoragedat('auth_id') ?? '';
+    authtype.value = await _maincontroller.getstoragedat('authtype') ?? '';
   }
 
   void getcurrentposition(context) async {
@@ -121,11 +123,12 @@ class GoingController extends GetxController {
         await handlepermissionreq(Permission.location, context);
 
     if (statuslocation.isDenied) {
-      var statuslocation =
-          await handlepermissionreq(Permission.location, context);
+      statuslocation = await handlepermissionreq(Permission.location, context);
     }
 
     getcurrentrides(context);
+
+    cardscontroller.fetchDatas(context);
 
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -743,7 +746,14 @@ class GoingController extends GetxController {
                   priceofwaycontroller.value.text != ' '
               ? priceofwaycontroller.value.text
               : 0,
-          'payment_method': 'nagd',
+          'payment_method': cardscontroller.selectedCards.value!.id == null ||
+                  cardscontroller.selectedCards.value!.id == 0
+              ? 'nagd'
+              : 'card',
+          'payment_card': cardscontroller.selectedCards.value!.id == null ||
+                  cardscontroller.selectedCards.value!.id == 0
+              ? null
+              : cardscontroller.selectedCards.value!.id,
           'status': 'waiting',
           'weight': weightcontroller.value.text != null &&
                   weightcontroller.value.text != '' &&
@@ -883,7 +893,8 @@ class GoingController extends GetxController {
 
   void lookmore(Rides ride, BuildContext context) {
     _authController.getalldataoncache(context);
-    priceofwaycontroller.value.text = ride.minimalPriceOfWay ?? ride.priceOfWay!;
+    priceofwaycontroller.value.text =
+        ride.minimalPriceOfWay ?? ride.priceOfWay!;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -1202,12 +1213,51 @@ class GoingController extends GetxController {
   void getrequestforride(Rides ride, BuildContext context) async {
     refreshpage.value = true;
 
+    List<LatLng> points = [];
+
+    polyline.forEach((polyline) {
+      if (polyline != null) {
+        polyline.points.forEach((element) {
+          points.add(element);
+        });
+      }
+    });
+
     Map<String, dynamic> body = {
       "ride_id": ride.id,
       "price": priceofwaycontroller.value.text ?? 0,
-      "weight": weightcontroller.value.text ?? 0,
       "position": selectedplace.value ?? null,
       "coordinates": <Map<String, dynamic>>[],
+      'start_time': fromTimeSelectable.value.toString() ?? null,
+      'end_time': toTimeSelectable.value.toString() ?? null,
+      'kmofway': directiondetails.value!.distanceValue ?? 0,
+      'durationofway': directiondetails.value!.durationValue ?? 0,
+      "polyline_points": points,
+      'minimal_price_of_way': minimumpriceofwaycontroller.value.text != null &&
+              minimumpriceofwaycontroller.value.text != '' &&
+              minimumpriceofwaycontroller.value.text != ' '
+          ? minimumpriceofwaycontroller.value.text
+          : 0,
+      'price_of_way': priceofwaycontroller.value.text != null &&
+              priceofwaycontroller.value.text != '' &&
+              priceofwaycontroller.value.text != ' '
+          ? priceofwaycontroller.value.text
+          : 0,
+      'payment_method': cardscontroller.selectedCards.value!.id == null ||
+              cardscontroller.selectedCards.value!.id == 0
+          ? 'nagd'
+          : 'card',
+      'payment_card': cardscontroller.selectedCards.value!.id == null ||
+              cardscontroller.selectedCards.value!.id == 0
+          ? null
+          : cardscontroller.selectedCards.value!.id,
+      'status': 'waiting',
+      'weight': weightcontroller.value.text != null &&
+              weightcontroller.value.text != '' &&
+              weightcontroller.value.text != ' '
+          ? weightcontroller.value.text
+          : 0,
+      'place_id': null,
     };
 
     List<Map<String, dynamic>> coordinates = [];
@@ -1275,6 +1325,8 @@ class GoingController extends GetxController {
         }
         refreshpage.value = true;
       } else {
+        print("--------------------------------Xeta---------------------------------------------------");
+        print(message);
         showToastMSG(errorcolor, message, context);
       }
       refreshpage.value = false;
@@ -1290,8 +1342,6 @@ class GoingController extends GetxController {
       Map<String, dynamic> body = {};
       userlocations.value = [];
       var response = await GetAndPost.fetchData("rides", context, body);
-      print("------------------------------------------------------------------");
-      print(response);
       if (response != null) {
         String status = response['status'];
         String message = '';
@@ -1314,7 +1364,6 @@ class GoingController extends GetxController {
   }
 
   void changemethod(context) {
-    final CardsController cardscontroller = Get.put(CardsController());
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1364,6 +1413,7 @@ class GoingController extends GetxController {
                           onChanged: (value) {
                             cardscontroller.updateSelection(
                                 item.id!, true, context);
+                            Get.back();
                           },
                         ),
                       ),
@@ -1374,22 +1424,6 @@ class GoingController extends GetxController {
               ),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: StaticText(
-                color: secondarycolor,
-                size: normaltextSize,
-                weight: FontWeight.w500,
-                align: TextAlign.right,
-                textOverflow: TextOverflow.ellipsis,
-                maxline: 1,
-                text: "submit".tr,
-              ),
-            ),
-          ],
         );
       },
     );

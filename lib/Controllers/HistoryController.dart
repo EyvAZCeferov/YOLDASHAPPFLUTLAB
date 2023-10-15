@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 import 'package:yoldashapp/models/rides.dart';
 
@@ -58,6 +59,8 @@ class HistoryController extends GetxController {
   };
   Rx<int> selectedgender = Rx<int>(1);
   Rx<bool> ontheway = Rx<bool>(false);
+  Rx<Reason?> selectedReason = Rx<Reason?>(null);
+  RxList<Reason?> reasons = <Reason>[].obs;
 
   HistoryController() {
     getAuthId();
@@ -68,18 +71,37 @@ class HistoryController extends GetxController {
     authtype.value = await _maincontroller.getstoragedat('authtype');
   }
 
-  Future<void> getRides(context) async {
+  Future<void> getRides(context, int? selectedHistoryId) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
-    var response = await GetAndPost.fetchData("rides", context, body);
+    var response;
+
+    if (selectedHistoryId != null && selectedHistoryId > 0) {
+      response =
+          await GetAndPost.fetchData("rides/$selectedHistoryId", context, body);
+    } else {
+      response = await GetAndPost.fetchData("rides", context, body);
+    }
+
+    print("----------------------------------GETTING HISTORY-----------------------");
+    print(response);
+
+    if (authtype.value == "rider") {
+      getreasons(context);
+    }
+
     if (response != null) {
       String status = response['status'];
       String message = '';
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
-        data.value = (response['data'] as List).map((dat) {
-          return Rides.fromMap(dat);
-        }).toList();
+        if (selectedHistoryId != null && selectedHistoryId > 0) {
+          selectedRide.value = Rides.fromJson(response['data']);
+        } else {
+          data.value = (response['data'] as List).map((dat) {
+            return Rides.fromMap(dat);
+          }).toList();
+        }
 
         refreshpage.value = false;
       } else {
@@ -212,7 +234,10 @@ class HistoryController extends GetxController {
 
   void bottombutton(context) async {
     if (authtype.value == "rider") {
-      launchUrlTOSITE(selectedRide.value?.user?.phone);
+      final MessagesController messagescontroller =
+          Get.put(MessagesController());
+      messagescontroller.createandredirectchat(
+          auth_id.value, selectedRide.value?.userId, context);
     } else {
       if (selectedRide.value?.status == 'ontheway') {
         updateridestatus('completed', context);
@@ -358,7 +383,8 @@ class HistoryController extends GetxController {
   }
 
   void lookmore(Rides ride, BuildContext context) {
-    priceofwaycontroller.value.text = ride.minimalPriceOfWay ?? ride.priceOfWay!;
+    priceofwaycontroller.value.text =
+        ride.minimalPriceOfWay ?? ride.priceOfWay!;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -463,16 +489,16 @@ class HistoryController extends GetxController {
                   Devider(),
                   SizedBox(
                     height: 100,
-                    width: Get.width-50,
+                    width: Get.width - 50,
                     child: ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         var keysList = items.keys.toList();
                         var valuesList = items.values.toList();
-                  
+
                         var key = keysList[index];
                         var value = valuesList[index];
-                  
+
                         return ListTile(
                           contentPadding: EdgeInsets.symmetric(vertical: 5),
                           title: StaticText(
@@ -488,7 +514,8 @@ class HistoryController extends GetxController {
                             focusColor: primarycolor,
                             hoverColor: primarycolor,
                             toggleable: true,
-                            visualDensity: VisualDensity.adaptivePlatformDensity,
+                            visualDensity:
+                                VisualDensity.adaptivePlatformDensity,
                             groupValue: selectedgender == key ? true : false,
                             onChanged: (value) {
                               selectedgender.value = key;
@@ -499,7 +526,6 @@ class HistoryController extends GetxController {
                         );
                       },
                     ),
-                  
                   ),
                   Devider(),
                   Center(
@@ -716,20 +742,85 @@ class HistoryController extends GetxController {
   void settypequery(id, type, context) async {
     refreshpage.value = true;
     if (id != null && id != 0) {
+      var nextprocess = true;
+      if (type == 'cancelled' &&
+          (selectedReason.value == null && selectedReason.value?.id == null)) {
+        nextprocess = false;
+        refreshpage.value = false;
+        return showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                height: 500,
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Devider(size: 15),
+                    StaticText(
+                      color: darkcolor,
+                      size: subHeadingSize,
+                      align: TextAlign.center,
+                      weight: FontWeight.bold,
+                      textOverflow: TextOverflow.ellipsis,
+                      text: 'choise_cancel_reason'.tr,
+                    ),
+                    Devider(size: 15),
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: reasons.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            var reason = reasons[index];
+                            return ListTile(
+                              title: StaticText(
+                                color: darkcolor,
+                                size: normaltextSize,
+                                text: reason?.name?.azName ?? '',
+                                weight: FontWeight.w500,
+                                align: TextAlign.left,
+                              ),
+                              trailing: Radio<bool>(
+                                value: true,
+                                groupValue: false,
+                                activeColor: primarycolor,
+                                focusColor: primarycolor,
+                                hoverColor: primarycolor,
+                                toggleable: true,
+                                visualDensity:
+                                    VisualDensity.adaptivePlatformDensity,
+                                onChanged: (value) {
+                                  selectedReason.value = reason;
+                                  settypequery(id, type, context);
+                                  Get.back();
+                                },
+                              ),
+                            );
+                          }),
+                    ),
+                    Devider(size: 15),
+                  ],
+                ),
+              );
+            });
+      }
       Map<String, dynamic> body = {
         "status": type,
+        "reason_id":selectedReason.value?.id,
       };
-      var response =
-          await GetAndPost.postData("ride_queries/$id", body, context);
-      if (response != null) {
-        String status = response['status'];
-        String message = '';
-        if (response['message'] != null) message = response['message'];
-        if (status == "success") {
-          getridedata(context, selectedRide.value!.id!);
-        } else {
-          refreshpage.value = false;
-          showToastMSG(errorcolor, message, context);
+      if (nextprocess == true) {
+        var response =
+            await GetAndPost.postData("ride_queries/$id", body, context);
+        if (response != null) {
+          String status = response['status'];
+          String message = '';
+          if (response['message'] != null) message = response['message'];
+          if (status == "success") {
+            selectedReason.value=Reason();
+            getridedata(context, selectedRide.value!.id!);
+          } else {
+            refreshpage.value = false;
+            showToastMSG(errorcolor, message, context);
+          }
         }
       }
 
@@ -843,7 +934,11 @@ class HistoryController extends GetxController {
                           coords: coords,
                           title: title,
                         ),
-                        title: StaticText(color: darkcolor, size: normaltextSize, text: map.mapName, weight: FontWeight.bold),
+                        title: StaticText(
+                            color: darkcolor,
+                            size: normaltextSize,
+                            text: map.mapName,
+                            weight: FontWeight.bold),
                         leading: SvgPicture.asset(
                           map.icon,
                           height: 30.0,
@@ -938,5 +1033,26 @@ class HistoryController extends GetxController {
           );
         });
     refreshpage.value = false;
+  }
+
+  void getreasons(context) async {
+    refreshpage.value = true;
+    Map<String, dynamic> body = {};
+    var response = await GetAndPost.fetchData("reasons", context, body);
+    if (response != null) {
+      String status = response['status'];
+      String message = '';
+      if (response['message'] != null) message = response['message'];
+      if (status == "success") {
+        reasons.value = (response['data'] as List).map((dat) {
+          return Reason.fromMap(dat);
+        }).toList();
+        refreshpage.value = false;
+      } else {
+        print(message);
+        refreshpage.value = false;
+        showToastMSG(errorcolor, message, context);
+      }
+    }
   }
 }

@@ -32,8 +32,7 @@ class MessagesController extends GetxController {
   ];
   late MainController _maincontroller = Get.put(MainController());
   final GoingController _goingController = Get.put(GoingController());
-  Rx<ScrollController> scrollController =
-      Rx<ScrollController>(ScrollController());
+  ScrollController scrollController = new ScrollController();
   Rx<int?> auth_id = Rx<int?>(null);
   Rx<String?> authtype = Rx<String?>(null);
   final Completer<GoogleMapController> googlemapcontroller = Completer();
@@ -124,7 +123,6 @@ class MessagesController extends GetxController {
       } else {
         response = await GetAndPost.fetchData("chats", context, body);
       }
-
       if (response != null) {
         String status = response['status'];
         String message = "";
@@ -136,6 +134,7 @@ class MessagesController extends GetxController {
                   MessageGroups.fromJson(response['data']);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
+                  scrollDown();
             } else {
               data.value = (response['data'] as List).map((dat) {
                 return MessageGroups.fromMap(dat);
@@ -153,6 +152,7 @@ class MessagesController extends GetxController {
       }
     } catch (e) {
       refreshpage.value = false;
+      print("MESSAGES CONTROLLER GET MESSAGE");
       print(e.toString());
     }
   }
@@ -195,6 +195,7 @@ class MessagesController extends GetxController {
       refreshpage.value = false;
       if (response['status'] == "success") {
         getMessages(context, selectedMessageGroup.value?.id);
+        scrollDown();
       }
     }
   }
@@ -254,28 +255,32 @@ class MessagesController extends GetxController {
   }
 
   void sendtextmessage(context) async {
-    refreshpage.value = true;
+    refreshpage.value = false;
 
-    if (messagetextcontroller.value.text != null) {
+    if (messagetextcontroller.value.text != null &&
+        messagetextcontroller.value.text != '' &&
+        messagetextcontroller.value.text != ' ') {
       MessageGroups oldmessagegroup = selectedMessageGroup.value!;
       var body = {
         'message_group_id': oldmessagegroup.id,
-        'message': messagetextcontroller.value.text,
+        'message': messagetextcontroller.value.text ?? '',
         'type': 'TEXT'
       };
+
       var response = await GetAndPost.postData("messages", body, context);
       if (response != null) {
+        getMessages(context, oldmessagegroup.id);
         String status = response['status'];
         String message = "";
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
           messagetextcontroller.value.text = '';
-          getMessages(context, oldmessagegroup.id);
+
           refreshpage.value = false;
-          scrollController.value
-              .jumpTo(scrollController.value.position.maxScrollExtent);
+          scrollDown();
         } else {
           messagetextcontroller.value.text = '';
+          print(message);
           showToastMSG(errorcolor, message, context);
         }
         refreshpage.value = false;
@@ -288,6 +293,15 @@ class MessagesController extends GetxController {
       refreshpage.value = false;
       showToastMSG(errorcolor, 'messageisnothavenull'.tr, context);
     }
+  }
+
+  void scrollDown() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent+150,
+      duration: Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+      
+    );
   }
 
   void sendlocationviamessage(context) async {
@@ -307,16 +321,15 @@ class MessagesController extends GetxController {
       };
       var response = await GetAndPost.postData("messages", body, context);
       if (response != null) {
+        getMessages(context, oldmessagegroup.id);
+        Get.back();
         String status = response['status'];
         String message = "";
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
-          getMessages(context, oldmessagegroup.id);
+          scrollDown();
           markers.value = {};
-          Get.back();
           refreshpage.value = false;
-          scrollController.value
-              .jumpTo(scrollController.value.position.maxScrollExtent);
         }
         refreshpage.value = false;
       }

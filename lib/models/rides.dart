@@ -17,6 +17,7 @@ class Rides {
     this.minimalPriceOfWay,
     this.priceOfWay,
     this.paymentMethod,
+    this.paymentCard,
     this.status,
     this.createdAt,
     this.updatedAt,
@@ -46,6 +47,7 @@ class Rides {
         minimalPriceOfWay: map['minimal_price_of_way'],
         priceOfWay: map['price_of_way'],
         paymentMethod: map['payment_method'],
+        paymentCard: map['payment_card'],
         status: map['status'],
         createdAt: map['created_at'],
         updatedAt: map['updated_at'],
@@ -73,6 +75,7 @@ class Rides {
   final String? minimalPriceOfWay;
   final String? priceOfWay;
   final String? paymentMethod;
+  final String? paymentCard;
   final String? status;
   final String? createdAt;
   final String? updatedAt;
@@ -94,6 +97,7 @@ class Rides {
         'minimal_price_of_way': minimalPriceOfWay,
         'price_of_way': priceOfWay,
         'payment_method': paymentMethod,
+        'payment_card': paymentCard,
         'status': status,
         'created_at': createdAt,
         'updated_at': updatedAt,
@@ -123,14 +127,18 @@ class Queries {
     this.kmofway,
     this.durationofway,
     this.reasonId,
-    this.createdAt,
-    this.updatedAt,
     this.driver,
     this.rider,
     this.reason,
     this.ratingRide,
     this.place,
-    this.usedEndirim
+    this.usedEndirim,
+    this.endirim,
+    this.paymentMethod,
+    this.paymentCard,
+    this.createdAt,
+    this.updatedAt,
+    
   });
 
   factory Queries.fromMap(Map<String, dynamic> map) => Queries(
@@ -153,10 +161,13 @@ class Queries {
         updatedAt: map['updated_at'],
         driver: map['driver'] == null ? null : Users.fromMap(map['driver']),
         rider: map['rider'] == null ? null : Users.fromMap(map['rider']),
-        reason: map['reason'],
+        reason: map['reason'] == null ? null : Reason.fromMap(map['reason']),
         ratingRide: map['rating_ride'],
         place: map['place'] == null ? null : PlacesMark.fromMap(map['place']),
-        usedEndirim:map['used_endirim']
+        usedEndirim:map['used_endirim'],
+        endirim: map['endirim'] == null ? null : Endirim.fromMap(map['endirim']),
+        paymentMethod: map['payment_method'],
+        paymentCard: map['payment_card'],
       );
 
   factory Queries.fromJson(String str) => Queries.fromMap(json.decode(str));
@@ -168,7 +179,7 @@ class Queries {
   final int? riderId;
   final String? status;
   final String? price;
-  final String? priceEndirim;
+  final double? priceEndirim;
   final String? weight;
   final int? position;
   final int? gender;
@@ -183,7 +194,10 @@ class Queries {
   final Reason? reason;
   final int? ratingRide;
   final PlacesMark? place;
-  final String? usedEndirim;
+  final int? usedEndirim;
+  final Endirim? endirim;
+  final String? paymentMethod;
+  final int? paymentCard;
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -205,10 +219,13 @@ class Queries {
         'updated_at': updatedAt,
         'driver': driver?.toMap(),
         'rider': rider,
-        'reason': reason,
+        'reason': reason?.toMap(),
         'rating_ride': ratingRide,
         'place': place?.toMap(),
         'used_endirim':usedEndirim,
+        'endirim': endirim?.toMap(),
+        'paymentMethod': paymentMethod,
+        'paymentCard': paymentCard,
       };
 
   String toJson() => json.encode(toMap());
@@ -246,7 +263,7 @@ class Reason {
   final bool? status;
   final String? createdAt;
   final String? updatedAt;
-  final String? deletedAt;
+  final dynamic? deletedAt;
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -299,6 +316,74 @@ class CoordinatesRides {
       'longitude': longitude,
       'address': address,
       'type': type,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+}
+
+class Endirim {
+  const Endirim({
+    this.id,
+    this.uuid,
+    this.value,
+    this.type,
+    this.status,
+    this.applyToGroup,
+    this.sendnotification,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory Endirim.fromMap(Map<String, dynamic> map) =>
+      Endirim(
+        id: map['id'],
+        uuid: map['uuid'],
+        value: map['value'],
+        type: map['type'],
+        status: map['status'],
+        applyToGroup: map['apply_to_group'],
+        sendnotification: map['sendnotification'],
+        createdAt: map['created_at'],
+        updatedAt: map['updated_at'],
+      );
+
+  factory Endirim.fromJson(String str) =>
+      Endirim.fromMap(json.decode(str));
+
+  final int? id;
+  final String? uuid;
+  final int? value;
+  final String? type;
+  final bool? status;
+  final bool? sendnotification;
+  final String? applyToGroup;
+  final String? createdAt;
+  final String? updatedAt;
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'uuid': uuid,
+        'value': value,
+        'type': type,
+        'status': status,
+        'sendnotification': sendnotification,
+        'apply_to_group': applyToGroup,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
+      };
+
+  Map<String, dynamic> toJsonMap() {
+    return {
+       'id': id,
+        'uuid': uuid,
+        'value': value,
+        'type': type,
+        'status': status,
+        'sendnotification': sendnotification,
+        'apply_to_group': applyToGroup,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
     };
   }
 

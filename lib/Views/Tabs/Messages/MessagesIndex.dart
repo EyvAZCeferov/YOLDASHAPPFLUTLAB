@@ -54,6 +54,8 @@ class MessagesIndex extends StatelessWidget {
                         onTap: () {
                           _controller.selectedMessageGroup.value = item;
                           _controller.getMessages(context, item.id);
+                          print("SELECTED MESSAGE");
+                          print(item.id);
                           Get.toNamed('/messages/${item.id}', arguments: item);
                         },
                         child: Center(

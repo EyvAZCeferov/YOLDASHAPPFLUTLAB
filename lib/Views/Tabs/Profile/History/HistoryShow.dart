@@ -180,7 +180,8 @@ class HistoryShow extends StatelessWidget {
                             left: 0,
                             child: GestureDetector(
                               onTap: () {
-                                _controller.launchWaze(context,
+                                _controller.launchWaze(
+                                    context,
                                     _controller.markers.value?.first?.position
                                         ?.latitude as double,
                                     _controller.markers.value?.last?.position
@@ -198,7 +199,8 @@ class HistoryShow extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(35)),
                                 child: ImageClass(
                                   type: false,
-                                  url: "./assets/images/yoldash_favicon_bg_white.png",
+                                  url:
+                                      "./assets/images/yoldash_favicon_bg_white.png",
                                   boxfit: BoxFit.contain,
                                 ),
                               ),
@@ -238,8 +240,8 @@ class HistoryShow extends StatelessWidget {
                   ]),
       ),
       bottomNavigationBar: Obx(
-        ()=> Container(
-          height: 60,
+        () => Container(
+          height: 40,
           color: whitecolor,
           margin: EdgeInsets.only(bottom: 15),
           child: Align(
@@ -247,17 +249,16 @@ class HistoryShow extends StatelessWidget {
             child: ButtonElement(
                 text: _controller.authtype.value == "rider"
                     ? "contact".tr
-                    : _controller.ontheway == true ||
-                            _controller.ontheway == 1
+                    : _controller.ontheway == true || _controller.ontheway == 1
                         ? "endride".tr
                         : "startride".tr,
                 height: 50,
                 width: width - 100,
                 borderRadius: BorderRadius.circular(45),
-                bgColor: _controller.ontheway == true ||
-                        _controller.ontheway == 1
-                    ? errorcolor
-                    : primarycolor,
+                bgColor:
+                    _controller.ontheway == true || _controller.ontheway == 1
+                        ? errorcolor
+                        : primarycolor,
                 onPressed: () => _controller.bottombutton(context)),
           ),
         ),
@@ -266,6 +267,8 @@ class HistoryShow extends StatelessWidget {
   }
 
   Queries? getQuery(List<Queries>? queries) {
+    print("------------------------GETTING QUERY-----------------------");
+    print(queries);
     if (queries != null && queries.length > 0) {
       for (var i = 0; i < queries.length; i++) {
         var query = queries[i];
@@ -418,8 +421,9 @@ class HistoryShow extends StatelessWidget {
                 size: buttontextSize,
                 weight: FontWeight.w500,
                 align: TextAlign.right,
-                text: "${query?.price} AZN",
+                text: "${query?.priceEndirim} AZN",
               ),
+              endirimWidget(query),
             ],
           ),
           Devider(),
@@ -477,9 +481,7 @@ class HistoryShow extends StatelessWidget {
                             query?.id != '' &&
                             query?.id != ' ') {
                           _controller.settypequery(
-                              query!.id, "notaccepted", context);
-                          _goingController.getcurrentrides(context);
-                          Get.back();
+                              query!.id, "cancelled", context);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -506,47 +508,56 @@ class HistoryShow extends StatelessWidget {
                     ),
                   ),
                 )
-              : Center(
-                  child: SizedBox(
-                    width: Get.width - 90,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (query?.ratingRide != 0 &&
-                            query?.ratingRide != null) {
-                          showToastMSG(
-                              secondarycolor, "yourratedbefore".tr, context);
-                        } else {
-                          _controller.rate(query?.id, context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary:
-                            query?.ratingRide != 0 && query?.ratingRide != null
-                                ? bodycolor
-                                : secondarycolor,
-                        onPrimary: whitecolor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+              : query?.status == "cancelled"
+                  ? StaticText(
+                      text: getLocalizedValue(query?.reason?.name, 'name') ??
+                          'Səbəb qeyd edilmədi',
+                      weight: FontWeight.bold,
+                      size: normaltextSize,
+                      color: errorcolor)
+                  : query?.ratingRide != null
+                      ? SizedBox()
+                      : Center(
+                          child: SizedBox(
+                            width: Get.width - 90,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (query?.ratingRide != 0 &&
+                                    query?.ratingRide != null) {
+                                  showToastMSG(secondarycolor,
+                                      "yourratedbefore".tr, context);
+                                } else {
+                                  _controller.rate(query?.id, context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: query?.ratingRide != 0 &&
+                                        query?.ratingRide != null
+                                    ? bodycolor
+                                    : secondarycolor,
+                                onPrimary: whitecolor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                alignment: Alignment.center,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(FeatherIcons.star,
+                                      color: whitecolor, size: normaltextSize),
+                                  StaticText(
+                                      text: " " + "rate".tr,
+                                      weight: FontWeight.w400,
+                                      size: normaltextSize,
+                                      color: whitecolor),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        alignment: Alignment.center,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(FeatherIcons.star,
-                              color: whitecolor, size: normaltextSize),
-                          StaticText(
-                              text: " " + "rate".tr,
-                              weight: FontWeight.w400,
-                              size: normaltextSize,
-                              color: whitecolor),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
           Devider(),
         ],
       );
@@ -629,8 +640,7 @@ class HistoryShow extends StatelessWidget {
                       String addressText = '';
                       if (query?.coordinates != null) {
                         query!.coordinates!
-                            .where(
-                                (element) => element.type != "position_0")
+                            .where((element) => element.type != "position_0")
                             .map((element) => element.address ?? '')
                             .toList();
                       }
@@ -848,7 +858,10 @@ class HistoryShow extends StatelessWidget {
                                               query?.status ==
                                                   "arrivedoncustomer"
                                           ? ElevatedButton(
-                                              onPressed: () => _controller.showroadinfo(query as Queries, context),
+                                              onPressed: () =>
+                                                  _controller.showroadinfo(
+                                                      query as Queries,
+                                                      context),
                                               style: ElevatedButton.styleFrom(
                                                 primary: secondarycolor,
                                                 onPrimary: whitecolor,
@@ -909,5 +922,17 @@ class HistoryShow extends StatelessWidget {
       });
     }
     return totalPrice.toStringAsFixed(2);
+  }
+
+  Widget endirimWidget(query) {
+    return query?.endirim != null
+        ? StaticText(
+            text:
+                "${query?.endirim?.applyToGroup == 'telebe' ? 'Tələbə Endirimi. ${query?.endirim?.value} ${query?.endirim?.type == "percent" ? "%" : "AZN"} ' : 'Şəhid ailəsi endirimi ${query?.endirim?.value} ${query?.endirim?.type == "percent" ? "%" : "AZN"} '}",
+            weight: FontWeight.bold,
+            size: normaltextSize,
+            color: errorcolor,
+          )
+        : SizedBox();
   }
 }

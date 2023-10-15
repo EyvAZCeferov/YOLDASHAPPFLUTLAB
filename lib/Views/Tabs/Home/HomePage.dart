@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -7,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yoldashapp/Constants/SearchedLocationItems.dart';
-import 'package:yoldashapp/Controllers/CardsController.dart';
 import 'package:yoldashapp/Controllers/HistoryController.dart';
 import 'package:yoldashapp/Functions/helpers.dart';
 import 'package:yoldashapp/models/searchionglocations.dart';
@@ -33,7 +30,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
   late AuthController _authcontroller = Get.put(AuthController());
-  late CardsController _cardscontroller = Get.put(CardsController());
   late HistoryController _historycontroller = Get.put(HistoryController());
 
   String? getrideofferprice(Rides ride, type) {
@@ -47,7 +43,7 @@ class _HomePageState extends State<HomePage> {
             query = q;
           }
         }
-        return query?.price.toString() ?? '0';
+        return query?.priceEndirim.toString() ?? '0';
       } else {
         return '0';
       }
@@ -76,7 +72,8 @@ class _HomePageState extends State<HomePage> {
                 }
                 return GestureDetector(
                   onTap: () {
-                    _historycontroller.selectedRide.value = ride;
+                    _historycontroller.selectedRide.value=ride;
+                    _historycontroller.getRides(context, ride.id);
                     Get.toNamed('/history/${ride.id}');
                   },
                   child: Center(
@@ -161,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                     SizedBox(width: 4),
                                     StaticText(
                                       text:
-                                          " ${getrideofferprice(ride as Rides, _controller.authtype.value)}",
+                                          " ${getrideofferprice(ride as Rides, _controller.authtype.value)} AZN",
                                       weight: FontWeight.w500,
                                       size: smalltextSize,
                                       color: iconcolor,
@@ -189,7 +186,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _cardscontroller.fetchDatas(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -342,38 +338,38 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ]),
                                         child:
-                                            _cardscontroller.selectedCards
+                                            _controller.cardscontroller.selectedCards
                                                             .value !=
                                                         null &&
-                                                    _cardscontroller
+                                                    _controller.cardscontroller
                                                             .selectedCards.value?.id !=
                                                         null &&
-                                                    _cardscontroller.selectedCards
+                                                    _controller.cardscontroller.selectedCards
                                                             .value?.id !=
                                                         '' &&
-                                                    _cardscontroller
+                                                    _controller.cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.id !=
                                                         ' ' &&
-                                                    _cardscontroller
+                                                    _controller.cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         null &&
-                                                    _cardscontroller
+                                                    _controller.cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         '' &&
-                                                    _cardscontroller
+                                                    _controller.cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         ' '
                                                 ? Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.start,
+                                                        MainAxisAlignment.spaceEvenly,
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .center,
@@ -394,7 +390,7 @@ class _HomePageState extends State<HomePage> {
                                                                         20)),
                                                         child: Icon(
                                                           fontawesome(
-                                                              _cardscontroller
+                                                              _controller.cardscontroller
                                                                       .selectedCards
                                                                       .value
                                                                       ?.cardtype
@@ -420,7 +416,7 @@ class _HomePageState extends State<HomePage> {
                                                                 TextAlign.left,
                                                             weight:
                                                                 FontWeight.w500,
-                                                            text: _cardscontroller
+                                                            text: _controller.cardscontroller
                                                                     .selectedCards
                                                                     .value!
                                                                     .cardholdername
@@ -468,8 +464,11 @@ class _HomePageState extends State<HomePage> {
                                                 ? "reservation".tr
                                                 : "addroute".tr,
                                         width: width - 70,
-                                        onPressed: () => _controller
-                                            .togglesearch("onmap", context)),
+                                        onPressed: () {
+                                           _controller
+                                            .togglesearch("onmap", context);
+                                            
+                                            }),
                                   ),
                                 ],
                               ),
