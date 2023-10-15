@@ -73,7 +73,7 @@ class _HistoryIndexState extends State<HistoryIndex> {
 
   @override
   Widget build(BuildContext context) {
-    _controller.getRides(context, null);
+    _controller.getRides(context, null,true);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         resizeToAvoidBottomInset: true,

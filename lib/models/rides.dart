@@ -68,18 +68,18 @@ class Rides {
   final int? automobilId;
   final List<CoordinatesRides>? coordinates;
   final List? polylinePoints;
-  final int? startTime;
-  final int? endTime;
-  final String? kmofway;
-  final String? durationofway;
-  final String? minimalPriceOfWay;
-  final String? priceOfWay;
-  final String? paymentMethod;
-  final String? paymentCard;
-  final String? status;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final dynamic? startTime;
+  final dynamic? endTime;
+  final dynamic? kmofway;
+  final dynamic? durationofway;
+  final dynamic? minimalPriceOfWay;
+  final dynamic? priceOfWay;
+  final dynamic? paymentMethod;
+  final dynamic? paymentCard;
+  final dynamic? status;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
+  final dynamic? deletedAt;
   final List<Queries>? queries;
   final Automobils? automobil;
   final Users? user;
@@ -177,18 +177,18 @@ class Queries {
   final int? userId;
   final int? driverId;
   final int? riderId;
-  final String? status;
-  final String? price;
-  final double? priceEndirim;
-  final String? weight;
-  final int? position;
-  final int? gender;
+  final dynamic? status;
+  final dynamic? price;
+  final dynamic? priceEndirim;
+  final dynamic? weight;
+  final dynamic? position;
+  final dynamic? gender;
   final List<CoordinatesRides>? coordinates;
-  final String? kmofway;
-  final String? durationofway;
+  final dynamic? kmofway;
+  final dynamic? durationofway;
   final int? reasonId;
-  final String? createdAt;
-  final String? updatedAt;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
   final Users? driver;
   final Users? rider;
   final Reason? reason;
@@ -261,8 +261,8 @@ class Reason {
   final Slugs? slugs;
   final int? order;
   final bool? status;
-  final String? createdAt;
-  final String? updatedAt;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
   final dynamic? deletedAt;
 
   Map<String, dynamic> toMap() => {
@@ -298,10 +298,10 @@ class CoordinatesRides {
   factory CoordinatesRides.fromJson(String str) =>
       CoordinatesRides.fromMap(json.decode(str));
 
-  final String? latitude;
-  final String? longitude;
-  final String? address;
-  final String? type;
+  final dynamic? latitude;
+  final dynamic? longitude;
+  final dynamic? address;
+  final dynamic? type;
 
   Map<String, dynamic> toMap() => {
         'latitude': latitude,
@@ -352,14 +352,14 @@ class Endirim {
       Endirim.fromMap(json.decode(str));
 
   final int? id;
-  final String? uuid;
+  final dynamic? uuid;
   final int? value;
-  final String? type;
+  final dynamic? type;
   final bool? status;
   final bool? sendnotification;
-  final String? applyToGroup;
-  final String? createdAt;
-  final String? updatedAt;
+  final dynamic? applyToGroup;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
 
   Map<String, dynamic> toMap() => {
         'id': id,

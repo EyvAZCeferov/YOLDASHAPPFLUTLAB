@@ -14,7 +14,6 @@ import '../../../../Constants/ImageClass.dart';
 import '../../../../Constants/ImageModal.dart';
 import '../../../../Constants/LoaderScreen.dart';
 import '../../../../Constants/StaticText.dart';
-import '../../../../Controllers/GoingController.dart';
 import '../../../../Controllers/HistoryController.dart';
 import '../../../../Controllers/MessagesController.dart';
 import '../../../../Functions/helpers.dart';
@@ -25,7 +24,6 @@ class HistoryShow extends StatelessWidget {
   final HistoryController _controller = Get.put(HistoryController());
   final MessagesController _messagesController = Get.put(MessagesController());
   final AuthController _authController = Get.put(AuthController());
-  final GoingController _goingController = Get.put(GoingController());
   final AutomobilsController _automobilsController =
       Get.put(AutomobilsController());
 
@@ -267,8 +265,6 @@ class HistoryShow extends StatelessWidget {
   }
 
   Queries? getQuery(List<Queries>? queries) {
-    print("------------------------GETTING QUERY-----------------------");
-    print(queries);
     if (queries != null && queries.length > 0) {
       for (var i = 0; i < queries.length; i++) {
         var query = queries[i];
@@ -281,7 +277,7 @@ class HistoryShow extends StatelessWidget {
   }
 
   Widget _rendercontent(context) {
-    if (_controller.authtype.value == "rider") {
+    if (_controller.ridedriver.value == false) {
       Queries? query = getQuery(_controller.selectedRide.value?.queries);
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -651,7 +647,7 @@ class HistoryShow extends StatelessWidget {
                         children: [
                           Container(
                             width: Get.width - 40,
-                            height: 245,
+                            height: 155,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: whitecolor,
@@ -686,7 +682,7 @@ class HistoryShow extends StatelessWidget {
                                   ),
                                   Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -748,6 +744,7 @@ class HistoryShow extends StatelessWidget {
                                           align: TextAlign.left,
                                           text: "${query!.price} AZN",
                                         ),
+                                        endirimWidget(query),
                                       ]),
                                   Column(
                                     mainAxisAlignment:

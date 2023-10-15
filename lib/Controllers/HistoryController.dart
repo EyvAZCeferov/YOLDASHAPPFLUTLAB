@@ -61,6 +61,7 @@ class HistoryController extends GetxController {
   Rx<bool> ontheway = Rx<bool>(false);
   Rx<Reason?> selectedReason = Rx<Reason?>(null);
   RxList<Reason?> reasons = <Reason>[].obs;
+  Rx<bool> ridedriver = Rx<bool>(false);
 
   HistoryController() {
     getAuthId();
@@ -71,9 +72,12 @@ class HistoryController extends GetxController {
     authtype.value = await _maincontroller.getstoragedat('authtype');
   }
 
-  Future<void> getRides(context, int? selectedHistoryId) async {
+  Future<void> getRides(context, int? selectedHistoryId, bool? page) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
+    if(page==true){
+      body['page']='rides';
+    }
     var response;
 
     if (selectedHistoryId != null && selectedHistoryId > 0) {
@@ -83,20 +87,22 @@ class HistoryController extends GetxController {
       response = await GetAndPost.fetchData("rides", context, body);
     }
 
-    print("----------------------------------GETTING HISTORY-----------------------");
-    print(response);
-
-    if (authtype.value == "rider") {
       getreasons(context);
-    }
 
     if (response != null) {
       String status = response['status'];
       String message = '';
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
+        ridedriver.value = false;
         if (selectedHistoryId != null && selectedHistoryId > 0) {
-          selectedRide.value = Rides.fromJson(response['data']);
+          selectedRide.value = Rides.fromMap(response['data']);
+
+          if (selectedRide.value?.userId == auth_id.value) {
+            ridedriver.value = true;
+          }
+
+          print(ridedriver.value);
         } else {
           data.value = (response['data'] as List).map((dat) {
             return Rides.fromMap(dat);
@@ -743,7 +749,7 @@ class HistoryController extends GetxController {
     refreshpage.value = true;
     if (id != null && id != 0) {
       var nextprocess = true;
-      if (type == 'cancelled' &&
+      if ((type == 'cancelled' || type=="notaccepted") &&
           (selectedReason.value == null && selectedReason.value?.id == null)) {
         nextprocess = false;
         refreshpage.value = false;
@@ -805,7 +811,7 @@ class HistoryController extends GetxController {
       }
       Map<String, dynamic> body = {
         "status": type,
-        "reason_id":selectedReason.value?.id,
+        "reason_id": selectedReason.value?.id,
       };
       if (nextprocess == true) {
         var response =
@@ -815,7 +821,7 @@ class HistoryController extends GetxController {
           String message = '';
           if (response['message'] != null) message = response['message'];
           if (status == "success") {
-            selectedReason.value=Reason();
+            selectedReason.value = Reason();
             getridedata(context, selectedRide.value!.id!);
           } else {
             refreshpage.value = false;
@@ -898,7 +904,6 @@ class HistoryController extends GetxController {
           getridedata(context, selectedRide.value!.id!);
           if (type == "completed") {
             _goingController.getcurrentrides(context);
-
             Get.back();
           }
         } else {

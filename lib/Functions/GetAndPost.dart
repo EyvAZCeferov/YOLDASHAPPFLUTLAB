@@ -72,8 +72,12 @@ class GetAndPost {
       } else {
         url = Uri.parse('$urlold');
       }
+     print("-----------------------------------BAREAR TOKEN--------------------------");
+
+
       var headers = {'Content-Type': 'application/json'};
       var token = await _maincontroller.getstoragedat('token');
+      print(token);
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
