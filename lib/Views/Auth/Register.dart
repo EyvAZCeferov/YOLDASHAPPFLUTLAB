@@ -333,13 +333,23 @@ class _RegisterState extends State<Register> {
                                           }),
                                     ),
                                     Devider(),
-                                    DocumentRow(
-                                      title: 'Təsdiqləyici sənəd',
-                                      subtitle: "uploadimage".tr,
-                                      onPressed: () => _controller.pickImageTesdigleyici("submitting_document",context),
-                                      data:
-                                          _controller.submitting_document.value,
-                                    ),
+                                    _controller.socialstatus.value != null &&
+                                            _controller.socialstatus.value != ''
+                                        ? DocumentRow(
+                                            title: _controller
+                                                        .socialstatus.value ==
+                                                    'telebe'
+                                                ? 'Tələbə bileti'
+                                                : 'Təsdiqləyici sənəd',
+                                            subtitle: "uploadimage".tr,
+                                            onPressed: () => _controller
+                                                .pickImageTesdigleyici(
+                                                    "submitting_document",
+                                                    context),
+                                            data: _controller
+                                                .submitting_document.value,
+                                          )
+                                        : SizedBox(),
                                   ],
                                 )
                               : Column(
@@ -651,48 +661,7 @@ class _RegisterState extends State<Register> {
                               borderRadius: BorderRadius.circular(45),
                               onPressed: () => _controller.register(context)),
                           Devider(size: 25),
-                          // Row(
-                          //   crossAxisAlignment: CrossAxisAlignment.center,
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     ImageButton(
-                          //       image: AssetImage('./assets/images/glogo.png'),
-                          //       bgColor: Colors.transparent,
-                          //       borderRadius: BorderRadius.circular(40),
-                          //       width: 40,
-                          //       padding: EdgeInsets.all(5),
-                          //       onPressed: () {
-                          //         print("Pressed Google");
-                          //       },
-                          //     ),
-                          //     Devider(type: false),
-                          //     ImageButton(
-                          //       image:
-                          //           AssetImage('./assets/images/facebook.webp'),
-                          //       bgColor: Colors.transparent,
-                          //       borderRadius: BorderRadius.circular(40),
-                          //       width: 40,
-                          //       padding: EdgeInsets.all(5),
-                          //       onPressed: () {
-                          //         print("Pressed Facebook");
-                          //       },
-                          //     ),
-                          //     Devider(type: false),
-                          //     ImageButton(
-                          //       image: AssetImage('./assets/images/apple.png'),
-                          //       bgColor: Colors.transparent,
-                          //       borderRadius: BorderRadius.circular(40),
-                          //       width: 40,
-                          //       padding: EdgeInsets.all(5),
-                          //       onPressed: () {
-                          //         print("Pressed apple");
-                          //       },
-                          //     )
-                          //   ],
-                          // ),
-                          // Devider(
-                          //   size: 20,
-                          // ),
+                        
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,

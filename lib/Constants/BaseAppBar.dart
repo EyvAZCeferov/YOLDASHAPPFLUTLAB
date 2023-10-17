@@ -16,6 +16,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? authtype;
   final Color? bgcolorheader;
   final Function? changeprofpage;
+  final Function? backFunction;
 
   const BaseAppBar(
       {this.backbutton = true,
@@ -24,7 +25,8 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.titlebg = false,
       this.authtype,
       this.bgcolorheader = Colors.transparent,
-      this.changeprofpage});
+      this.changeprofpage,
+      this.backFunction});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -67,7 +69,12 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: FeatherIcons.chevronLeft,
                   color: Colors.black,
                   size: buttontextSize,
-                  onPressed: () => Get.back()),
+                  onPressed: () {
+                    Get.back();
+                    if (backFunction != null) {
+                      backFunction!();
+                    }
+                  }),
             )
           : null,
       title: titlebg == true

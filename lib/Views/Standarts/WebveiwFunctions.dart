@@ -9,6 +9,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:yoldashapp/Constants/BaseAppBar.dart';
+import 'package:yoldashapp/Controllers/BalanceController.dart';
+import 'package:yoldashapp/Controllers/CardsController.dart';
 
 import '../../Functions/helpers.dart';
 import '../../Theme/ThemeService.dart';
@@ -25,6 +27,8 @@ class WebviewFunctions extends StatefulWidget {
 
 class _WebviewFunctionsState extends State<WebviewFunctions> {
   late final WebViewController _controller;
+  final CardsController cardscontroller = Get.put(CardsController());
+  final BalanceController balanceController = Get.put(BalanceController());
 
   @override
   void initState() {
@@ -45,27 +49,27 @@ class _WebviewFunctionsState extends State<WebviewFunctions> {
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onProgress: (int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
+          onWebResourceError: (WebResourceError error) {
+            showToastMSG(primarycolor, "errordatanotfound".tr, context);
+            cardscontroller.fetchDatas(context);
+            balanceController.fetchData(context);
+            Navigator.pop(context);
           },
-          onPageStarted: (String url) {
-            debugPrint('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            debugPrint('Page finished loading: $url');
-          },
-          onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             if (request.url
                 .startsWith('https://sovqat369777.az/api/successpayment')) {
               showToastMSG(primarycolor, "success_payment".tr, context);
+              cardscontroller.fetchDatas(context);
+              balanceController.fetchData(context);
               Navigator.pop(context);
               return NavigationDecision.prevent;
             } else if (request.url
                 .startsWith('https://sovqat369777.az/api/errorpayment')) {
+              cardscontroller.fetchDatas(context);
+              balanceController.fetchData(context);
               showToastMSG(primarycolor, "error_payment".tr, context);
               Navigator.pop(context);
               return NavigationDecision.prevent;
@@ -76,10 +80,14 @@ class _WebviewFunctionsState extends State<WebviewFunctions> {
           onUrlChange: (UrlChange change) {
             if (change.url == 'https://sovqat369777.az/api/successpayment') {
               showToastMSG(primarycolor, "success_payment".tr, context);
+              cardscontroller.fetchDatas(context);
+              balanceController.fetchData(context);
               return Navigator.pop(context);
             } else if (change.url ==
                 'https://sovqat369777.az/api/errorpayment') {
               showToastMSG(primarycolor, "error_payment".tr, context);
+              cardscontroller.fetchDatas(context);
+              balanceController.fetchData(context);
               return Navigator.pop(context);
             }
           },
@@ -88,9 +96,7 @@ class _WebviewFunctionsState extends State<WebviewFunctions> {
       ..addJavaScriptChannel(
         'Toaster',
         onMessageReceived: (JavaScriptMessage message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
+          showToastMSG(bodycolor, message, context);
         },
       )
       ..loadRequest(Uri.parse(widget.paymentUrl));
@@ -107,12 +113,13 @@ class _WebviewFunctionsState extends State<WebviewFunctions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.transparent,
       appBar: BaseAppBar(
         backbutton: true,
         bgcolorheader: whitecolor,
         title: widget.title,
         titlebg: true,
+        backFunction: () => cardscontroller.fetchDatas(context),
       ),
       body: WebViewWidget(controller: _controller),
     );

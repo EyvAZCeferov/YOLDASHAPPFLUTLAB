@@ -17,6 +17,11 @@ class BalanceController extends GetxController {
   Rx<int?> totalprice = Rx<int?>(0);
   Rx<BalanceElement?> selectedElement = Rx<BalanceElement?>(null);
 
+  BalanceController(){
+    fetchTypes(null);
+    fetchData(null);
+  }
+
   void changeAddType(String newType, context) {
     refreshpage.value = true;
     selectedType.value = null;
@@ -53,7 +58,7 @@ class BalanceController extends GetxController {
           }
           totalprice.value = response['price'];
         } else {
-          showToastMSG(errorcolor, message, context);
+          // showToastMSG(errorcolor, message, context);
           totalprice.value = 0;
         }
         refreshpage.value = false;
@@ -63,7 +68,7 @@ class BalanceController extends GetxController {
         userbalances.value = [];
         balancetypes.value = [];
         selectedType.value = BalanceTypes();
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
       refreshpage.value = false;
@@ -72,8 +77,9 @@ class BalanceController extends GetxController {
   }
 
   Future<void> fetchTypes(context) async {
-    refreshpage.value = true;
+    
     try {
+      refreshpage.value = true;
       Map<String, dynamic> body = {};
       var response =
           await GetAndPost.fetchData("balance_actions/create", context, body);
@@ -84,18 +90,19 @@ class BalanceController extends GetxController {
         String message = "";
         if (response['message'] != null) message = response['message'] ?? '';
         if (status == "success") {
-          refreshpage.value = true;
           List<String> groups = response['data'].keys.toList();
           for (String group in groups) {
-            List<dynamic> elements = response['data'][group];
-            List<BalanceElement> balanceElements = elements.map((element) {
-              return BalanceElement.fromMap(element);
-            }).toList();
+            List<dynamic>? elements = response['data'][group];
+            if (elements != null && elements.length > 0) {
+              List<BalanceElement>? balanceElements = elements.map((element) {
+                return BalanceElement.fromMap(element);
+              }).toList();
 
-            balancetypes.value.add(BalanceTypes(
-              type: group,
-              elements: balanceElements,
-            ));
+              balancetypes.value.add(BalanceTypes(
+                type: group,
+                elements: balanceElements,
+              ));
+            }
           }
         } else {
           refreshpage.value = true;
@@ -108,7 +115,7 @@ class BalanceController extends GetxController {
         showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
-      print("Balance Fetch Type Error------------------------------------");
+      print("-------------------------------------------Balance Fetch Type Error------------------------------------");
       print(e.toString());
     }
   }
@@ -153,8 +160,10 @@ class BalanceController extends GetxController {
         'balance_type': selectedElement.value!.id,
         'package_type': selectedType.value!.type
       };
+      
       var response =
           await GetAndPost.postData("balance_actions", body, context);
+          print(response);
       if (response != null) {
         String status = response['status'];
         String message = response['message'];
@@ -167,7 +176,6 @@ class BalanceController extends GetxController {
                     paymentUrl: response['data'], title: 'paynow'.tr),
               ),
             );
-            // launchUrlTOSITE(response['data']);
           } else {
             showToastMSG(errorcolor, "nothavepaymentlink".tr, context);
           }

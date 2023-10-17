@@ -26,6 +26,7 @@ class HistoryShow extends StatelessWidget {
   final AuthController _authController = Get.put(AuthController());
   final AutomobilsController _automobilsController =
       Get.put(AutomobilsController());
+      
 
   List<Widget> addressWidgets = [];
 
@@ -277,6 +278,7 @@ class HistoryShow extends StatelessWidget {
   }
 
   Widget _rendercontent(context) {
+    _automobilsController.fetchUserCar(context,_controller.selectedRide.value?.userId);
     if (_controller.ridedriver.value == false) {
       Queries? query = getQuery(_controller.selectedRide.value?.queries);
       return Column(

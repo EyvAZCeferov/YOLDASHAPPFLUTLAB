@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
+import '../Constants/ButtonElement.dart';
+import '../Constants/Devider.dart';
+import '../Constants/StaticText.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
@@ -27,6 +30,8 @@ class AutomobilsController extends GetxController {
   RxList<AutoType?> autotype = <AutoType?>[].obs;
   Rx<AutoType?> selectedAutotype = Rx<AutoType?>(null);
   RxList<String> autoimages = RxList<String>(['', '', '', '', '']);
+  Rx<Automobils?> driverautomobil = Rx<Automobils?>(null);
+  Rx<bool?> really_delete = Rx<bool>(false);
 
   Future<void> fetchDatas(context) async {
     try {
@@ -40,12 +45,15 @@ class AutomobilsController extends GetxController {
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
           refreshpage.value = false;
-          if (response['data'] != null && response['data'].length>0 && response['data'] !='' && response['data'] !=' ') {
+          if (response['data'] != null &&
+              response['data'].length > 0 &&
+              response['data'] != '' &&
+              response['data'] != ' ') {
             data.value = (response['data'] as List).map((dat) {
               return Automobils.fromMap(dat);
             }).toList();
 
-            if (data != null && data.length>0) {
+            if (data != null && data.length > 0) {
               selectedAutomobil.value = data.firstWhere(
                   (automobil) => automobil.selected == true,
                   orElse: () => Automobils());
@@ -71,6 +79,122 @@ class AutomobilsController extends GetxController {
       print("AUTOMOBILS ERROR");
       print(e.toString());
       // showToastMSG(errorcolor, e.toString(), context);
+    }
+  }
+
+  Future<void> fetchUserCar(context, userId) async {
+    try {
+      refreshpage.value = true;
+      Map<String, dynamic> body = {
+        'user_id': userId,
+      };
+      var response =
+          await GetAndPost.fetchData("automobils_getby_user", context, body);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          refreshpage.value = false;
+          if (response['data'] != null) {
+            driverautomobil.value = Automobils.fromMap(response['data']);
+          } else {
+            refreshpage.value = false;
+          }
+        } else {
+          refreshpage.value = false;
+        }
+      } else {
+        refreshpage.value = false;
+        driverautomobil.value = Automobils();
+      }
+    } catch (e) {
+      refreshpage.value = false;
+      print(
+          "-------------------------------------------AUTOMOBILS BY USER ERROR-------------------------------------");
+      print(e.toString());
+    }
+  }
+
+  void removeAutomobil(id, context) async {
+    refreshpage.value = true;
+    if (really_delete.value == false) {
+      refreshpage.value = false;
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 140,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Devider(),
+                  StaticText(
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "really_delete".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
+                    maxline: 3,
+                    textOverflow: TextOverflow.clip,
+                  ),
+                  Devider(size: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ButtonElement(
+                        text: "really_delete_no".tr,
+                        bgColor: errorcolor,
+                        fontsize: 14,
+                        textColor: whitecolor,
+                        onPressed: () => Get.back(),
+                        width: Get.width / 3,
+                        height: 50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      SizedBox(width: 25),
+                      ButtonElement(
+                        text: "really_delete_yes".tr,
+                        bgColor: primarycolor,
+                        fontsize: 14,
+                        textColor: whitecolor,
+                        onPressed: () {
+                          really_delete.value = true;
+                          refreshpage.value = false;
+                          Get.back();
+                          removeAutomobil(id, context);
+                        },
+                        width: Get.width / 3,
+                        height: 50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          });
+    } else {
+      Map<String, dynamic> body = {
+        "id": id,
+      };
+      var response = await GetAndPost.postData("removeAutomobil", body, context);
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          really_delete.value = false;
+          fetchDatas(context);
+          refreshpage.value = false;
+        } else {
+          showToastMSG(errorcolor, message, context);
+          refreshpage.value = false;
+        }
+      } else {
+        refreshpage.value = false;
+      }
     }
   }
 

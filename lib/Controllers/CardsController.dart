@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:get/get.dart';
+import '../Constants/ButtonElement.dart';
+import '../Constants/Devider.dart';
+import '../Constants/StaticText.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
@@ -23,6 +26,7 @@ class CardsController extends GetxController {
       Rx<TextEditingController>(TextEditingController());
   Rx<int?> auth_id = Rx<int?>(null);
   Rx<String> authtype = Rx<String>('rider');
+  Rx<bool?> really_delete = Rx<bool>(false);
 
   void getAuthId() async {
     auth_id.value = await _maincontroller.getstoragedat('auth_id');
@@ -79,7 +83,7 @@ class CardsController extends GetxController {
           refreshpage.value = false;
         } else {
           refreshpage.value = false;
-          showToastMSG(errorcolor, message, context);
+          // showToastMSG(errorcolor, message, context);
         }
         refreshpage.value = false;
       } else {
@@ -140,6 +144,90 @@ class CardsController extends GetxController {
       data.value = [];
       selectedCards.value = Cards();
       showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
+  void removeCard(id, context) async {
+    refreshpage.value = true;
+    if (really_delete.value == false) {
+      refreshpage.value = false;
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 140,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Devider(),
+                  StaticText(
+                    color: secondarycolor,
+                    size: buttontextSize,
+                    text: "really_delete".tr,
+                    weight: FontWeight.w500,
+                    align: TextAlign.center,
+                    maxline: 3,
+                    textOverflow: TextOverflow.clip,
+                  ),
+                  Devider(size: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ButtonElement(
+                        text: "really_delete_no".tr,
+                        bgColor: errorcolor,
+                        fontsize: 14,
+                        textColor: whitecolor,
+                        onPressed: () => Get.back(),
+                        width: Get.width / 3,
+                        height: 50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      SizedBox(width: 25),
+                      ButtonElement(
+                        text: "really_delete_yes".tr,
+                        bgColor: primarycolor,
+                        fontsize: 14,
+                        textColor: whitecolor,
+                        onPressed: () {
+                          really_delete.value = true;
+                          refreshpage.value = false;
+                          Get.back();
+                          removeCard(id, context);
+                        },
+                        width: Get.width / 3,
+                        height: 50,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          });
+    } else {
+      Map<String, dynamic> body = {
+        "id": id,
+      };
+
+      var response = await GetAndPost.postData("removeCard", body, context);
+
+      if (response != null) {
+        String status = response['status'];
+        String message = "";
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          really_delete.value = false;
+          fetchDatas(context);
+          refreshpage.value = false;
+        } else {
+          showToastMSG(errorcolor, message, context);
+          refreshpage.value = false;
+        }
+      } else {
+        refreshpage.value = false;
+      }
     }
   }
 

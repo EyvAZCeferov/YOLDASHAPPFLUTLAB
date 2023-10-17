@@ -51,6 +51,13 @@ class MessagesController extends GetxController {
     getAuthId();
   }
 
+   void dispose() {
+    selectedMessageGroup.value = MessageGroups();
+    selectedMessageLists.clear();
+    getMessages(null, null);
+    Get.back();
+   }
+
   void connectandreadsocket() async {
     final wsUrl = Uri.parse('ws://localhost:1234');
     var channel = WebSocketChannel.connect(wsUrl);

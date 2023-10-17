@@ -178,16 +178,15 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                     )
                                   : SizedBox(),
                               Devider(),
-                              _automobilsController
-                                              .selectedAutomobil.value !=
+                              _automobilsController.driverautomobil.value !=
                                           null &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           null &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           '' &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           ' '
                                   ? StaticText(
@@ -199,80 +198,62 @@ class _ProfileDriverState extends State<ProfileDriver> {
                                     )
                                   : SizedBox(),
                               Devider(),
-                              _automobilsController
-                                              .selectedAutomobil.value !=
+                              _automobilsController.driverautomobil.value !=
                                           null &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           null &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           '' &&
-                                      _automobilsController.selectedAutomobil
+                                      _automobilsController.driverautomobil
                                               .value?.autoSerialNumber !=
                                           ' '
-                                  ? CarouselSlider(
-                                      options: CarouselOptions(
-                                          enlargeCenterPage: true,
-                                          aspectRatio: 16 / 9,
-                                          autoPlay: true,
-                                          autoPlayAnimationDuration:
-                                              Duration(milliseconds: 500),
-                                          scrollDirection: Axis.horizontal),
-                                      items: [
-                                        ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: _automobilsController
-                                                  .selectedAutomobil
-                                                  .value
-                                                  ?.images
-                                                  ?.length ??
-                                              0,
-                                          itemBuilder: (context, index) {
-                                            Images image = _automobilsController
-                                                .selectedAutomobil
-                                                .value!
-                                                .images![index];
-                                            return GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedimage = getimageurl(
-                                                      'automobil',
-                                                      'automobils/types',
-                                                      image?.image);
-                                                  showimagemodal = true;
-                                                });
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.symmetric(
-                                                    horizontal: 5),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: getimageurl(
-                                                      'automobil',
-                                                      'automobils/types',
-                                                      image?.image),
-                                                  placeholder: (context, url) =>
-                                                      CircularProgressIndicator(),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Icon(Icons.error),
-                                                  imageBuilder: (context,
-                                                          imageProvider) =>
-                                                      CircleAvatar(
-                                                    backgroundColor:
-                                                        primarycolor,
-                                                    foregroundColor: whitecolor,
-                                                    radius: 35,
-                                                    backgroundImage:
-                                                        imageProvider,
-                                                  ),
-                                                ),
+                                  ? SizedBox(
+                                    height: 300,
+                                    child: ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: _automobilsController
+                                                .driverautomobil
+                                                .value
+                                                ?.images
+                                                ?.length ??
+                                            0,
+                                        itemBuilder: (context, index) {
+                                          Images image = _automobilsController
+                                              .driverautomobil
+                                              .value!
+                                              .images![index];
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedimage = getimageurl(
+                                                    'automobil',
+                                                    'automobils/types',
+                                                    image?.image);
+                                                showimagemodal = true;
+                                              });
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5),
+                                              child: CachedNetworkImage(
+                                                imageUrl: getimageurl(
+                                                    'automobil',
+                                                    'automobils/types',
+                                                    image?.image),
+                                                placeholder: (context, url) =>
+                                                    CircularProgressIndicator(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error,color:Colors.white,size: 0,),
+                                                
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    )
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                  )
                                   : SizedBox(),
                               Devider(),
                             ],

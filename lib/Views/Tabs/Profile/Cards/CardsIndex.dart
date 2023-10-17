@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Constants/IconButtonElement.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
 import '../../../../Constants/Devider.dart';
@@ -52,31 +54,51 @@ class CardsIndex extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ListTile(
-                      leading: Icon(
-                          fontawesome(item.cardtype ?? 'visa') as IconData?,
-                          color: secondarycolor,
-                          size: headingSize,
-                          textDirection: TextDirection.ltr),
-                      title: StaticText(
-                        color: darkcolor,
-                        size: normaltextSize,
-                        text: maskLastFourDigits(item.cardnumber ?? ''),
-                        weight: FontWeight.w500,
-                        align: TextAlign.left,
-                      ),
-                      trailing: Radio<bool>(
-                        value: true,
-                        groupValue: item.selected,
-                        activeColor: primarycolor,
-                        focusColor: primarycolor,
-                        hoverColor: primarycolor,
-                        toggleable: true,
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                        onChanged: (value) {
-                          _controller.updateSelection(item.id!, true, context);
-                        },
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(fontawesome(item.cardtype ?? 'visa') as IconData?,
+                            color: secondarycolor,
+                            size: headingSize,
+                            textDirection: TextDirection.ltr),
+                        StaticText(
+                          color: darkcolor,
+                          size: normaltextSize,
+                          text: maskLastFourDigits(item.cardnumber ?? ''),
+                          weight: FontWeight.w500,
+                          align: TextAlign.left,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            item.id != 0
+                                ? IconButtonElement(
+                                    icon: FontAwesomeIcons.trash,
+                                    onPressed: () => _controller.removeCard(
+                                        item.id, context),
+                                    color: errorcolor,
+                                    size: 18,
+                                  )
+                                : SizedBox(),
+                            Radio<bool>(
+                              value: true,
+                              groupValue: item.selected,
+                              activeColor: primarycolor,
+                              focusColor: primarycolor,
+                              hoverColor: primarycolor,
+                              toggleable: true,
+                              visualDensity:
+                                  VisualDensity.adaptivePlatformDensity,
+                              onChanged: (value) {
+                                _controller.updateSelection(
+                                    item.id!, true, context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     Devider(),
                   ],

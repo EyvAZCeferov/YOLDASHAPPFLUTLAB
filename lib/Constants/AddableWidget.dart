@@ -57,7 +57,13 @@ class _AddableWidgetState extends State<AddableWidget> {
     return Center(
       child: Container(
         width: widget.width - 40,
-        height: widget.type=='cards'? data_cards.length > 0 ? 160 : widget.width / 1.8 : data_automobils.length > 0 ? 160 : widget.width / 1.8,
+        height: widget.type == 'cards'
+            ? data_cards.length > 0
+                ? 160
+                : widget.width / 1.8
+            : data_automobils.length > 0
+                ? 160
+                : widget.width / 1.8,
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: whitecolor,
@@ -152,49 +158,53 @@ class _AddableWidgetState extends State<AddableWidget> {
                   itemCount: _cardscontroller.data.length,
                   itemBuilder: (context, index) {
                     final item = _cardscontroller.data[index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                              width: 80,
-                              height: 60,
-                              margin: EdgeInsets.only(right: 10),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Color(0xffF4F5F6),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                  fontawesome(item.cardtype ?? 'visa')
-                                      as IconData?,
-                                  color: secondarycolor,
-                                  size: headingSize)),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StaticText(
-                                text: maskLastFourDigits(item.cardnumber ?? ''),
-                                color: darkcolor,
-                                size: buttontextSize,
-                                weight: FontWeight.w500,
-                                align: TextAlign.left,
-                              ),
-                              StaticText(
-                                text: item.selected == true
-                                    ? "mainaccount".tr
-                                    : '',
-                                color: Colors.grey,
-                                size: smalltextSize,
-                                weight: FontWeight.w400,
-                                align: TextAlign.left,
-                              ),
-                            ],
-                          )
-                        ],
+                    return GestureDetector(
+                      onTap: () => Get.toNamed('/' + type),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                width: 80,
+                                height: 60,
+                                margin: EdgeInsets.only(right: 10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffF4F5F6),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                    fontawesome(item.cardtype ?? 'visa')
+                                        as IconData?,
+                                    color: secondarycolor,
+                                    size: headingSize)),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StaticText(
+                                  text:
+                                      maskLastFourDigits(item.cardnumber ?? ''),
+                                  color: darkcolor,
+                                  size: buttontextSize,
+                                  weight: FontWeight.w500,
+                                  align: TextAlign.left,
+                                ),
+                                StaticText(
+                                  text: item.selected == true
+                                      ? "mainaccount".tr
+                                      : '',
+                                  color: Colors.grey,
+                                  size: smalltextSize,
+                                  weight: FontWeight.w400,
+                                  align: TextAlign.left,
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }),
@@ -209,59 +219,62 @@ class _AddableWidgetState extends State<AddableWidget> {
                   itemCount: _automobilscontroller.data.length,
                   itemBuilder: (context, index) {
                     final item = _automobilscontroller.data[index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 60,
-                            margin: EdgeInsets.only(right: 10),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Color(0xffF4F5F6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: getimageurl("models",
-                                  'automobils/types', item.autotype?.icon),
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(
-                                backgroundColor: primarycolor,
-                                foregroundColor: whitecolor,
-                                radius: 35,
-                                backgroundImage: imageProvider,
+                    return GestureDetector(
+                      onTap: () => Get.toNamed('/' + type),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 60,
+                              margin: EdgeInsets.only(right: 10),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Color(0xffF4F5F6),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: getimageurl("models",
+                                    'automobils/types', item.autotype?.icon),
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                imageBuilder: (context, imageProvider) =>
+                                    CircleAvatar(
+                                  backgroundColor: primarycolor,
+                                  foregroundColor: whitecolor,
+                                  radius: 35,
+                                  backgroundImage: imageProvider,
+                                ),
                               ),
                             ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StaticText(
-                                text: getLocalizedValue(
-                                    item.autotype!.name, 'name') as String,
-                                color: darkcolor,
-                                size: buttontextSize,
-                                weight: FontWeight.w500,
-                                align: TextAlign.left,
-                              ),
-                              StaticText(
-                                text: item.autoSerialNumber as String,
-                                color: Colors.grey,
-                                size: smalltextSize,
-                                weight: FontWeight.w400,
-                                align: TextAlign.left,
-                              ),
-                            ],
-                          )
-                        ],
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StaticText(
+                                  text: getLocalizedValue(
+                                      item.autotype!.name, 'name') as String,
+                                  color: darkcolor,
+                                  size: buttontextSize,
+                                  weight: FontWeight.w500,
+                                  align: TextAlign.left,
+                                ),
+                                StaticText(
+                                  text: item.autoSerialNumber as String,
+                                  color: Colors.grey,
+                                  size: smalltextSize,
+                                  weight: FontWeight.w400,
+                                  align: TextAlign.left,
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }),

@@ -72,8 +72,8 @@ class _HomePageState extends State<HomePage> {
                 }
                 return GestureDetector(
                   onTap: () {
-                    _historycontroller.selectedRide.value=ride;
-                    _historycontroller.getRides(context, ride.id,false);
+                    _historycontroller.selectedRide.value = ride;
+                    _historycontroller.getRides(context, ride.id, false);
                     Get.toNamed('/history/${ride.id}');
                   },
                   child: Center(
@@ -338,38 +338,51 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ]),
                                         child:
-                                            _controller.cardscontroller.selectedCards
+                                            _controller
+                                                            .cardscontroller
+                                                            .selectedCards
                                                             .value !=
                                                         null &&
-                                                    _controller.cardscontroller
-                                                            .selectedCards.value?.id !=
+                                                    _controller
+                                                            .cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.id !=
                                                         null &&
-                                                    _controller.cardscontroller.selectedCards
-                                                            .value?.id !=
+                                                    _controller
+                                                            .cardscontroller
+                                                            .selectedCards
+                                                            .value
+                                                            ?.id !=
                                                         '' &&
-                                                    _controller.cardscontroller
+                                                    _controller
+                                                            .cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.id !=
                                                         ' ' &&
-                                                    _controller.cardscontroller
+                                                    _controller
+                                                            .cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         null &&
-                                                    _controller.cardscontroller
+                                                    _controller
+                                                            .cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         '' &&
-                                                    _controller.cardscontroller
+                                                    _controller
+                                                            .cardscontroller
                                                             .selectedCards
                                                             .value
                                                             ?.cardholdername !=
                                                         ' '
                                                 ? Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.spaceEvenly,
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .center,
@@ -389,12 +402,12 @@ class _HomePageState extends State<HomePage> {
                                                                     .circular(
                                                                         20)),
                                                         child: Icon(
-                                                          fontawesome(
-                                                              _controller.cardscontroller
-                                                                      .selectedCards
-                                                                      .value
-                                                                      ?.cardtype
-                                                                  as String),
+                                                          fontawesome(_controller
+                                                                  .cardscontroller
+                                                                  .selectedCards
+                                                                  .value
+                                                                  ?.cardtype
+                                                              as String),
                                                           color: primarycolor,
                                                           size: headingSize,
                                                         ),
@@ -416,7 +429,8 @@ class _HomePageState extends State<HomePage> {
                                                                 TextAlign.left,
                                                             weight:
                                                                 FontWeight.w500,
-                                                            text: _controller.cardscontroller
+                                                            text: _controller
+                                                                    .cardscontroller
                                                                     .selectedCards
                                                                     .value!
                                                                     .cardholdername
@@ -465,10 +479,9 @@ class _HomePageState extends State<HomePage> {
                                                 : "addroute".tr,
                                         width: width - 70,
                                         onPressed: () {
-                                           _controller
-                                            .togglesearch("onmap", context);
-                                            
-                                            }),
+                                          _controller.togglesearch(
+                                              "onmap", context);
+                                        }),
                                   ),
                                 ],
                               ),
@@ -698,85 +711,88 @@ class _HomePageState extends State<HomePage> {
                                       itemCount: _controller
                                           .addresscontrollers.value.length,
                                       itemBuilder: (context, index) {
-                                        TextEditingController controllernow =
+                                        TextEditingController? controllernow =
                                             _controller.addresscontrollers
                                                 .value['position_$index'];
-                                                if(controllernow!=null){
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 5),
-                                              height: 55,
-                                              width: width - 120,
-                                              child: InputElement(
-                                                accentColor: iconcolor,
-                                                controller: controllernow,
-                                                placeholder:
-                                                    controllernow.text !=
-                                                                null &&
-                                                            controllernow.text
-                                                                    .length >
-                                                                0
-                                                        ? controllernow.text
-                                                            .toString()
-                                                        : index == 0
-                                                            ? "from".tr
-                                                            : "to".tr,
-                                                textColor: iconcolor,
-                                                cornerradius:
-                                                    BorderRadius.circular(40),
-                                                inputType: TextInputType.text,
-                                                onchanged: (val) =>
-                                                    _controller.findplaces(
-                                                  val,
-                                                  controllernow,
-                                                  'position_${index}',
-                                                  context,
+
+                                        if (controllernow != null) {
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(bottom: 5),
+                                                height: 55,
+                                                width: width - 120,
+                                                child: InputElement(
+                                                  accentColor: iconcolor,
+                                                  controller: controllernow,
+                                                  placeholder: controllernow
+                                                                  .text !=
+                                                              null &&
+                                                          controllernow
+                                                                  .text.length >
+                                                              0
+                                                      ? controllernow.text
+                                                          .toString()
+                                                      : index == 0
+                                                          ? "from".tr
+                                                          : "to".tr,
+                                                  textColor: iconcolor,
+                                                  cornerradius:
+                                                      BorderRadius.circular(40),
+                                                  inputType: TextInputType.text,
+                                                  onchanged: (val) =>
+                                                      _controller.findplaces(
+                                                    val,
+                                                    controllernow,
+                                                    'position_${index}',
+                                                    context,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            index != 0
-                                                ? _controller.addresscontrollers[
-                                                            'position_${index + 1}'] ==
-                                                        null
-                                                    ? IconButton(
-                                                        onPressed: () {
-                                                          _controller
-                                                              .refreshpage
-                                                              .value = true;
-                                                          _controller
-                                                              .addorremoveeditingcontroller(
-                                                                  index + 1,
-                                                                  'add');
-                                                          _controller
-                                                              .refreshpage
-                                                              .value = false;
-                                                        },
-                                                        icon: Icon(
-                                                          FeatherIcons.plus,
-                                                          color: primarycolor,
-                                                          size: normaltextSize,
-                                                        ))
-                                                    : IconButton(
-                                                        onPressed: () {
-                                                          _controller
-                                                              .addorremoveeditingcontroller(
-                                                                  index,
-                                                                  'delete');
-                                                        },
-                                                        icon: Icon(
-                                                          FeatherIcons.minus,
-                                                          color: errorcolor,
-                                                          size: normaltextSize,
-                                                        ))
-                                                : SizedBox(),
-                                          ],
-                                        );
+                                              index != 0
+                                                  ? _controller.addresscontrollers[
+                                                              'position_${index + 1}'] ==
+                                                          null
+                                                      ? IconButton(
+                                                          onPressed: () {
+                                                            _controller
+                                                                .refreshpage
+                                                                .value = true;
+                                                            _controller
+                                                                .addorremoveeditingcontroller(
+                                                                    index + 1,
+                                                                    'add');
+                                                            _controller
+                                                                .refreshpage
+                                                                .value = false;
+                                                          },
+                                                          icon: Icon(
+                                                            FeatherIcons.plus,
+                                                            color: primarycolor,
+                                                            size:
+                                                                normaltextSize,
+                                                          ))
+                                                      : IconButton(
+                                                          onPressed: () {
+                                                            _controller
+                                                                .addorremoveeditingcontroller(
+                                                                    index,
+                                                                    'delete');
+                                                          },
+                                                          icon: Icon(
+                                                            FeatherIcons.minus,
+                                                            color: errorcolor,
+                                                            size:
+                                                                normaltextSize,
+                                                          ))
+                                                  : SizedBox(),
+                                            ],
+                                          );
                                         }
                                       },
                                     ),
@@ -789,19 +805,46 @@ class _HomePageState extends State<HomePage> {
                         Devider(
                           size: 5,
                         ),
-                         Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Devider(),
-                                  Row(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Devider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(width: 10),
+                                Icon(
+                                  FeatherIcons.briefcase,
+                                  color: secondarycolor,
+                                  size: subHeadingSize,
+                                ),
+                                SizedBox(width: 20),
+                                SizedBox(
+                                  width: width - 110,
+                                  child: InputElement(
+                                    accentColor: iconcolor,
+                                    controller:
+                                        _controller.weightcontroller.value,
+                                    placeholder: "weight".tr + ", kg",
+                                    textColor: iconcolor,
+                                    cornerradius: BorderRadius.circular(40),
+                                    inputType: TextInputType.number,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Devider(),
+                            _authcontroller.authType == "driver"
+                                ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(width: 10),
                                       Icon(
-                                        FeatherIcons.briefcase,
+                                        FontAwesomeIcons.road,
                                         color: secondarycolor,
                                         size: subHeadingSize,
                                       ),
@@ -811,8 +854,9 @@ class _HomePageState extends State<HomePage> {
                                         child: InputElement(
                                           accentColor: iconcolor,
                                           controller: _controller
-                                              .weightcontroller.value,
-                                          placeholder: "weight".tr + ", kg",
+                                              .minimumpriceofwaycontroller
+                                              .value,
+                                          placeholder: "minumumwayofprice".tr,
                                           textColor: iconcolor,
                                           cornerradius:
                                               BorderRadius.circular(40),
@@ -820,164 +864,127 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ],
-                                  ),
-                                  Devider(),
-                                  _authcontroller.authType == "driver"
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Icon(
-                                              FontAwesomeIcons.road,
-                                              color: secondarycolor,
-                                              size: subHeadingSize,
-                                            ),
-                                            SizedBox(width: 20),
-                                            SizedBox(
-                                              width: width - 110,
-                                              child: InputElement(
-                                                accentColor: iconcolor,
-                                                controller: _controller
-                                                    .minimumpriceofwaycontroller
-                                                    .value,
-                                                placeholder:
-                                                    "minumumwayofprice".tr,
-                                                textColor: iconcolor,
-                                                cornerradius:
-                                                    BorderRadius.circular(40),
-                                                inputType: TextInputType.number,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : SizedBox(),
-                                  Devider(),
-                                  _authcontroller.authType == "driver"
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Icon(
-                                              FontAwesomeIcons.car,
-                                              color: secondarycolor,
-                                              size: subHeadingSize,
-                                            ),
-                                            SizedBox(width: 20),
-                                            SizedBox(
-                                              width: width - 110,
-                                              child: InputElement(
-                                                accentColor: iconcolor,
-                                                controller: _controller
-                                                    .priceofwaycontroller.value,
-                                                placeholder: "wayofprice".tr,
-                                                textColor: iconcolor,
-                                                cornerradius:
-                                                    BorderRadius.circular(40),
-                                                inputType: TextInputType.number,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : SizedBox(),
-                                  Devider(),
-                                  Row(
+                                  )
+                                : SizedBox(),
+                            Devider(),
+                            _authcontroller.authType == "driver"
+                                ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(width: 10),
                                       Icon(
-                                        FeatherIcons.clock,
+                                        FontAwesomeIcons.car,
                                         color: secondarycolor,
                                         size: subHeadingSize,
                                       ),
                                       SizedBox(width: 20),
-                                      Center(
-                                        child: SizedBox(
-                                          width: width - 70,
-                                          child: GestureDetector(
-                                            onTap: () =>
-                                                _controller.changeindex(1,context),
-                                            child: Container(
-                                              width: 90,
-                                              height: 35,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: primarycolor,
-                                                      style: BorderStyle.solid,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(35),
-                                                  color: _controller
-                                                                  .selectedindex
-                                                                  .value !=
-                                                              null &&
-                                                          _controller
-                                                                  .selectedindex
-                                                                  .value ==
-                                                              1
-                                                      ? primarycolor
-                                                      : whitecolor),
-                                              child: StaticText(
-                                                  color: _controller
-                                                                  .selectedindex
-                                                                  .value !=
-                                                              null &&
-                                                          _controller
-                                                                  .selectedindex
-                                                                  .value ==
-                                                              1
-                                                      ? whitecolor
-                                                      : darkcolor,
-                                                  size: normaltextSize,
-                                                  weight: FontWeight.w500,
-                                                  align: TextAlign.center,
-                                                  text:
-                                                      '${converttimedayandmonth(_controller.fromTime.value)} ${_controller.authtype.value == 'rider' ? "- ${converttimedayandmonth(_controller.toTime.value)}" : ""} '),
-                                            ),
-                                          ),
+                                      SizedBox(
+                                        width: width - 110,
+                                        child: InputElement(
+                                          accentColor: iconcolor,
+                                          controller: _controller
+                                              .priceofwaycontroller.value,
+                                          placeholder: "wayofprice".tr,
+                                          textColor: iconcolor,
+                                          cornerradius:
+                                              BorderRadius.circular(40),
+                                          inputType: TextInputType.number,
                                         ),
                                       ),
                                     ],
+                                  )
+                                : SizedBox(),
+                            Devider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(width: 10),
+                                Icon(
+                                  FeatherIcons.clock,
+                                  color: secondarycolor,
+                                  size: subHeadingSize,
+                                ),
+                                SizedBox(width: 20),
+                                Center(
+                                  child: SizedBox(
+                                    width: width - 70,
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          _controller.changeindex(1, context),
+                                      child: Container(
+                                        width: 90,
+                                        height: 35,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: primarycolor,
+                                                style: BorderStyle.solid,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(35),
+                                            color: _controller.selectedindex
+                                                            .value !=
+                                                        null &&
+                                                    _controller.selectedindex
+                                                            .value ==
+                                                        1
+                                                ? primarycolor
+                                                : whitecolor),
+                                        child: StaticText(
+                                            color: _controller.selectedindex
+                                                            .value !=
+                                                        null &&
+                                                    _controller.selectedindex
+                                                            .value ==
+                                                        1
+                                                ? whitecolor
+                                                : darkcolor,
+                                            size: normaltextSize,
+                                            weight: FontWeight.w500,
+                                            align: TextAlign.center,
+                                            text:
+                                                '${converttimedayandmonth(_controller.fromTimeSelectable.value)} ${_controller.authtype.value == 'rider' ? "- ${converttimedayandmonth(_controller.toTimeSelectable.value)}" : ""} '),
+                                      ),
+                                    ),
                                   ),
-                                  Devider(),
-                                ],
-                              )
-                          ,
+                                ),
+                              ],
+                            ),
+                            Devider(),
+                          ],
+                        ),
                         _controller.searchinglocations.value.length > 0
-    ? SizedBox(
-        height: 200,
-        child: ListView.builder(
-          itemCount: _controller.searchinglocations.value.length,
-          itemBuilder: (context, index) {
-            SearchingLocations searchedlocationitem =
-                _controller.searchinglocations.value[index];
-            if (searchedlocationitem != null) {
-              return Column(
-                children: [
-                  SearchedLocationItems(
-                    searchedlocation: searchedlocationitem,
-                  ),
-                  Divider(
-                    height: 5,
-                  ),
-                ],
-              );
-            } else {
-              return Container(); // Null değerler için boş bir Container döndürün
-            }
-          },
-        ),
-      )
-    : Container(),
-
+                            ? SizedBox(
+                                height: 200,
+                                child: ListView.builder(
+                                  itemCount: _controller
+                                      .searchinglocations.value.length,
+                                  itemBuilder: (context, index) {
+                                    SearchingLocations searchedlocationitem =
+                                        _controller
+                                            .searchinglocations.value[index];
+                                    if (searchedlocationitem != null) {
+                                      return Column(
+                                        children: [
+                                          SearchedLocationItems(
+                                            searchedlocation:
+                                                searchedlocationitem,
+                                          ),
+                                          Divider(
+                                            height: 5,
+                                          ),
+                                        ],
+                                      );
+                                    } else {
+                                      return Container(); // Null değerler için boş bir Container döndürün
+                                    }
+                                  },
+                                ),
+                              )
+                            : Container(),
                         _controller.loading.value == true
                             ? Center(
                                 child: Column(
@@ -1032,6 +1039,7 @@ class _HomePageState extends State<HomePage> {
                                       itemBuilder: (context, index) {
                                         Rides ride =
                                             _controller.data.value[index];
+
                                         String addressText = '';
                                         if (ride.coordinates != null) {
                                           addressText = ride.coordinates!
@@ -1229,11 +1237,14 @@ class _HomePageState extends State<HomePage> {
                               text: _controller.loading.value == true
                                   ? "stopsearching".tr
                                   : _authcontroller.authType == 'rider'
-                                      ? "reservation".tr
+                                      ? "search".tr
                                       : "addroute".tr,
                               width: width - 70,
-                              onPressed: () => _controller.togglesearch(
-                                  "onsearch", context)),
+                              onPressed: () => _controller.authtype.value ==
+                                      "rider"
+                                  ? _controller.togglesearch("onmap", context)
+                                  : _controller.togglesearch(
+                                      "onsearch", context)),
                         ),
                         Devider(),
                       ],

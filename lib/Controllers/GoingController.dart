@@ -51,11 +51,11 @@ class GoingController extends GetxController {
   Rx<bool> loading = Rx<bool>(false);
   final selectedindex = 0.obs;
   final Rx<DateTime> fromTime = DateTime.now().obs;
-  final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 4)).obs;
+  final Rx<DateTime> toTime = DateTime.now().add(Duration(days: 30)).obs;
 
   final Rx<DateTime> fromTimeSelectable = DateTime.now().obs;
   final Rx<DateTime> toTimeSelectable =
-      DateTime.now().add(Duration(days: 4)).obs;
+      DateTime.now().add(Duration(days: 30)).obs;
   Rx<int> selectedplace = Rx<int>(0);
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
   final Completer<GoogleMapController> googlemapcontroller = Completer();
@@ -101,7 +101,9 @@ class GoingController extends GetxController {
         addresscontrollers.value['position_$index'] = TextEditingController();
       }
     }
-    refreshpage.value = false;
+    // Future.delayed(Duration(seconds: 2),(){
+      refreshpage.value = false;
+    // });
   }
 
   @override
@@ -301,7 +303,7 @@ class GoingController extends GetxController {
                             minimumDate: fromTime.value,
                             mode: CupertinoDatePickerMode.dateAndTime,
                             backgroundColor: bodycolor,
-                            maximumDate: fromTime.value.add(Duration(days: 5)),
+                            maximumDate: fromTime.value.add(Duration(days: 30)),
                             initialDateTime: fromTime.value,
                             onDateTimeChanged: (DateTime newDate) {
                               fromTimeSelectable.value = newDate;
@@ -332,7 +334,7 @@ class GoingController extends GetxController {
                                   mode: CupertinoDatePickerMode.dateAndTime,
                                   backgroundColor: bodycolor,
                                   maximumDate:
-                                      toTime.value.add(Duration(days: 5)),
+                                      toTime.value.add(Duration(days: 30)),
                                   initialDateTime: toTime.value,
                                   onDateTimeChanged: (DateTime newDate) {
                                     toTimeSelectable.value = newDate;
@@ -505,6 +507,7 @@ class GoingController extends GetxController {
   void selectplace(index, List places, Rides ride, BuildContext context) {
     selectedindex.value = index;
     if (index == 1) {
+      priceofwaycontroller.value.text=ride.minimalPriceOfWay??ride.priceOfWay;
       showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
@@ -524,7 +527,7 @@ class GoingController extends GetxController {
                   ),
                   Devider(size: 25),
                   Column(
-                    children: groupAndSortPlaces(ride.queries as List<Queries>,
+                    children: groupAndSortPlaces(ride,ride.queries as List<Queries>,
                         places as List<PlacesMark>, context as BuildContext),
                   ),
                   Devider(
@@ -536,12 +539,14 @@ class GoingController extends GetxController {
           });
     } else {
       selectedplace.value = 0;
+      priceofwaycontroller.value.text=ride.priceOfWay??0;
       Get.back();
       lookmore(ride, context);
     }
   }
 
   List<Widget> groupAndSortPlaces(
+    Rides ride,
       List<Queries>? queries, List<PlacesMark> places, context) {
     Map<int, List<PlacesMark>> rowGroups = {};
 
@@ -580,6 +585,7 @@ class GoingController extends GetxController {
 
         return GestureDetector(
           onTap: () {
+            selectedindex.value=1;
             if (place.type == "driver") {
               showToastMSG(errorcolor, "youarenotselectingdriver".tr, context);
             } else {
@@ -594,6 +600,8 @@ class GoingController extends GetxController {
                   }),
                   context);
               Get.back();
+              Get.back();
+              lookmore(ride, context);
             }
           },
           child: Container(
@@ -704,7 +712,7 @@ class GoingController extends GetxController {
       var nextprocess = false;
 
       if (authtype.value == "driver") {
-        if (_automobilscontroller.data.length == 0) {
+        if (_automobilscontroller.data.value.length == 0) {
           nextprocess = false;
           showToastMSG(errorcolor, "add_automobil".tr, context);
           Get.toNamed('/automobils');
@@ -790,15 +798,15 @@ class GoingController extends GetxController {
         var response = await GetAndPost.postData("rides", body, context);
         if (response != null) {
           String status = response['status'];
-          String message = "";
-          if (response['message'] != null) message = response['message'];
           if (status == "success") {
             if (authtype.value == "rider") {
               data.value = [];
               if (response['data'] != null && response['data'].length > 0) {
+                
                 data.value = (response['data'] as List).map((dat) {
                   return Rides.fromMap(dat);
                 }).toList();
+
                 if (data.value.length == 0) {
                   resulttext.value = "nohasdataforallrides".tr;
                 }
@@ -823,10 +831,8 @@ class GoingController extends GetxController {
                 openmodal.value = false;
                 addedsectionshow.value = false;
                 loading.value = false;
-                fromTime.value = DateTime.now();
-                toTime.value = DateTime.now().add(Duration(days: 4));
                 fromTimeSelectable.value = DateTime.now();
-                toTimeSelectable.value = DateTime.now().add(Duration(days: 4));
+                toTimeSelectable.value = DateTime.now().add(Duration(days: 30));
                 goinglocations
                     .removeWhere((element) => element?.type != "position_0");
                 polyline.value = {};
@@ -836,7 +842,9 @@ class GoingController extends GetxController {
                 if (response['data'] != null) {
                   currentrides.value.add(Rides.fromMap(response['data']));
                 }
+                getcurrentposition(context);
                 refreshpage.value = true;
+                getcurrentrides(context);
               }
 
               getcurrentrides(context);
@@ -893,8 +901,10 @@ class GoingController extends GetxController {
 
   void lookmore(Rides ride, BuildContext context) {
     _authController.getalldataoncache(context);
-    priceofwaycontroller.value.text =
-        ride.minimalPriceOfWay ?? ride.priceOfWay!;
+    _automobilscontroller.fetchUserCar(context,ride.userId);
+    if(priceofwaycontroller.value.text==null){
+      priceofwaycontroller.value.text =ride.minimalPriceOfWay ?? ride.priceOfWay!;
+    }
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {

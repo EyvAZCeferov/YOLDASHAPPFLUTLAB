@@ -13,10 +13,9 @@ import '../../../../models/balance_types.dart';
 
 class BalanceCreate extends StatelessWidget {
   final BalanceController _controller = Get.put(BalanceController());
-  
+
   @override
   Widget build(BuildContext context) {
-    _controller.fetchTypes(context);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -40,36 +39,38 @@ class BalanceCreate extends StatelessWidget {
                         itemCount: _controller.balancetypes.length,
                         itemBuilder: (context, index) {
                           final item = _controller.balancetypes[index];
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () => _controller.changeAddType(
-                                    item.type.toString(), context),
-                                child: Container(
-                                  width: width - 40,
-                                  height: 35,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: primarycolor,
-                                          style: BorderStyle.solid,
-                                          width: 1),
-                                      color: _controller.getActiveBgColor(
-                                          item.type.toString())),
-                                  child: StaticText(
-                                    color: _controller.getActiveTextColor(
-                                        item.type.toString()),
-                                    size: normaltextSize,
-                                    align: TextAlign.center,
-                                    weight: FontWeight.w500,
-                                    text: "${item.type}_balance".tr,
+                          if (item.type != 'fromride') {
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _controller.changeAddType(
+                                      item.type.toString(), context),
+                                  child: Container(
+                                    width: width - 40,
+                                    height: 35,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: primarycolor,
+                                            style: BorderStyle.solid,
+                                            width: 1),
+                                        color: _controller.getActiveBgColor(
+                                            item.type.toString())),
+                                    child: StaticText(
+                                      color: _controller.getActiveTextColor(
+                                          item.type.toString()),
+                                      size: normaltextSize,
+                                      align: TextAlign.center,
+                                      weight: FontWeight.w500,
+                                      text: "${item.type}_balance".tr,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Devider(),
-                            ],
-                          );
+                                Devider(),
+                              ],
+                            );
+                          }
                         },
                       ),
                     ),
@@ -110,7 +111,7 @@ class BalanceCreate extends StatelessWidget {
         ));
   }
 
-  Row getDailyOrPersonal(context) {
+  Row? getDailyOrPersonal(context) {
     final width = MediaQuery.of(context).size.width;
     List<BalanceElement>? elements = _controller.selectedType?.value?.elements;
     if (elements == null ||

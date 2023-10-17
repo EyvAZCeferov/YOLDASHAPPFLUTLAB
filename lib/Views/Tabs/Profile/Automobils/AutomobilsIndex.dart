@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:yoldashapp/models/automobils.dart';
 
 import '../../../../Constants/BaseAppBar.dart';
 import '../../../../Constants/Devider.dart';
+import '../../../../Constants/IconButtonElement.dart';
 import '../../../../Constants/LoaderScreen.dart';
 import '../../../../Constants/StaticText.dart';
 import '../../../../Controllers/AutomobilsController.dart';
@@ -54,8 +56,11 @@ class AutomobilsIndex extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ListTile(
-                      leading: CachedNetworkImage(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                       CachedNetworkImage(
                         imageUrl: getimageurl(
                             "models", 'automobils/types', item.autotype!.icon),
                         placeholder: (context, url) =>
@@ -68,22 +73,28 @@ class AutomobilsIndex extends StatelessWidget {
                           backgroundImage: imageProvider,
                         ),
                       ),
-                      title: StaticText(
-                        color: darkcolor,
-                        size: normaltextSize,
-                        text: getLocalizedValue(item.autotype!.name, 'name')
+                        StaticText(
+                          color: darkcolor,
+                          size: normaltextSize,
+                          text: getLocalizedValue(item.autotype!.name, 'name')
                             as String,
-                        weight: FontWeight.w500,
-                        align: TextAlign.left,
-                      ),
-                      subtitle: StaticText(
-                        color: iconcolor,
-                        size: smalltextSize,
-                        text: item.autoSerialNumber as String,
-                        weight: FontWeight.w400,
-                        align: TextAlign.left,
-                      ),
-                      trailing: item.verified == true
+                          weight: FontWeight.w500,
+                          align: TextAlign.left,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            item.id != 0
+                                ? IconButtonElement(
+                                    icon: FontAwesomeIcons.trash,
+                                    onPressed: () => _controller.removeAutomobil(
+                                        item.id, context),
+                                    color: errorcolor,
+                                    size: 18,
+                                  )
+                                : SizedBox(),
+                            item.verified == true
                           ? Radio<bool>(
                               value: true,
                               groupValue: item.selected as bool,
@@ -105,6 +116,9 @@ class AutomobilsIndex extends StatelessWidget {
                               align: TextAlign.center,
                               weight: FontWeight.w500,
                             ),
+                          ],
+                        ),
+                      ],
                     ),
                     Devider(),
                   ],

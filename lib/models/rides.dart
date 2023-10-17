@@ -35,7 +35,7 @@ class Rides {
             ? null
             : List<CoordinatesRides>.from(
                 map['coordinates'].map((e) => CoordinatesRides.fromMap(e))),
-        polylinePoints: (map['polyline_points'] as List<dynamic>)
+        polylinePoints: map['polyline_points']==null ? null : (map['polyline_points'] as List<dynamic>)
             .map((pointList) => pointList
                 .map((point) => double.parse(point.toString()))
                 .toList())
@@ -74,9 +74,9 @@ class Rides {
   final dynamic? durationofway;
   final dynamic? minimalPriceOfWay;
   final dynamic? priceOfWay;
-  final dynamic? paymentMethod;
-  final dynamic? paymentCard;
-  final dynamic? status;
+  final String? paymentMethod;
+  final int? paymentCard;
+  final String? status;
   final dynamic? createdAt;
   final dynamic? updatedAt;
   final dynamic? deletedAt;

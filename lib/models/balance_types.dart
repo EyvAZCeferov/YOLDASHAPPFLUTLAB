@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'automobils.dart';
+
 class BalanceTypes {
   final String? type;
   final List<BalanceElement>? elements;
@@ -22,11 +24,11 @@ class BalanceElement {
   final int? id;
   final Name? name;
   final String? type;
-  final int? price;
+  final dynamic? price;
   final int? order;
-  final int? days;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final dynamic? days;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
   final dynamic? deletedAt;
 
   BalanceElement({
@@ -68,25 +70,3 @@ class BalanceElement {
       };
 }
 
-class Name {
-  final String azName;
-  final String ruName;
-  final String enName;
-  final String trName;
-
-  Name({
-    required this.azName,
-    required this.ruName,
-    required this.enName,
-    required this.trName,
-  });
-
-  factory Name.fromMap(Map<String, dynamic> map) {
-    return Name(
-      azName: map['az_name'],
-      ruName: map['ru_name'],
-      enName: map['en_name'],
-      trName: map['tr_name'],
-    );
-  }
-}
