@@ -162,7 +162,7 @@ class TranslationAdditionals extends Translations {
           'subject': "Mövzu",
           'social_status': "Sosial statusunuz",
           'social_status_telebe': "Tələbə",
-          'social_status_sehid': "Şəhid ailəsi",
+          'social_status_sehid': "Şəhid ailəsi üzvləri",
           'social_status_no': "Heçbiri",
           "choise_cancel_reason": "Ləğv etmə səbəbini seçin",
           "really_delete": "Silməyə əminsiniz? Məlumatlar geri qaytarılmır.",

@@ -41,7 +41,8 @@ class AuthController extends GetxController {
   List social_statuses = ['sehid', 'telebe', ''];
   Rx<String?> socialstatus = Rx<String>('');
   Rx<String?> submitting_document = Rx<String?>(null);
-
+  Rx<String?> human_document = Rx<String?>(null);
+  
   AuthController() {
     init();
   }
@@ -140,9 +141,11 @@ class AuthController extends GetxController {
       final image = File(pickedFile.path);
       var response = await GetAndPost.uploadfile(
           "users_sendphoto/{$type}", image, context);
-      print(response);
+
       if (type == "submitting_document") {
         submitting_document.value = response['data'];
+      }else if (type == "human_document") {
+        human_document.value = response['data'];
       }
     }
   }
@@ -254,6 +257,7 @@ class AuthController extends GetxController {
           'type': authType.value,
           'socialstatus':socialstatus.value??'',
           'submitting_document':submitting_document.value??'',
+          'human_document':human_document.value??'',
           'language': 'az',
         };
 

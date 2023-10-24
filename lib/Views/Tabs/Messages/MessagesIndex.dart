@@ -82,7 +82,7 @@ class MessagesIndex extends StatelessWidget {
                                     imageUrl: getimageurl(
                                         "user",
                                         "users",
-                                        _controller.authtype == 'rider'
+                                        _controller.auth_id.value == item.senderId
                                             ? item.receiverImage ?? null
                                             : item.senderImage ?? null),
                                     placeholder: (context, url) =>

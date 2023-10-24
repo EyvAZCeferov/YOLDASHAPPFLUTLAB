@@ -663,9 +663,7 @@ class HistoryController extends GetxController {
     if ((namesurnamecontroller.value.text != null &&
             namesurnamecontroller.value.text != '' &&
             namesurnamecontroller.value.text != ' ') &&
-        (phonecontroller.value.text != null &&
-            phonecontroller.value.text != '' &&
-            phonecontroller.value.text != ' ') &&
+       
         (priceofwaycontroller.value.text != null &&
             priceofwaycontroller.value.text != '' &&
             priceofwaycontroller.value.text != ' ') &&

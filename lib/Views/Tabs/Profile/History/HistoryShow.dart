@@ -43,7 +43,7 @@ class HistoryShow extends StatelessWidget {
                 text: address.address as String,
                 weight: FontWeight.bold,
               ),
-              Devider(),
+              Devider(size:5),
             ],
           ),
         );
@@ -118,7 +118,7 @@ class HistoryShow extends StatelessWidget {
                             width: width - 40,
                             child: Container(
                               width: width - 40,
-                              height: 160,
+                              height: 130,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
                               margin: EdgeInsets.symmetric(vertical: 8),
@@ -137,7 +137,7 @@ class HistoryShow extends StatelessWidget {
                               ),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Devider(size: 3),
@@ -159,7 +159,7 @@ class HistoryShow extends StatelessWidget {
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.start,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: addressWidgets,
@@ -744,7 +744,7 @@ class HistoryShow extends StatelessWidget {
                                           size: normaltextSize,
                                           weight: FontWeight.w600,
                                           align: TextAlign.left,
-                                          text: "${query!.price} AZN",
+                                          text: "${query!.priceEndirim} AZN",
                                         ),
                                         endirimWidget(query),
                                       ]),

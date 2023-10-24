@@ -136,6 +136,20 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Icon(
+                                      FeatherIcons.clock,
+                                      color: iconcolor,
+                                      size: normaltextSize,
+                                    ),
+                                    SizedBox(width: 4),
+                                    StaticText(
+                                      text: "${convertfromintToTime(ride.startTime)}",
+                                      weight: FontWeight.w500,
+                                      size: smalltextSize,
+                                      color: iconcolor,
+                                      align: TextAlign.left,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Icon(
                                       FeatherIcons.user,
                                       color: iconcolor,
                                       size: normaltextSize,
@@ -489,9 +503,9 @@ class _HomePageState extends State<HomePage> {
                         : Positioned(
                             bottom: 0,
                             left: 20,
-                            width: width - 40,
+                            width: width - 30,
                             child: Container(
-                                height: width,
+                                height: width - 70,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -501,13 +515,13 @@ class _HomePageState extends State<HomePage> {
                                                     .length !=
                                                 null
                                         ? Container(
-                                            height: 170,
+                                            height: 130,
                                             child: getmyroutes(context),
                                           )
                                         : SizedBox(),
                                     Container(
                                       width: width - 40,
-                                      height: width / 2.3,
+                                      height: 140,
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       margin: EdgeInsets.symmetric(vertical: 8),
@@ -688,7 +702,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             SizedBox(
                               width: 47,
-                              height: 120,
+                              height: 100,
                               child: ImageClass(
                                   boxfit: BoxFit.contain,
                                   url: "./assets/images/destinationicon.png",
@@ -698,16 +712,17 @@ class _HomePageState extends State<HomePage> {
                               width: 10,
                             ),
                             Container(
-                              height: 190,
+                              height: 100,
                               width: width - 67,
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                    MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Expanded(
                                     flex: 1,
                                     child: ListView.builder(
+                                      padding: EdgeInsets.zero,
                                       itemCount: _controller
                                           .addresscontrollers.value.length,
                                       itemBuilder: (context, index) {
@@ -718,14 +733,14 @@ class _HomePageState extends State<HomePage> {
                                         if (controllernow != null) {
                                           return Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(bottom: 5),
-                                                height: 55,
+                                                    EdgeInsets.only(bottom: 3),
+                                                height: 45,
                                                 width: width - 120,
                                                 child: InputElement(
                                                   accentColor: iconcolor,
@@ -803,13 +818,46 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         Devider(
-                          size: 5,
+                          size: 3,
+                        ),
+                        _controller.searchinglocations.value.length > 0
+                            ? SizedBox(
+                                height: 360,
+                                child: ListView.builder(
+                                  padding:EdgeInsets.zero,
+                                  itemCount: _controller
+                                      .searchinglocations.value.length,
+                                  itemBuilder: (context, index) {
+                                    SearchingLocations searchedlocationitem =
+                                        _controller
+                                            .searchinglocations.value[index];
+                                    if (searchedlocationitem != null) {
+                                      return Column(
+                                        children: [
+                                          SearchedLocationItems(
+                                            searchedlocation:
+                                                searchedlocationitem,
+                                          ),
+                                          Divider(
+                                            height: 5,
+                                          ),
+                                        ],
+                                      );
+                                    } else {
+                                      return Container(); // Null değerler için boş bir Container döndürün
+                                    }
+                                  },
+                                ),
+                              )
+                            : Container(),
+                        Devider(
+                          size:3
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Devider(),
+                            Devider(size:5),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -817,12 +865,13 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(width: 10),
                                 Icon(
                                   FeatherIcons.briefcase,
-                                  color: secondarycolor,
-                                  size: subHeadingSize,
+                                  color: primarycolor,
+                                  size:buttontextSize,
                                 ),
                                 SizedBox(width: 20),
                                 SizedBox(
                                   width: width - 110,
+                                  height:45,
                                   child: InputElement(
                                     accentColor: iconcolor,
                                     controller:
@@ -835,7 +884,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            Devider(),
+                            Devider(size:5),
                             _authcontroller.authType == "driver"
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -845,12 +894,13 @@ class _HomePageState extends State<HomePage> {
                                       SizedBox(width: 10),
                                       Icon(
                                         FontAwesomeIcons.road,
-                                        color: secondarycolor,
-                                        size: subHeadingSize,
+                                        color: primarycolor,
+                                        size:buttontextSize,
                                       ),
                                       SizedBox(width: 20),
                                       SizedBox(
                                         width: width - 110,
+                                        height:45,
                                         child: InputElement(
                                           accentColor: iconcolor,
                                           controller: _controller
@@ -866,7 +916,7 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   )
                                 : SizedBox(),
-                            Devider(),
+                            Devider(size:5),
                             _authcontroller.authType == "driver"
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -876,12 +926,13 @@ class _HomePageState extends State<HomePage> {
                                       SizedBox(width: 10),
                                       Icon(
                                         FontAwesomeIcons.car,
-                                        color: secondarycolor,
-                                        size: subHeadingSize,
+                                        color: primarycolor,
+                                        size:buttontextSize,
                                       ),
                                       SizedBox(width: 20),
                                       SizedBox(
                                         width: width - 110,
+                                        height:45,
                                         child: InputElement(
                                           accentColor: iconcolor,
                                           controller: _controller
@@ -896,7 +947,7 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   )
                                 : SizedBox(),
-                            Devider(),
+                            Devider(size:5),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -904,19 +955,20 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(width: 10),
                                 Icon(
                                   FeatherIcons.clock,
-                                  color: secondarycolor,
-                                  size: subHeadingSize,
+                                  color: primarycolor,
+                                  size:buttontextSize,
                                 ),
                                 SizedBox(width: 20),
                                 Center(
                                   child: SizedBox(
                                     width: width - 70,
+                                    height: 30,
                                     child: GestureDetector(
                                       onTap: () =>
                                           _controller.changeindex(1, context),
                                       child: Container(
                                         width: 90,
-                                        height: 35,
+                                        height: 30,
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                             border: Border.all(
@@ -953,38 +1005,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            Devider(),
+                            Devider(size:5),
                           ],
                         ),
-                        _controller.searchinglocations.value.length > 0
-                            ? SizedBox(
-                                height: 200,
-                                child: ListView.builder(
-                                  itemCount: _controller
-                                      .searchinglocations.value.length,
-                                  itemBuilder: (context, index) {
-                                    SearchingLocations searchedlocationitem =
-                                        _controller
-                                            .searchinglocations.value[index];
-                                    if (searchedlocationitem != null) {
-                                      return Column(
-                                        children: [
-                                          SearchedLocationItems(
-                                            searchedlocation:
-                                                searchedlocationitem,
-                                          ),
-                                          Divider(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      );
-                                    } else {
-                                      return Container(); // Null değerler için boş bir Container döndürün
-                                    }
-                                  },
-                                ),
-                              )
-                            : Container(),
+                        
                         _controller.loading.value == true
                             ? Center(
                                 child: Column(
@@ -1000,7 +1024,7 @@ class _HomePageState extends State<HomePage> {
                                         url: "./assets/images/searchingcar.png",
                                       ),
                                     ),
-                                    Devider(),
+                                    Devider(size:5),
                                     Center(
                                       child: SizedBox(
                                         width: width - 40,
@@ -1015,7 +1039,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),
-                                    Devider(),
+                                    Devider(size:5),
                                     StaticText(
                                       align: TextAlign.center,
                                       color: darkcolor,

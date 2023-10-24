@@ -231,6 +231,16 @@ String convertStringToTime(timestamp) {
   }
 }
 
+String convertfromintToTime(timestamp) {
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  String day = dateTime.day.toString().padLeft(2, '0');
+  String month = dateTime.month.toString().padLeft(2, '0');
+  int year = dateTime.year;
+  int hour = dateTime.hour;
+  int minute = dateTime.minute;
+  return "${day}.${month}.${year} ${hour}:${minute}";
+}
+
 String convertToSlug(String text) {
   text = text.toLowerCase();
   text = text.replaceAll(RegExp(r'[^a-z0-9\s-]'), '');

@@ -135,7 +135,7 @@ class MessagesShow extends StatelessWidget {
                     imageUrl: getimageurl(
                         "user",
                         "users",
-                        _controller.authtype == 'rider'
+                        _controller.auth_id.value == _controller.selectedMessageGroup.value?.senderId
                             ? _controller.selectedMessageGroup.value
                                     ?.receiverImage ??
                                 null

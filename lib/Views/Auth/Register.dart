@@ -308,7 +308,7 @@ class _RegisterState extends State<Register> {
                                                     ? 'social_status_no'.tr
                                                     : "social_status_$val".tr,
                                                 weight: FontWeight.w500,
-                                                align: TextAlign.left,
+                                              align: TextAlign.left,
                                               ),
                                               trailing: Radio<bool>(
                                                 value: true,
@@ -333,6 +333,21 @@ class _RegisterState extends State<Register> {
                                           }),
                                     ),
                                     Devider(),
+                                    _controller.socialstatus.value != null &&
+                                            _controller.socialstatus.value != ''
+                                        ? DocumentRow(
+                                            title: "Şəxsiyyət vəsiqəsi",
+                                            subtitle: "uploadimage".tr,
+                                            onPressed: () => _controller
+                                                .pickImageTesdigleyici(
+                                                    "human_document",
+                                                    context),
+                                            data: _controller
+                                                .human_document.value,
+                                          )
+                                        : SizedBox(),
+
+                                         Devider(),
                                     _controller.socialstatus.value != null &&
                                             _controller.socialstatus.value != ''
                                         ? DocumentRow(
