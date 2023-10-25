@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final width = MediaQuery.of(context).size.width;
     balancecontroller.fetchData(context);
     _controller.getalldataoncache(context);
-    return Scaffold(
+    return Obx(() =>Scaffold(
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
             backbutton: false,
@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
             titlebg: false,
             authtype: _controller.authType.value ?? 'rider',
             changeprofpage: () => _controller.changeprofpage(context)),
-        body: Obx(() => _controller.refreshpage.value == true
+        body: _controller.refreshpage.value == true
             ? LoaderScreen()
             : SingleChildScrollView(
                 controller: ScrollController(),
@@ -226,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Devider(),
                   ],
                 ),
-              )),
+              ),
         bottomNavigationBar: Container(
           height: 60,
           margin: EdgeInsets.only(bottom: 15),
@@ -239,6 +239,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(45),
                 onPressed: () => _controller.logout(context)),
           ),
-        ));
+        )));
   }
 }

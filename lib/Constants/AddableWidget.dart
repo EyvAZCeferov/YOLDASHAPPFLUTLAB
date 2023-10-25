@@ -116,8 +116,8 @@ class _AddableWidgetState extends State<AddableWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                      width: 80,
-                      height: 40,
+                      width: 50,
+                      height: 25,
                       margin: EdgeInsets.only(right: 10),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -129,7 +129,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(FontAwesomeIcons.plus,
-                          color: secondarycolor, size: subHeadingSize)),
+                          color: secondarycolor, size: normaltextSize)),
                   StaticText(
                     color: iconcolor,
                     size: normaltextSize,
@@ -155,6 +155,7 @@ class _AddableWidgetState extends State<AddableWidget> {
           () => _cardscontroller.refreshpage.value == true
               ? LoaderScreen()
               : ListView.builder(
+                padding: EdgeInsets.zero,
                   itemCount: _cardscontroller.data.length,
                   itemBuilder: (context, index) {
                     final item = _cardscontroller.data[index];
@@ -167,8 +168,8 @@ class _AddableWidgetState extends State<AddableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                                width: 80,
-                                height: 60,
+                                width: 55,
+                                height: 35,
                                 margin: EdgeInsets.only(right: 10),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
@@ -179,7 +180,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                                     fontawesome(item.cardtype ?? 'visa')
                                         as IconData?,
                                     color: secondarycolor,
-                                    size: headingSize)),
+                                    size: subHeadingSize)),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,8 +229,8 @@ class _AddableWidgetState extends State<AddableWidget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: 80,
-                              height: 60,
+                              width: 55,
+                              height: 35,
                               margin: EdgeInsets.only(right: 10),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -247,7 +248,7 @@ class _AddableWidgetState extends State<AddableWidget> {
                                     CircleAvatar(
                                   backgroundColor: primarycolor,
                                   foregroundColor: whitecolor,
-                                  radius: 35,
+                                  radius: 28,
                                   backgroundImage: imageProvider,
                                 ),
                               ),
