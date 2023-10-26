@@ -1,3 +1,4 @@
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
@@ -32,213 +33,230 @@ class _ProfilePageState extends State<ProfilePage> {
     final width = MediaQuery.of(context).size.width;
     balancecontroller.fetchData(context);
     _controller.getalldataoncache(context);
-    return Obx(() =>Scaffold(
-        backgroundColor: bodycolor,
-        appBar: BaseAppBar(
-            backbutton: false,
-            title: "myaccount".tr,
-            changeprof: true,
-            titlebg: false,
-            authtype: _controller.authType.value ?? 'rider',
-            changeprofpage: () => _controller.changeprofpage(context)),
-        body: _controller.refreshpage.value == true
-            ? LoaderScreen()
-            : SingleChildScrollView(
-                controller: ScrollController(),
-                physics: ScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  textBaseline: TextBaseline.alphabetic,
-                  textDirection: TextDirection.ltr,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    Center(
-                      child: Container(
-                        height: width / 4,
-                        width: width - 40,
-                        alignment: Alignment.center,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                            color: whitecolor,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                blurStyle: BlurStyle.solid,
-                                color: Colors.black38,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                                spreadRadius: 0,
-                              )
-                            ]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: getimageurl(
-                                  "user",
-                                  'users',
-                                  _controller
-                                      .userdatas.value?.additionalinfo?.image),
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              imageBuilder: (context, imageProvider) =>
-                                  CircleAvatar(
-                                backgroundColor: primarycolor,
-                                foregroundColor: whitecolor,
-                                radius: 35,
-                                backgroundImage: imageProvider,
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+    return DoubleBackToCloseApp(
+        snackBar: const SnackBar(
+          content: StaticText(
+              align: TextAlign.center,
+              textOverflow: TextOverflow.ellipsis,
+              text: "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
+              weight: FontWeight.bold,
+              size: smalltextSize,
+                  color: whitecolor),
+        ),
+        child: Obx(() => Scaffold(
+            backgroundColor: bodycolor,
+            appBar: BaseAppBar(
+                backbutton: false,
+                title: "myaccount".tr,
+                changeprof: true,
+                titlebg: false,
+                authtype: _controller.authType.value ?? 'rider',
+                changeprofpage: () => _controller.changeprofpage(context)),
+            body: _controller.refreshpage.value == true
+                ? LoaderScreen()
+                : SingleChildScrollView(
+                    controller: ScrollController(),
+                    physics: ScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      textBaseline: TextBaseline.alphabetic,
+                      textDirection: TextDirection.ltr,
+                      verticalDirection: VerticalDirection.down,
+                      children: [
+                        Center(
+                          child: Container(
+                            height: width / 4,
+                            width: width - 40,
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: whitecolor,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    blurStyle: BlurStyle.solid,
+                                    color: Colors.black38,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                    spreadRadius: 0,
+                                  )
+                                ]),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    StaticText(
-                                        text: _controller
-                                                .userdatas.value?.nameSurname ??
-                                            '',
-                                        weight: FontWeight.bold,
-                                        size: normaltextSize,
-                                        color: darkcolor),
-                                    IconButtonElement(
-                                        color: secondarycolor,
-                                        size: buttontextSize,
-                                        icon: FeatherIcons.edit2,
-                                        onPressed: () =>
-                                            Get.toNamed("/profileinformation"))
-                                  ],
+                                CachedNetworkImage(
+                                  imageUrl: getimageurl(
+                                      "user",
+                                      'users',
+                                      _controller.userdatas.value
+                                          ?.additionalinfo?.image),
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                  imageBuilder: (context, imageProvider) =>
+                                      CircleAvatar(
+                                    backgroundColor: primarycolor,
+                                    foregroundColor: whitecolor,
+                                    radius: 35,
+                                    backgroundImage: imageProvider,
+                                  ),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      FeatherIcons.phone,
-                                      color: secondarycolor,
-                                      size: normaltextSize,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        StaticText(
+                                            text: _controller.userdatas.value
+                                                    ?.nameSurname ??
+                                                '',
+                                            weight: FontWeight.bold,
+                                            size: normaltextSize,
+                                            color: darkcolor),
+                                        IconButtonElement(
+                                            color: secondarycolor,
+                                            size: buttontextSize,
+                                            icon: FeatherIcons.edit2,
+                                            onPressed: () => Get.toNamed(
+                                                "/profileinformation"))
+                                      ],
                                     ),
-                                    StaticText(
-                                        text: _controller.userdatas.value!.phone
-                                                .toString() ??
-                                            '',
-                                        weight: FontWeight.w400,
-                                        size: smalltextSize,
-                                        color: Colors.grey),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          FeatherIcons.phone,
+                                          color: secondarycolor,
+                                          size: normaltextSize,
+                                        ),
+                                        StaticText(
+                                            text: _controller
+                                                    .userdatas.value!.phone
+                                                    .toString() ??
+                                                '',
+                                            weight: FontWeight.w400,
+                                            size: smalltextSize,
+                                            color: Colors.grey),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
+                          ),
+                        ),
+                        Devider(
+                          size: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Devider(),
+                            _controller.authType.value == "driver"
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => Get.toNamed('/balance'),
+                                        child: Container(
+                                          width: width - 50,
+                                          alignment: Alignment.center,
+                                          height: 80,
+                                          decoration: BoxDecoration(
+                                              color: whitecolor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: <BoxShadow>[
+                                                BoxShadow(
+                                                  blurStyle: BlurStyle.solid,
+                                                  color: Colors.black38,
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 4),
+                                                  spreadRadius: 0,
+                                                )
+                                              ]),
+                                          child: balancecontroller
+                                                      .refreshpage.value ==
+                                                  true
+                                              ? LoaderScreen()
+                                              : Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    StaticText(
+                                                      color: darkcolor,
+                                                      size: buttontextSize,
+                                                      weight: FontWeight.w600,
+                                                      align: TextAlign.center,
+                                                      text:
+                                                          "${balancecontroller.totalprice.value} AZN",
+                                                    ),
+                                                    StaticText(
+                                                      color: darkcolor,
+                                                      size: smalltextSize,
+                                                      weight: FontWeight.w400,
+                                                      align: TextAlign.center,
+                                                      text: "balance".tr,
+                                                    ),
+                                                  ],
+                                                ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : SizedBox(),
+                            Devider(size: 20),
+                            AddableWidget(type: 'cards', width: width),
+                            Devider(size: 20),
+                            _controller.authType.value == "driver"
+                                ? AddableWidget(
+                                    width: width,
+                                    type: 'automobils',
+                                  )
+                                : SizedBox(),
+                            Devider()
                           ],
                         ),
-                      ),
-                    ),
-                    Devider(
-                      size: 10,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
                         Devider(),
-                        _controller.authType.value == "driver"
-                            ? Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => Get.toNamed('/balance'),
-                                    child: Container(
-                                      width: width - 50,
-                                      alignment: Alignment.center,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                          color: whitecolor,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: <BoxShadow>[
-                                            BoxShadow(
-                                              blurStyle: BlurStyle.solid,
-                                              color: Colors.black38,
-                                              blurRadius: 10,
-                                              offset: Offset(0, 4),
-                                              spreadRadius: 0,
-                                            )
-                                          ]),
-                                      child: balancecontroller
-                                                  .refreshpage.value ==
-                                              true
-                                          ? LoaderScreen()
-                                          : Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                StaticText(
-                                                  color: darkcolor,
-                                                  size: buttontextSize,
-                                                  weight: FontWeight.w600,
-                                                  align: TextAlign.center,
-                                                  text:
-                                                      "${balancecontroller.totalprice.value} AZN",
-                                                ),
-                                                StaticText(
-                                                  color: darkcolor,
-                                                  size: smalltextSize,
-                                                  weight: FontWeight.w400,
-                                                  align: TextAlign.center,
-                                                  text: "balance".tr,
-                                                ),
-                                              ],
-                                            ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : SizedBox(),
-                        Devider(size: 20),
-                        AddableWidget(type: 'cards', width: width),
-                        Devider(size: 20),
-                        _controller.authType.value == "driver"
-                            ? AddableWidget(
-                                width: width,
-                                type: 'automobils',
-                              )
-                            : SizedBox(),
-                        Devider()
+                        build_menu_items(_controller.authType.value),
+                        Devider(),
                       ],
                     ),
-                    Devider(),
-                    build_menu_items(_controller.authType.value),
-                    Devider(),
-                  ],
-                ),
+                  ),
+            bottomNavigationBar: Container(
+              height: 60,
+              margin: EdgeInsets.only(bottom: 15),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ButtonElement(
+                    text: "logout".tr,
+                    height: 50,
+                    width: width - 100,
+                    borderRadius: BorderRadius.circular(45),
+                    onPressed: () => _controller.logout(context)),
               ),
-        bottomNavigationBar: Container(
-          height: 60,
-          margin: EdgeInsets.only(bottom: 15),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ButtonElement(
-                text: "logout".tr,
-                height: 50,
-                width: width - 100,
-                borderRadius: BorderRadius.circular(45),
-                onPressed: () => _controller.logout(context)),
-          ),
-        )));
+            ))));
   }
 }

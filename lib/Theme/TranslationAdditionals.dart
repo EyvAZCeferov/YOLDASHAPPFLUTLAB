@@ -168,6 +168,7 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Silməyə əminsiniz? Məlumatlar geri qaytarılmır.",
           "really_delete_yes": "Bəli",
           "really_delete_no": "Xeyr",
+          "proqramexit":"Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun."
         },
         'ru_RU': {
           'login': 'Входить',
@@ -335,6 +336,7 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Вы уверены, что хотите удалить? Данные не возвращаются.",
           "really_delete_yes": "Да",
           "really_delete_no": "Нет",
+          "proqramexit":"Дважды нажмите кнопку «Назад», чтобы выйти из приложения."
         },
         'en_EN': {
           'login': 'Login',
@@ -502,6 +504,7 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Are you sure to delete? Data is not returned.",
           "really_delete_yes": "Yes",
           "really_delete_no": "No",
+          "programexit":"Tap the back button twice to exit the application."
         },
         'tr_TR': {
           'login': 'Giriş yapın',
@@ -668,6 +671,7 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Silmek istediğinizden emin misiniz? Veriler döndürülmedi.",
           "really_delete_yes": "Evet",
           "really_delete_no": "Hayır",
+          "programexit":"Uygulamadan çıkmak için geri düğmesine iki kez dokunun."
         },
       };
 }

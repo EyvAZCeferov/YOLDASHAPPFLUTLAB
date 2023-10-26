@@ -1,3 +1,4 @@
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -43,114 +44,118 @@ class _VerificationCodeState extends State<VerificationCode> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: bodycolor,
-      resizeToAvoidBottomInset: false,
-      appBar: BaseAppBar(
-        backbutton: true,
-      ),
-      body:
-          //  Obx(
-          //   () =>
-
-          // _controller.refreshpage.value == true
-          //     ? LoaderScreen()
-          //     :
-
-          SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          verticalDirection: VerticalDirection.down,
-          children: [
-            StaticText(
-                text: "enter_verification_code".tr,
-                weight: FontWeight.w500,
-                size: buttontextSize,
+        backgroundColor: bodycolor,
+        resizeToAvoidBottomInset: false,
+        appBar: BaseAppBar(
+          backbutton: true,
+        ),
+        body: DoubleBackToCloseApp(
+          snackBar: const SnackBar(
+            content: StaticText(
                 align: TextAlign.center,
-                color: darkcolor),
-            Devider(size: 10),
-            StaticText(
-                text: "sendedcodephone".trParams({'phoneNumber': phoneNumber}),
-                weight: FontWeight.w400,
+                textOverflow: TextOverflow.ellipsis,
+                text:
+                    "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
+                weight: FontWeight.bold,
                 size: smalltextSize,
-                align: TextAlign.center,
-                color: Colors.grey),
-            Devider(size: 10),
-            Container(
-              width: width - 40,
-              alignment: Alignment.center,
-              child: PinCodeTextField(
-                length: 4,
-                obscureText: false,
-                appContext: context,
-                animationType: AnimationType.scale,
-                pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(15),
-                    fieldHeight: 58,
-                    fieldWidth: 71,
-                    activeFillColor: secondarycolor,
-                    activeBorderWidth: 1,
-                    activeColor: whitecolor,
-                    borderWidth: 1,
-                    disabledColor: bodycolor,
-                    inactiveColor: whitecolor,
-                    errorBorderColor: errorcolor,
-                    errorBorderWidth: 1,
-                    inactiveFillColor: whitecolor,
-                    selectedColor: whitecolor,
-                    selectedFillColor: secondarycolor,
-                    selectedBorderWidth: 1,
-                    inactiveBorderWidth: 1,
-                    disabledBorderWidth: 1),
-                animationDuration: Duration(milliseconds: 300),
-                backgroundColor: bodycolor,
-                enableActiveFill: true,
-                controller: pincontroller,
-                onCompleted: (v) {
-                  _controller.verifycode(
-                      pincontroller.text, phoneNumber, context);
-                },
-                beforeTextPaste: (text) {
-                  return true;
-                },
-                autoFocus: true,
-              ),
-            ),
-            Devider(size: 10),
-            Row(
+                  color: whitecolor),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
+              verticalDirection: VerticalDirection.down,
               children: [
                 StaticText(
-                    text: 'dontgetcode'.tr,
+                    text: "enter_verification_code".tr,
+                    weight: FontWeight.w500,
+                    size: buttontextSize,
+                    align: TextAlign.center,
+                    color: darkcolor),
+                Devider(size: 10),
+                StaticText(
+                    text: "sendedcodephone"
+                        .trParams({'phoneNumber': phoneNumber}),
                     weight: FontWeight.w400,
                     size: smalltextSize,
-                    color: darkcolor),
-                TextButtonElement(
-                    text: "resend".tr,
-                    width: 140,
-                    borderRadius: BorderRadius.zero,
-                    bgColor: bodycolor,
-                    textColor: secondarycolor,
-                    onPressed: () {
-                      pincontroller.text = "";
-                      _controller.resendcode(phoneNumber, context);
-                    }),
+                    align: TextAlign.center,
+                    color: Colors.grey),
+                Devider(size: 10),
+                Container(
+                  width: width - 40,
+                  alignment: Alignment.center,
+                  child: PinCodeTextField(
+                    length: 4,
+                    obscureText: false,
+                    appContext: context,
+                    animationType: AnimationType.scale,
+                    pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(15),
+                        fieldHeight: 58,
+                        fieldWidth: 71,
+                        activeFillColor: secondarycolor,
+                        activeBorderWidth: 1,
+                        activeColor: whitecolor,
+                        borderWidth: 1,
+                        disabledColor: bodycolor,
+                        inactiveColor: whitecolor,
+                        errorBorderColor: errorcolor,
+                        errorBorderWidth: 1,
+                        inactiveFillColor: whitecolor,
+                        selectedColor: whitecolor,
+                        selectedFillColor: secondarycolor,
+                        selectedBorderWidth: 1,
+                        inactiveBorderWidth: 1,
+                        disabledBorderWidth: 1),
+                    animationDuration: Duration(milliseconds: 300),
+                    backgroundColor: bodycolor,
+                    enableActiveFill: true,
+                    controller: pincontroller,
+                    onCompleted: (v) {
+                      _controller.verifycode(
+                          pincontroller.text, phoneNumber, context);
+                    },
+                    beforeTextPaste: (text) {
+                      return true;
+                    },
+                    autoFocus: true,
+                  ),
+                ),
+                Devider(size: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    StaticText(
+                        text: 'dontgetcode'.tr,
+                        weight: FontWeight.w400,
+                        size: smalltextSize,
+                        color: darkcolor),
+                    TextButtonElement(
+                        text: "resend".tr,
+                        width: 140,
+                        borderRadius: BorderRadius.zero,
+                        bgColor: bodycolor,
+                        textColor: secondarycolor,
+                        onPressed: () {
+                          pincontroller.text = "";
+                          _controller.resendcode(phoneNumber, context);
+                        }),
+                  ],
+                ),
+                Devider(size: 80),
+                ButtonElement(
+                    text: "submit".tr,
+                    height: 50,
+                    width: width - 40,
+                    borderRadius: BorderRadius.circular(45),
+                    onPressed: () => _controller.verifycode(
+                        pincontroller.text, phoneNumber, context)),
+                Devider(size: 10),
               ],
             ),
-            Devider(size: 80),
-            ButtonElement(
-                text: "submit".tr,
-                height: 50,
-                width: width - 40,
-                borderRadius: BorderRadius.circular(45),
-                onPressed: () => _controller.verifycode(
-                    pincontroller.text, phoneNumber, context)),
-            Devider(size: 10),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

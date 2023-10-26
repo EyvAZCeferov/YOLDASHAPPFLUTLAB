@@ -1,4 +1,5 @@
 import 'package:dash_flags/dash_flags.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
@@ -34,7 +35,17 @@ class _RegisterState extends State<Register> {
         body: SingleChildScrollView(
           child: Container(
             color: bodycolor,
-            child: Obx(
+            child:DoubleBackToCloseApp(
+            snackBar: const SnackBar(
+              content:  StaticText(
+                align: TextAlign.center,
+                textOverflow: TextOverflow.ellipsis,
+                  text: "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
+                  weight: FontWeight.bold,
+                  size: smalltextSize,
+                  color: whitecolor),
+            ),
+            child:  Obx(
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
                   : Center(
@@ -700,7 +711,7 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
             ),
-          ),
+          )),
         ));
   }
 }
