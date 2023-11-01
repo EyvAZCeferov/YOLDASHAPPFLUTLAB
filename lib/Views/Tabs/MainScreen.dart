@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../Constants/StaticText.dart';
+import '../../Controllers/MessagesController.dart';
 import '../../Theme/ThemeService.dart';
 import 'Home/HomePage.dart';
 import 'Messages/MessagesIndex.dart';
@@ -14,91 +16,113 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  int currentIndex = 0;
+  Function? onTap;
+  final MessagesController _controller = Get.put(MessagesController());
 
   final List<Widget> _pages = [
     HomePage(),
     MessagesIndex(),
-    // Logistics(),
     ProfilePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    _controller.getMessages(context,null);
     return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            tooltip: 'departure'.tr,
-            icon: Icon(
-              FontAwesomeIcons.road,
+        body: _pages[currentIndex],
+        bottomNavigationBar: Obx(()=>
+           BottomNavigationBar(
+            currentIndex: currentIndex,
+            onTap: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+            },
+            items: [
+              buildBottomNavigationBarItem(
+                  FontAwesomeIcons.road, 'departure'.tr, 0),
+              buildBottomNavigationBarItem(
+                  FontAwesomeIcons.message, 'chat'.tr, 1),
+              buildBottomNavigationBarItem(FeatherIcons.user, 'profile'.tr, 2),
+            ],
+            backgroundColor: whitecolor,
+            elevation: 10,
+            iconSize: subHeadingSize,
+            fixedColor: iconcolor,
+            selectedIconTheme: IconThemeData(
+              color: primarycolor,
+              opacity: 1,
             ),
-            label: 'departure'.tr,
+            landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            unselectedIconTheme: IconThemeData(color: iconcolor, opacity: 1),
+            selectedLabelStyle: TextStyle(
+                color: primarycolor,
+                backgroundColor: Colors.transparent,
+                decoration: TextDecoration.none,
+                decorationColor: primarycolor,
+                decorationStyle: TextDecorationStyle.solid,
+                decorationThickness: 0,
+                fontSize: icontextSize,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 1,
+                overflow: TextOverflow.ellipsis,
+                wordSpacing: 5,
+                textBaseline: TextBaseline.alphabetic,
+                height: 1.5),
+            unselectedLabelStyle: TextStyle(
+                color: secondarycolor,
+                backgroundColor: Colors.transparent,
+                decoration: TextDecoration.none,
+                decorationColor: primarycolor,
+                decorationStyle: TextDecorationStyle.solid,
+                decorationThickness: 0,
+                fontSize: icontextSize,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 1,
+                overflow: TextOverflow.ellipsis,
+                wordSpacing: 1,
+                textBaseline: TextBaseline.alphabetic,
+                height: 1.5),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.message),
-            label: 'chat'.tr,
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(FeatherIcons.package),
-          //   label: 'logistic'.tr,
-          // ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.user),
-            label: 'profile'.tr,
-          ),
+        ));
+  }
+
+  BottomNavigationBarItem buildBottomNavigationBarItem(
+      IconData icon, String label, int index) {
+    return BottomNavigationBarItem(
+      tooltip: label,
+      icon: Stack(
+        children: [
+          Icon(icon),
+          if (index == 1 && _controller.countunreadmessages>0)
+            Positioned(
+              right: 0,
+              top: -5,
+              child: Container(
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: StaticText(
+                  text: _controller.countunreadmessages.toString(),
+                  color: whitecolor,
+                  size: 13,
+                  weight: FontWeight.w500,
+                  align: TextAlign.right,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
         ],
-        backgroundColor: whitecolor,
-        elevation: 10,
-        iconSize: subHeadingSize,
-        fixedColor: iconcolor,
-        selectedIconTheme: IconThemeData(
-          color: primarycolor,
-          opacity: 1,
-        ),
-        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        unselectedIconTheme: IconThemeData(color: iconcolor, opacity: 1),
-        selectedLabelStyle: TextStyle(
-            color: primarycolor,
-            backgroundColor: Colors.transparent,
-            decoration: TextDecoration.none,
-            decorationColor: primarycolor,
-            decorationStyle: TextDecorationStyle.solid,
-            decorationThickness: 0,
-            fontSize: icontextSize,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 1,
-            overflow: TextOverflow.ellipsis,
-            wordSpacing: 5,
-            textBaseline: TextBaseline.alphabetic,
-            height: 1.5),
-        unselectedLabelStyle: TextStyle(
-            color: secondarycolor,
-            backgroundColor: Colors.transparent,
-            decoration: TextDecoration.none,
-            decorationColor: primarycolor,
-            decorationStyle: TextDecorationStyle.solid,
-            decorationThickness: 0,
-            fontSize: icontextSize,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 1,
-            overflow: TextOverflow.ellipsis,
-            wordSpacing: 1,
-            textBaseline: TextBaseline.alphabetic,
-            height: 1.5),
       ),
+      label: label,
     );
   }
 }

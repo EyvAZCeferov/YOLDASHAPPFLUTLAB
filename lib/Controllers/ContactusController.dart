@@ -5,8 +5,11 @@ import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/settings.dart';
+import 'MainController.dart';
 
 class ContactusController extends GetxController {
+  late MainController _maincontroller = Get.put(MainController());
+
   Rx<bool> refreshpage = Rx<bool>(false);
   Rx<Settings?> settingModel = Rx<Settings?>(null);
   Rx<TextEditingController> emailcontroller =
@@ -20,6 +23,7 @@ class ContactusController extends GetxController {
   Rx<TextEditingController> messagecontroller =
       Rx<TextEditingController>(TextEditingController());
       Rx<String> responseanswer=Rx<String>('');
+  Rx<int?> auth_id = Rx<int?>(null);
 
   Future<void> fetchSettings() async {
     try {
@@ -48,6 +52,11 @@ class ContactusController extends GetxController {
       print(e.toString());
     }
   }
+
+void getAuthId() async {
+    auth_id.value = await _maincontroller.getstoragedat('auth_id') ?? '';
+  }
+
 
   Future<void> sendmessage(context) async {
     refreshpage.value = true;
@@ -86,7 +95,7 @@ class ContactusController extends GetxController {
           namesurnamecontroller.value.text.trim().isNotEmpty &&
           namesurnamecontroller.value.text != '' &&
           namesurnamecontroller.value.text != ' ') {
-        body['namesurname'] = namesurnamecontroller.value.text;
+        body['name'] = namesurnamecontroller.value.text;
       }
 
       if (messagecontroller.value.text != null &&
@@ -96,8 +105,11 @@ class ContactusController extends GetxController {
         body['message'] = messagecontroller.value.text;
       }
 
-    
-      
+      if (auth_id.value != null &&
+          auth_id.value != '' &&
+          auth_id.value != ' ') {
+        body['user_id'] = auth_id.value;
+      }
 
       var response = await GetAndPost.postData("https://yoldash.app/contact", body, context);
       if (response != null) {

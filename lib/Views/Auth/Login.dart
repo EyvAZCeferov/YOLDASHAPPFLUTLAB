@@ -11,7 +11,6 @@ import '../../Constants/LoaderScreen.dart';
 import '../../Constants/StaticText.dart';
 import '../../Constants/TextButton.dart';
 import '../../Controllers/AuthController.dart';
-import '../../Functions/OnWillPopScope.dart';
 import '../../Theme/ThemeService.dart';
 
 class Login extends StatefulWidget {
@@ -35,7 +34,7 @@ class _LoginState extends State<Login> {
                 textOverflow: TextOverflow.ellipsis,
                   text: "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
                   weight: FontWeight.bold,
-                  size: smalltextSize,
+                  size: 12,
                   color: whitecolor),
             ),
             child: Obx(

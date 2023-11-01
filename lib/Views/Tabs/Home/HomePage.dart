@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                 text:
                     "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
                 weight: FontWeight.bold,
-size: smalltextSize,
+                size: 12,
                   color: whitecolor),
           ),
           child: Obx(

@@ -57,7 +57,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                 text:
                     "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
                 weight: FontWeight.bold,
-                size: smalltextSize,
+                size: 12,
                   color: whitecolor),
           ),
           child: SingleChildScrollView(

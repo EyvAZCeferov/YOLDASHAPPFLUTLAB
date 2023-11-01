@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
               textOverflow: TextOverflow.ellipsis,
               text: "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
               weight: FontWeight.bold,
-              size: smalltextSize,
+              size: 12,
                   color: whitecolor),
         ),
         child: Obx(() => Scaffold(

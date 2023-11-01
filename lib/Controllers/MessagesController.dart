@@ -46,17 +46,18 @@ class MessagesController extends GetxController {
     zoom: 17.4746,
   );
   WebSocketChannel? channel;
+  Rx<int> countunreadmessages = 0.obs;
 
   MessagesController() {
     getAuthId();
   }
 
-   void dispose() {
+  void dispose() {
     selectedMessageGroup.value = MessageGroups();
     selectedMessageLists.clear();
     getMessages(null, null);
     Get.back();
-   }
+  }
 
   void connectandreadsocket() async {
     final wsUrl = Uri.parse('ws://localhost:1234');
@@ -124,6 +125,7 @@ class MessagesController extends GetxController {
       refreshpage.value = true;
       Map<String, dynamic> body = {};
       var response;
+
       if (selectedGroupId != null && selectedGroupId > 0) {
         response =
             await GetAndPost.fetchData("chats/$selectedGroupId", context, body);
@@ -135,16 +137,22 @@ class MessagesController extends GetxController {
         String message = "";
         if (response['message'] != null) message = response['message'];
         if (status == "success") {
+          countunreadmessages.value = 0;
           if (response['data'] != null) {
             if (selectedGroupId != null && selectedGroupId > 0) {
               selectedMessageGroup.value =
                   MessageGroups.fromMap(response['data']);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
-                  scrollDown();
+              scrollDown();
             } else {
               data.value = (response['data'] as List).map((dat) {
-                return MessageGroups.fromMap(dat);
+                MessageGroups messagegroup = MessageGroups.fromMap(dat);
+
+                countunreadmessages.value += countMessageUnread(
+                    messagegroup.messages as List<Messages>,
+                    auth_id.value as int);
+                return messagegroup;
               }).toList();
             }
           }
@@ -304,10 +312,9 @@ class MessagesController extends GetxController {
 
   void scrollDown() {
     scrollController.animateTo(
-      scrollController.position.maxScrollExtent+150,
+      scrollController.position.maxScrollExtent + 150,
       duration: Duration(seconds: 2),
       curve: Curves.fastOutSlowIn,
-      
     );
   }
 

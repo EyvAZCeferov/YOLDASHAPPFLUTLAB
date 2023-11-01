@@ -10,7 +10,6 @@ import '../../../Constants/LoaderScreen.dart';
 import '../../../Constants/StaticText.dart';
 import '../../../Controllers/AuthController.dart';
 import '../../../Controllers/MessagesController.dart';
-import '../../../Functions/OnWillPopScope.dart';
 import '../../../Functions/helpers.dart';
 import '../../../Theme/ThemeService.dart';
 
@@ -43,9 +42,10 @@ class MessagesIndex extends StatelessWidget {
                 text:
                     "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
                 weight: FontWeight.bold,
-                size: smalltextSize,
+                size: 12,
                   color: whitecolor),
           ),
+
           child: Obx(() => _controller.refreshpage.value == true
               ? LoaderScreen()
               : _controller.data.length > 0
