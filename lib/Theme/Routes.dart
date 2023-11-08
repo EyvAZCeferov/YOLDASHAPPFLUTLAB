@@ -5,6 +5,7 @@ import '../Controllers/CallingController.dart';
 import '../Controllers/CardsController.dart';
 import '../Controllers/HistoryController.dart';
 import '../Controllers/MessagesController.dart';
+import '../Functions/VideoAndVoiceCall.dart';
 import '../Views/Auth/Login.dart';
 import '../Views/Auth/Register.dart';
 import '../Views/Auth/VerificationCode.dart';
@@ -113,7 +114,7 @@ final List<GetPage> Routes = [
   ),
   GetPage(
     name: '/callpage/:type',
-    page: () => CallPage(),
+    page: () => VideoAndVoiceCall(),
     binding: BindingsBuilder(() {
       Get.put(CallingController());
     }),

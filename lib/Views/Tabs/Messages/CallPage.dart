@@ -8,11 +8,8 @@ import '../../../Controllers/CallingController.dart';
 import '../../../Theme/ThemeService.dart';
 
 class CallPage extends StatelessWidget {
-  final String type;
   final CallingController _controller = Get.put(CallingController());
-  final String? typepage =
-      Get.arguments != null ? Get.arguments['type'] as String : 'calling';
-  CallPage({Key? key, this.type = 'calling'}) : super(key: key);
+  CallPage({Key? key}) : super(key: key);
 
   Widget _toolbar(width) {
     return Center(
@@ -54,19 +51,19 @@ class CallPage extends StatelessWidget {
                   size: headingSize,
                 ),
               ),
-              type == "video"
+              _controller.type.value == "video"
                   ? RawMaterialButton(
                       onPressed: () => print("flip cam"),
                       animationDuration: Duration(milliseconds: 300),
                       elevation: 2,
-                      fillColor: errorcolor,
+                      fillColor: iconcolor,
                       shape: const CircleBorder(),
-                      padding: EdgeInsets.all(25),
+                      padding: EdgeInsets.all(15),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       child: Icon(
                         FeatherIcons.refreshCw,
                         color: whitecolor,
-                        size: headingSize,
+                        size: buttontextSize,
                       ),
                     )
                   : SizedBox(
@@ -80,8 +77,7 @@ class CallPage extends StatelessWidget {
   }
 
   Center containerArea(width) {
-    final String type = _controller.type.value;
-    if (type == "video") {
+    if (_controller.type.value == "video") {
       return Center(
         child: Container(
           width: width - 40,
@@ -135,7 +131,6 @@ class CallPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: bodycolor,

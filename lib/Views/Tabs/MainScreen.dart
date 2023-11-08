@@ -102,10 +102,10 @@ class _MainScreenState extends State<MainScreen> {
           Icon(icon),
           if (index == 1 && _controller.countunreadmessages>0)
             Positioned(
-              right: 0,
-              top: -5,
+              left: 0,
+              top: -6,
               child: Container(
-                padding: EdgeInsets.all(3),
+                padding: EdgeInsets.all(3.5),
                 decoration: BoxDecoration(
                   color: Colors.red,
                   shape: BoxShape.circle,

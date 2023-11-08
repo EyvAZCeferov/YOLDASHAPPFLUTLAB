@@ -1,17 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
+import '../Functions/PusherClient.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
@@ -35,6 +39,7 @@ class MessagesController extends GetxController {
   ScrollController scrollController = new ScrollController();
   Rx<int?> auth_id = Rx<int?>(null);
   Rx<String?> authtype = Rx<String?>(null);
+  Rx<String?> authtoken = Rx<String?>(null);
   final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
@@ -47,6 +52,7 @@ class MessagesController extends GetxController {
   );
   WebSocketChannel? channel;
   Rx<int> countunreadmessages = 0.obs;
+  LaravelEcho? laraecho;
 
   MessagesController() {
     getAuthId();
@@ -56,6 +62,16 @@ class MessagesController extends GetxController {
     selectedMessageGroup.value = MessageGroups();
     selectedMessageLists.clear();
     getMessages(null, null);
+
+    laraecho?.disconnect();
+
+    if (selectedMessageGroup.value != null &&
+        selectedMessageGroup.value?.id != null &&
+        selectedMessageGroup.value?.id != '' &&
+        selectedMessageGroup.value?.id != ' ') {
+      leaveChatChannel(selectedMessageGroup.value!);
+    }
+
     Get.back();
   }
 
@@ -116,13 +132,28 @@ class MessagesController extends GetxController {
   }
 
   void getAuthId() async {
-    auth_id.value = await _maincontroller.getstoragedat('auth_id');
-    authtype.value = await _maincontroller.getstoragedat('authtype');
+    try {
+      auth_id.value = await _maincontroller.getstoragedat('auth_id');
+      authtype.value = await _maincontroller.getstoragedat('authtype');
+      authtoken.value = await _maincontroller.getstoragedat('token');
+
+      if (selectedMessageGroup.value != null &&
+          selectedMessageGroup.value?.id != null &&
+          selectedMessageGroup.value?.id != '' &&
+          selectedMessageGroup.value?.id != ' ') {
+        listenChatChannel(selectedMessageGroup.value!);
+      }
+    } catch (e) {
+      print(
+          "--------------------------SETTED NOT FOUND ---------------------- ${e.toString()}");
+    }
   }
 
   Future<void> getMessages(context, int? selectedGroupId) async {
     try {
-      refreshpage.value = true;
+      if (context != null) {
+        refreshpage.value = true;
+      }
       Map<String, dynamic> body = {};
       var response;
 
@@ -132,6 +163,7 @@ class MessagesController extends GetxController {
       } else {
         response = await GetAndPost.fetchData("chats", context, body);
       }
+
       if (response != null) {
         String status = response['status'];
         String message = "";
@@ -144,11 +176,11 @@ class MessagesController extends GetxController {
                   MessageGroups.fromMap(response['data']);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
+              listenChatChannel(selectedMessageGroup.value!);
               scrollDown();
             } else {
               data.value = (response['data'] as List).map((dat) {
                 MessageGroups messagegroup = MessageGroups.fromMap(dat);
-
                 countunreadmessages.value += countMessageUnread(
                     messagegroup.messages as List<Messages>,
                     auth_id.value as int);
@@ -157,18 +189,19 @@ class MessagesController extends GetxController {
             }
           }
         } else {
-          showToastMSG(errorcolor, message, context);
+          if (context != null) {
+            showToastMSG(errorcolor, message, context);
+          }
         }
         refreshpage.value = false;
       } else {
         refreshpage.value = false;
         data.value = [];
-        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
       refreshpage.value = false;
-      print("MESSAGES CONTROLLER GET MESSAGE");
-      print(e.toString());
+      print(
+          "----------------------------------MESSAGES CONTROLLER GET MESSAGE------------------------${e.toString()}");
     }
   }
 
@@ -270,43 +303,46 @@ class MessagesController extends GetxController {
   }
 
   void sendtextmessage(context) async {
-    refreshpage.value = false;
+    try {
+      refreshpage.value = false;
 
-    if (messagetextcontroller.value.text != null &&
-        messagetextcontroller.value.text != '' &&
-        messagetextcontroller.value.text != ' ') {
-      MessageGroups oldmessagegroup = selectedMessageGroup.value!;
-      var body = {
-        'message_group_id': oldmessagegroup.id,
-        'message': messagetextcontroller.value.text ?? '',
-        'type': 'TEXT'
-      };
+      if (messagetextcontroller.value.text != null &&
+          messagetextcontroller.value.text != '' &&
+          messagetextcontroller.value.text != ' ') {
+        MessageGroups oldmessagegroup = selectedMessageGroup.value!;
+        var body = {
+          'message_group_id': oldmessagegroup.id,
+          'message': messagetextcontroller.value.text ?? '',
+          'type': 'TEXT'
+        };
 
-      var response = await GetAndPost.postData("messages", body, context);
-      if (response != null) {
-        getMessages(context, oldmessagegroup.id);
-        String status = response['status'];
-        String message = "";
-        if (response['message'] != null) message = response['message'];
-        if (status == "success") {
-          messagetextcontroller.value.text = '';
-
+        var response = await GetAndPost.postData("messages", body, context);
+        if (response != null) {
+          getMessages(context, oldmessagegroup.id);
+          String status = response['status'];
+          String message = "";
+          if (response['message'] != null) message = response['message'];
+          if (status == "success") {
+            messagetextcontroller.value.text = '';
+            refreshpage.value = false;
+            scrollDown();
+          } else {
+            messagetextcontroller.value.text = '';
+            showToastMSG(errorcolor, message, context);
+          }
           refreshpage.value = false;
-          scrollDown();
         } else {
           messagetextcontroller.value.text = '';
-          print(message);
-          showToastMSG(errorcolor, message, context);
+          refreshpage.value = false;
+          showToastMSG(errorcolor, "errordatanotfound".tr, context);
         }
-        refreshpage.value = false;
       } else {
-        messagetextcontroller.value.text = '';
         refreshpage.value = false;
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        showToastMSG(errorcolor, 'messageisnothavenull'.tr, context);
       }
-    } else {
-      refreshpage.value = false;
-      showToastMSG(errorcolor, 'messageisnothavenull'.tr, context);
+    } catch (e) {
+      print(
+          "------------------------SEND TEXT MESSAGE------------------${e.toString()}");
     }
   }
 
@@ -355,9 +391,10 @@ class MessagesController extends GetxController {
 
   void callpageredirect(type, dynamic? value, context) async {
     try {
+      var statusMic = await handlepermissionreq(Permission.microphone, context);
       if (type == "video") {
-        var status = await handlepermissionreq(Permission.camera, context);
-        if (status.isGranted) {
+        var statusVid = await handlepermissionreq(Permission.camera, context);
+        if (statusVid.isGranted) {
           Get.toNamed('/callpage/${type}', arguments: {type: type});
         }
       } else {
@@ -407,6 +444,21 @@ class MessagesController extends GetxController {
           showToastMSG(errorcolor, "pleaseselectplaceandclick".tr, context);
         }
       }
+    }
+  }
+
+  void listenChatChannel(MessageGroups messageGroup) {
+    laraecho = LaravelEcho.init(
+        token: authtoken.value!,
+        channel: 'chat-${selectedMessageGroup.value!.id}');
+  }
+
+  void leaveChatChannel(MessageGroups messageGroup) {
+    try {
+      laraecho?.pusherUnsubscribe('chat.${messageGroup.id}');
+    } catch (e) {
+      print(
+          "----------------Leaving Error Channel-----------------------${e.toString()}");
     }
   }
 }

@@ -6,7 +6,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/Functions/GetAndPost.dart';
+import 'package:yoldashapp/Functions/PusherClient.dart';
 
 import '../Constants/StaticText.dart';
 import '../Theme/ThemeService.dart';
@@ -250,12 +252,24 @@ String convertToSlug(String text) {
 }
 
 void FirebaseMessageCall(BuildContext context) {
-  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  try {
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  firebaseMessaging.getToken().then((value) async {
-    Map<String, dynamic> body = {
-      'token': value,
-    };
-    var response = await GetAndPost.postData("auth/set_token", body, context);
-  });
+    firebaseMessaging.getToken().then((value) async {
+      Map<String, dynamic> body = {
+        'token': value,
+      };
+      var response = await GetAndPost.postData("auth/set_token", body, context);
+    });
+  } catch (e) {
+    print(
+        "------------------------FIREBASE MESSAGE ERROR CALLING-------------------${e.toString()}");
+  }
+}
+final MessagesController messageController=Get.put(MessagesController());
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+messageController.getMessages(null,null);
+if(messagecontroller.selectedMessageGroup.value!=null && messagecontroller.selectedMessageGroup.value?.id!=null){
+  messagecontroller.getMessages(null, messagecontroller.selectedMessageGroup.value!.id);
+}
 }

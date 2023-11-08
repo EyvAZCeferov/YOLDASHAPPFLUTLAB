@@ -5,7 +5,6 @@ import '../../Constants/Devider.dart';
 import '../../Constants/ImageClass.dart';
 import '../../Constants/StaticText.dart';
 import '../../Controllers/MainController.dart';
-import '../../Functions/helpers.dart';
 import '../../Theme/ThemeService.dart';
 
 class Splash extends StatelessWidget {
@@ -79,16 +78,13 @@ class Splash extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-                GestureDetector(
-                  onTap: () => launchUrlTOSITE('https://globalmart.az'),
-                  child: SizedBox(
-                    width: 150,
-                    height: 150,
-                    child: ImageClass(
-                      type: false,
-                      boxfit: BoxFit.contain,
-                      url: "assets/images/globalmartlogo.png",
-                    ),
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: ImageClass(
+                    type: false,
+                    boxfit: BoxFit.contain,
+                    url: "assets/images/globalmartlogowhite.png",
                   ),
                 ),
               ],

@@ -69,6 +69,7 @@ class MessagesIndex extends StatelessWidget {
                             onTap: () {
                               _controller.selectedMessageGroup.value = item;
                               _controller.getMessages(context, item.id);
+                              _controller.listenChatChannel(_controller.selectedMessageGroup.value!);
                               Get.toNamed('/messages/${item.id}',
                                   arguments: item);
                             },

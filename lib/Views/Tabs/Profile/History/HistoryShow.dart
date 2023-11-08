@@ -755,11 +755,13 @@ class HistoryShow extends StatelessWidget {
                                         CrossAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                        onPressed: () => _messagesController
+                                        onPressed: () {
+                                          _messagesController
                                             .createandredirectchat(
                                                 query?.userId,
                                                 query?.driverId,
-                                                context),
+                                                context);
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           primary: primarycolor,
                                           onPrimary: whitecolor,
@@ -776,11 +778,11 @@ class HistoryShow extends StatelessWidget {
                                           children: [
                                             Icon(FeatherIcons.messageCircle,
                                                 color: whitecolor,
-                                                size: normaltextSize),
+                                                size: 14,),
                                             StaticText(
                                                 text: " " + "chat".tr,
                                                 weight: FontWeight.w400,
-                                                size: normaltextSize,
+                                                size: 13,
                                                 color: whitecolor),
                                           ],
                                         ),
@@ -809,11 +811,11 @@ class HistoryShow extends StatelessWidget {
                                                 children: [
                                                   Icon(FeatherIcons.check,
                                                       color: whitecolor,
-                                                      size: normaltextSize),
+                                                      size: 14,),
                                                   StaticText(
                                                       text: " " + "accept".tr,
                                                       weight: FontWeight.w400,
-                                                      size: normaltextSize,
+                                                      size: 13,
                                                       color: whitecolor),
                                                 ],
                                               ),
@@ -843,11 +845,11 @@ class HistoryShow extends StatelessWidget {
                                                 children: [
                                                   Icon(FeatherIcons.x,
                                                       color: whitecolor,
-                                                      size: normaltextSize),
+                                                      size: 14,),
                                                   StaticText(
                                                       text: " " + "cancel".tr,
                                                       weight: FontWeight.w400,
-                                                      size: normaltextSize,
+                                                      size: 13,
                                                       color: whitecolor),
                                                 ],
                                               ),
@@ -878,11 +880,11 @@ class HistoryShow extends StatelessWidget {
                                                 children: [
                                                   Icon(FeatherIcons.eye,
                                                       color: whitecolor,
-                                                      size: normaltextSize),
+                                                      size: 14,),
                                                   StaticText(
                                                       text: " " + "more".tr,
                                                       weight: FontWeight.w400,
-                                                      size: normaltextSize,
+                                                      size: 13,
                                                       color: whitecolor),
                                                 ],
                                               ),

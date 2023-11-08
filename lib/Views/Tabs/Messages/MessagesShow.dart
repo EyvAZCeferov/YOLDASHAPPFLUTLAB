@@ -34,11 +34,10 @@ class MessagesShow extends StatelessWidget {
 
   @override
   void dispose() {
-    _controller.selectedMessageGroup.value = MessageGroups();
-    _controller.selectedMessageLists.clear();
-    _controller.getMessages(null, null);
-    Get.back();
+    _controller.dispose();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +45,7 @@ class MessagesShow extends StatelessWidget {
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity! < 0) {
-          _controller.selectedMessageGroup.value = MessageGroups();
-          _controller.selectedMessageLists.clear();
-          _controller.getMessages(null, null);
-          Get.back();
+          _controller.dispose();
         }
       },
       child: Scaffold(
@@ -92,22 +88,22 @@ class MessagesShow extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 3),
-                // SizedBox(
-                //   width: 50,
-                //   child: ElevatedButton(
-                //     onPressed: () =>
-                //         _controller.callpageredirect('video', null, context),
-                //     style: ElevatedButton.styleFrom(
-                //       primary: primarycolor,
-                //       onPrimary: whitecolor,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(50),
-                //       ),
-                //     ),
-                //     child: Icon(FeatherIcons.video,
-                //         color: whitecolor, size: normaltextSize),
-                //   ),
-                // ),
+                SizedBox(
+                  width: 50,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        _controller.callpageredirect('video', null, context),
+                    style: ElevatedButton.styleFrom(
+                      primary: primarycolor,
+                      onPrimary: whitecolor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    child: Icon(FeatherIcons.video,
+                        color: whitecolor, size: normaltextSize),
+                  ),
+                ),
               ],
               leading: Container(
                 width: 40,
@@ -122,9 +118,7 @@ class MessagesShow extends StatelessWidget {
                     color: Colors.black,
                     size: buttontextSize,
                     onPressed: () {
-                      _controller.selectedMessageGroup.value = null;
-                      _controller.getMessages(context, null);
-                      Get.back();
+                      dispose();
                     }),
               ),
               title: Row(
@@ -135,7 +129,8 @@ class MessagesShow extends StatelessWidget {
                     imageUrl: getimageurl(
                         "user",
                         "users",
-                        _controller.auth_id.value == _controller.selectedMessageGroup.value?.senderId
+                        _controller.auth_id.value ==
+                                _controller.selectedMessageGroup.value?.senderId
                             ? _controller.selectedMessageGroup.value
                                     ?.receiverImage ??
                                 null
@@ -184,8 +179,9 @@ class MessagesShow extends StatelessWidget {
                             itemBuilder: (context, index) {
                               var item =
                                   _controller.selectedMessageLists.value[index];
-
-                              if (item?.status == false) {
+                              if (item?.status == false &&
+                                  item?.messageId != null &&
+                                  item?.userId != null) {
                                 _controller.readmessage(
                                     item?.messageId as int,
                                     item?.userId as int,

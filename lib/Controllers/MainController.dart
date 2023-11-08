@@ -85,5 +85,4 @@ class MainController extends GetxController {
     WidgetsFlutterBinding.ensureInitialized();
     await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
   }
-
-  }
+}

@@ -69,6 +69,8 @@
 	<string>Resimleri seçmek için erişim izni gerekiyor.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Kamera kullanarak resim çekmek için erişim izni gerekiyor.</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>We require microphone access to connect</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	<key>GoogleMapsApiKey</key>
@@ -81,6 +83,8 @@
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+    	<true/>
 	</dict>
 </dict>
 </plist>

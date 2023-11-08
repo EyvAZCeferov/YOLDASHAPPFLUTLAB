@@ -331,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                                               textOverflow:
                                                   TextOverflow.ellipsis,
                                               text: _controller.directiondetails
-                                                  .value!.distanceText!,
+                                                  .value?.distanceText??'',
                                             ),
                                           ),
                                           Center(
@@ -342,11 +342,7 @@ class _HomePageState extends State<HomePage> {
                                                 align: TextAlign.center,
                                                 textOverflow:
                                                     TextOverflow.ellipsis,
-                                                text: _controller
-                                                    .directiondetails
-                                                    .value!
-                                                    .durationText!
-                                                    .toString()),
+                                                text: "${_controller.directiondetails.value?.durationText ?? ''}"),
                                           ),
                                         ],
                                       ),
@@ -357,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                                               _controller.changemethod(context),
                                           child: Container(
                                             width: Get.width - 40,
-                                            height: 50,
+                                            height: 55,
                                             margin: const EdgeInsets.symmetric(
                                                 vertical: 5),
                                             decoration: BoxDecoration(
@@ -574,7 +570,7 @@ class _HomePageState extends State<HomePage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Devider(size: 3),
+                                                Devider(size: 1),
                                                 StaticText(
                                                   color: darkcolor,
                                                   size: buttontextSize,
@@ -815,8 +811,7 @@ class _HomePageState extends State<HomePage> {
                                                                     .value = true;
                                                                 _controller
                                                                     .addorremoveeditingcontroller(
-                                                                        index +
-                                                                            1,
+                                                                        (index +1),
                                                                         'add');
                                                                 _controller
                                                                     .refreshpage
@@ -834,7 +829,7 @@ class _HomePageState extends State<HomePage> {
                                                               onPressed: () {
                                                                 _controller
                                                                     .addorremoveeditingcontroller(
-                                                                        index,
+                                                                        (index+1),
                                                                         'delete');
                                                               },
                                                               icon: Icon(
@@ -896,33 +891,33 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Devider(size: 5),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: 10),
-                                    Icon(
-                                      FeatherIcons.briefcase,
-                                      color: primarycolor,
-                                      size: buttontextSize,
-                                    ),
-                                    SizedBox(width: 20),
-                                    SizedBox(
-                                      width: width - 110,
-                                      height: 45,
-                                      child: InputElement(
-                                        accentColor: iconcolor,
-                                        controller:
-                                            _controller.weightcontroller.value,
-                                        placeholder: "weight".tr + ", kg",
-                                        textColor: iconcolor,
-                                        cornerradius: BorderRadius.circular(40),
-                                        inputType: TextInputType.number,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // Devider(size: 5),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.start,
+                                //   crossAxisAlignment: CrossAxisAlignment.center,
+                                //   children: [
+                                //     SizedBox(width: 10),
+                                //     Icon(
+                                //       FeatherIcons.briefcase,
+                                //       color: primarycolor,
+                                //       size: buttontextSize,
+                                //     ),
+                                //     SizedBox(width: 20),
+                                //     SizedBox(
+                                //       width: width - 110,
+                                //       height: 45,
+                                //       child: InputElement(
+                                //         accentColor: iconcolor,
+                                //         controller:
+                                //             _controller.weightcontroller.value,
+                                //         placeholder: "weight".tr + ", kg",
+                                //         textColor: iconcolor,
+                                //         cornerradius: BorderRadius.circular(40),
+                                //         inputType: TextInputType.number,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 Devider(size: 5),
                                 _authcontroller.authType == "driver"
                                     ? Row(
