@@ -62,9 +62,13 @@ class HistoryController extends GetxController {
   Rx<Reason?> selectedReason = Rx<Reason?>(null);
   RxList<Reason?> reasons = <Reason>[].obs;
   Rx<bool> ridedriver = Rx<bool>(false);
+  Timer? timer;
 
   HistoryController() {
     getAuthId();
+    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      _goingController.getandsetcurrentpoisition(null);
+    });
   }
 
   void getAuthId() async {

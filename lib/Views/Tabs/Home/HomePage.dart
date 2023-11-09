@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                               },
                             )),
                         _controller.markers.isNotEmpty &&
-                                _controller.markers.length > 1
+                                _controller.nonNumericMarkerCount> 1
                             ? Positioned(
                                 bottom: 0,
                                 left: 20,

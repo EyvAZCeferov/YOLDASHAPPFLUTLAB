@@ -40,18 +40,17 @@ class GetAndPost {
         if (status == 'success') {
           return jsonData;
         } else if (status == 'error') {
-          if(context!=null){
+          if (context != null) {
             showToastMSG(errorcolor, "errordatanotfound".tr, context);
           }
         }
       } else {
-        if(context!=null){
+        if (context != null) {
           showToastMSG(errorcolor, "errordatanotfound".tr, context);
         }
       }
     } catch (e) {
-      print(e.toString());
-      if(context!=null){
+      if (context != null) {
         showToastMSG(errorcolor, e.toString(), context);
       }
     }
@@ -72,12 +71,9 @@ class GetAndPost {
       } else {
         url = Uri.parse('$urlold');
       }
-     print("-----------------------------------BAREAR TOKEN--------------------------");
-
 
       var headers = {'Content-Type': 'application/json'};
       var token = await _maincontroller.getstoragedat('token');
-      print(token);
       if (token != null && token.length > 0) {
         headers['Authorization'] = 'Bearer $token';
       }
@@ -86,11 +82,14 @@ class GetAndPost {
         var jsonData = jsonDecode(response.body);
         return jsonData;
       } else {
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        if (context != null) {
+          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        }
       }
     } catch (e) {
-      print(e.toString());
-      showToastMSG(errorcolor, e.toString(), context);
+      if (context != null) {
+        showToastMSG(errorcolor, e.toString(), context);
+      }
     }
   }
 
@@ -122,11 +121,14 @@ class GetAndPost {
       if (status == 'success') {
         return jsonData;
       } else if (status == 'error') {
-        showToastMSG(errorcolor, jsonData['message'], context);
+        if (context != null) {
+          showToastMSG(errorcolor, jsonData['message'], context);
+        }
       }
     } catch (e) {
-      showToastMSG(errorcolor, e.toString(), context);
-      print(e.toString());
+      if (context != null) {
+        showToastMSG(errorcolor, e.toString(), context);
+      }
     }
   }
 
@@ -180,7 +182,6 @@ class GetAndPost {
       var jsonData = jsonDecode(responseString);
       return jsonData;
     } catch (e) {
-      print(e.toString());
       showToastMSG(errorcolor, e.toString(), context);
     }
   }

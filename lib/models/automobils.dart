@@ -132,6 +132,7 @@ class AutoType {
   const AutoType(
       {this.id,
       this.icon,
+      this.mapIcon,
       this.name,
       this.order_number,
       this.places,
@@ -146,6 +147,7 @@ class AutoType {
   factory AutoType.fromMap(Map<String, dynamic> map) => AutoType(
       id: map["id"],
       icon: map['icon'],
+      mapIcon: map['map_icon'],
       name: map["name"] == null ? null : Name.fromMap(map["name"]),
       order_number: map['order_number'],
       places: map['places'],
@@ -164,6 +166,7 @@ class AutoType {
 
   final int? id;
   final String? icon;
+  final String? mapIcon;
   final Name? name;
   final int? order_number;
   final int? places;
@@ -178,6 +181,7 @@ class AutoType {
   Map<String, dynamic> toMap() => {
         "id": id,
         "icon": icon,
+        "map_icon": mapIcon,
         "name": name?.toMap(),
         "order_number": order_number,
         "places": places,

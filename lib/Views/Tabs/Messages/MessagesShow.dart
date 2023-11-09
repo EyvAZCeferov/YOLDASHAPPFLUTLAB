@@ -88,22 +88,22 @@ class MessagesShow extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 3),
-                SizedBox(
-                  width: 50,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                        _controller.callpageredirect('video', null, context),
-                    style: ElevatedButton.styleFrom(
-                      primary: primarycolor,
-                      onPrimary: whitecolor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                    child: Icon(FeatherIcons.video,
-                        color: whitecolor, size: normaltextSize),
-                  ),
-                ),
+                // SizedBox(
+                //   width: 50,
+                //   child: ElevatedButton(
+                //     onPressed: () =>
+                //         _controller.callpageredirect('video', null, context),
+                //     style: ElevatedButton.styleFrom(
+                //       primary: primarycolor,
+                //       onPrimary: whitecolor,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(50),
+                //       ),
+                //     ),
+                //     child: Icon(FeatherIcons.video,
+                //         color: whitecolor, size: normaltextSize),
+                //   ),
+                // ),
               ],
               leading: Container(
                 width: 40,

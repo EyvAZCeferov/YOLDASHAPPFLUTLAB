@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Controllers/AuthController.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
@@ -20,11 +22,13 @@ import '../Constants/StaticText.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
+import '../models/DriverLocations.dart';
 import '../models/automobils.dart';
 import '../models/user_locations.dart';
 import 'CardsController.dart';
 import 'MainController.dart';
 import 'MessagesController.dart';
+import 'package:http/http.dart' as http;
 
 class GoingController extends GetxController {
   late MainController _maincontroller = Get.put(MainController());
@@ -80,11 +84,23 @@ class GoingController extends GetxController {
     target: LatLng(40.409264, 49.867092),
     zoom: 14.4746,
   );
+  Timer? timer;
+  RxList<dynamic> driverpositions = <dynamic>[].obs;
+  Rx<int> nonNumericMarkerCount = 0.obs;
 
   GoingController() {
     getAuthId();
     addorremoveeditingcontroller(0, 'add');
     addorremoveeditingcontroller(1, 'add');
+    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      getandsetcurrentpoisition(null);
+    });
+    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      getdriverpositions();
+    });
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+      getNonNumericMarkerCount();
+    });
   }
 
   void addorremoveeditingcontroller(int? index, String? type) {
@@ -101,11 +117,140 @@ class GoingController extends GetxController {
     // });
   }
 
+  void getandsetcurrentpoisition(context) async {
+    if (authtype.value == "driver") {
+      var statuslocation =
+          await handlepermissionreq(Permission.location, context);
+
+      if (statuslocation.isDenied) {
+        statuslocation =
+            await handlepermissionreq(Permission.location, context);
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          forceAndroidLocationManager: true);
+      position_0.value = position;
+      LatLng latLngPosn = LatLng(position.latitude, position.longitude);
+      CameraPosition cameraposition =
+          new CameraPosition(target: latLngPosn, zoom: 14);
+      kGooglePlex = cameraposition;
+      Map gettednameandplace_id = await getnameviacoords(
+          position.latitude, position.longitude, 'az', context);
+      UserLocations userlocation = await addlocationtodb(
+          gettednameandplace_id['nameaddress'] as String,
+          gettednameandplace_id['place_id'] as String,
+          latLngPosn as LatLng,
+          'position_0' as String,
+          context);
+      newgooglemapcontroller.value
+          ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
+    }
+  }
+
+  void getdriverpositions() async {
+    if (authtype.value == "rider") {
+      Map<String, dynamic> body = {};
+      if (auth_id.value != null &&
+          auth_id.value != '' &&
+          auth_id.value != ' ') {
+        body['user_id'] = auth_id.value;
+      }
+      var response =
+          await GetAndPost.fetchData("getdriverpositions", null, body);
+
+      markers.value.removeWhere((element) {
+        if (element?.markerId != null) {
+          final String markerId = element!.markerId.value;
+          return int.tryParse(markerId) != null;
+        }
+        return false;
+      });
+
+      circles.value.removeWhere((element) {
+        if (element?.circleId != null) {
+          final String circleId = element!.circleId.value;
+          return int.tryParse(circleId) != null;
+        }
+        return false;
+      });
+      if (response != null) {
+        String status = response['status'];
+        String message = '';
+        if (response['message'] != null) message = response['message'];
+        if (status == "success") {
+          if (response['data'] != null &&
+              response['data'].length > 0 &&
+              response['data'] != '' &&
+              response['data'] != ' ') {
+            driverpositions.value = (response['data'] as List).map((dat) {
+              return DriverLocations.fromMap(dat);
+            }).toList();
+
+            if (driverpositions.value.length > 0) {
+              for (DriverLocations element in driverpositions.value) {
+                if (element.id != null) {
+                  BitmapDescriptor icon = await addCustomIcon(
+                      getimageurl(
+                          "models", 'automobils/types', element.mapIcon),
+                      element.model ?? '');
+                  markers.add(Marker(
+                      markerId: MarkerId(element.id.toString()),
+                      draggable: false,
+                      icon: icon,
+                      position: LatLng(element.coordinates?.latitude,
+                          element.coordinates?.longitude)));
+                  circles.value.add(Circle(
+                    circleId: CircleId(element.id.toString()),
+                    fillColor: whitecolor,
+                    center: LatLng(element.coordinates?.latitude,
+                        element.coordinates?.longitude),
+                    radius: 10,
+                    strokeWidth: 4,
+                    strokeColor: whitecolor,
+                  ));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  int getNonNumericMarkerCount() {
+    var nonNumericMarkerCountLocal = 0;
+
+    markers.value.forEach((element) {
+      if (element?.markerId != null) {
+        final String markerId = element!.markerId.value;
+        if (int.tryParse(markerId) == null) {
+          nonNumericMarkerCountLocal++;
+        }
+      }
+    });
+    nonNumericMarkerCount.value = nonNumericMarkerCountLocal;
+    return nonNumericMarkerCountLocal;
+  }
+
+  Future<BitmapDescriptor> addCustomIcon(String url, String typeName) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      BitmapDescriptor icon =
+          await BitmapDescriptor.fromBytes(response.bodyBytes);
+      return icon;
+    } else {
+      throw Exception(
+          '----------------------Failed to load image---------------------------');
+    }
+  }
+
   @override
   void onClose() {
     for (var controller in textEditingControllers.value) {
       controller.dispose();
     }
+    timer?.cancel();
     super.onClose();
   }
 
@@ -193,8 +338,6 @@ class GoingController extends GetxController {
         ));
       }
     } catch (e) {
-      print(
-          "--------------------------------------------------Init ERROR-------------------------------------");
       print(e.toString());
     }
   }
@@ -204,7 +347,7 @@ class GoingController extends GetxController {
   }
 
   Future<UserLocations> addlocationtodb(String nameaddress, String place_id,
-      LatLng latlng, String type, BuildContext context) async {
+      LatLng latlng, String type, context) async {
     try {
       var body = {
         'place_id': place_id,
@@ -228,14 +371,12 @@ class GoingController extends GetxController {
         return UserLocations();
       }
     } catch (e) {
-      print(
-          "-----------------------------ADD LOCATIONS TO DB ERROR : ------------------------------ ${e.toString()}");
       return UserLocations();
     }
   }
 
-  Future<Map> getnameviacoords(double latitude, double longitude,
-      String language, BuildContext context) async {
+  Future<Map> getnameviacoords(
+      double latitude, double longitude, String language, context) async {
     var response = await GetAndPost.fetcOtherhData(
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$mapsApiKey&language=$language',
         context, {});
@@ -423,12 +564,12 @@ class GoingController extends GetxController {
           }
           goinglocations.value.add(userlocation);
 
-          if (markers.value.length > 0) {
+          if (nonNumericMarkerCount > 0) {
             markers.value.removeWhere((marker) =>
                 marker?.markerId.value == userlocation.type as String);
           }
 
-          if (circles.value.length > 0) {
+          if (nonNumericMarkerCount > 0) {
             circles.value.removeWhere((circle) =>
                 circle?.circleId.value == userlocation.type as String);
           }
@@ -1577,8 +1718,7 @@ class GoingController extends GetxController {
         Map gettednameandplace_id = await getnameviacoords(
             latlng.latitude, latlng.longitude, 'az', context);
 
-        goinglocations.value
-            .removeWhere((element) => element.type == markerId);
+        goinglocations.value.removeWhere((element) => element.type == markerId);
         markers.value
             .removeWhere((element) => element?.markerId == MarkerId(markerId));
         circles.value
@@ -1613,12 +1753,13 @@ class GoingController extends GetxController {
             markers.value.add(Marker(
               markerId: MarkerId(userlocationtoingdb.type as String),
               icon: BitmapDescriptor.defaultMarkerWithHue(
-                  markerId=="position_0"? BitmapDescriptor.hueAzure : BitmapDescriptor.hueRed),
+                  markerId == "position_0"
+                      ? BitmapDescriptor.hueAzure
+                      : BitmapDescriptor.hueRed),
               infoWindow: InfoWindow(
                 title: getLocalizedValue(userlocationtoingdb.name, 'name'),
                 snippet: 'mylocation'.tr,
               ),
-              
               position: LatLng(
                   userlocationtoingdb.coordinates!.latitude!.toDouble(),
                   userlocationtoingdb.coordinates!.longitude!.toDouble()),
@@ -1629,16 +1770,17 @@ class GoingController extends GetxController {
 
             circles.value.add(Circle(
               circleId: CircleId(userlocationtoingdb.type as String),
-              fillColor: markerId=="position_0"? secondarycolor : errorcolor,
+              fillColor: markerId == "position_0" ? secondarycolor : errorcolor,
               center: LatLng(
                   userlocationtoingdb.coordinates!.latitude!.toDouble(),
                   userlocationtoingdb.coordinates!.longitude!.toDouble()),
               radius: 15,
               strokeWidth: 4,
-              strokeColor:  markerId=="position_0"? secondarycolor : errorcolor,
+              strokeColor:
+                  markerId == "position_0" ? secondarycolor : errorcolor,
             ));
 
-            if(markers.length>1){
+            if (markers.length > 1) {
               createroute(context);
             }
           }

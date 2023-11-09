@@ -78,7 +78,9 @@ Future<PermissionStatus> handlepermissionreq(
     final status = await permission.request();
     return status;
   } catch (e) {
-    showToastMSG(errorcolor, "permissiondenied".tr, context);
+    if(context!=null){
+      showToastMSG(errorcolor, "permissiondenied".tr, context);
+    }
     return PermissionStatus.denied;
   }
 }
@@ -180,13 +182,9 @@ String getimageurl(String type, String clasore, String? path) {
         return imageurl + clasore + '/' + 'noprofilepicture.webp';
       }
     } else {
-      print(imageurl + clasore + '/' + path!);
       return imageurl + clasore + '/' + path!;
     }
   } catch (e) {
-    print(
-        '-+++++++++++++++++++++++++++++Şəkil xətası-+++++++++++++++++++++++++++');
-    print(e.toString());
     return e.toString();
   }
 }
@@ -262,8 +260,7 @@ void FirebaseMessageCall(BuildContext context) {
       var response = await GetAndPost.postData("auth/set_token", body, context);
     });
   } catch (e) {
-    print(
-        "------------------------FIREBASE MESSAGE ERROR CALLING-------------------${e.toString()}");
+    e.toString();
   }
 }
 final MessagesController messageController=Get.put(MessagesController());

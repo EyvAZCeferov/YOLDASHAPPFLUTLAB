@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.2"
-  asn1lib:
-    dependency: transitive
-    description:
-      name: asn1lib
-      sha256: "21afe4333076c02877d14f4a89df111e658a6d466cbfc802eb705eb91bd5adfd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.5.0"
   async:
     dependency: transitive
     description:
@@ -177,14 +169,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  encrypt:
-    dependency: transitive
-    description:
-      name: encrypt
-      sha256: "62d9aa4670cc2a8798bab89b39fc71b6dfbacf615de6cf5001fb39f7e4a996a2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -334,14 +318,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  flutter_logs:
-    dependency: transitive
-    description:
-      name: flutter_logs
-      sha256: "0fb84868b02e5880a1488f5282a4e193a1293280b85be7a56e58f29c0d1e6bea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.11"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -366,14 +342,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.1"
-  flutter_screenutil:
-    dependency: transitive
-    description:
-      name: flutter_screenutil
-      sha256: "8cf100b8e4973dc570b6415a2090b0bfaa8756ad333db46939efc3e774ee100d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.9.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -420,10 +388,10 @@ packages:
     dependency: transitive
     description:
       name: geolocator_android
-      sha256: "741579fa6c9e412984d2bdb2fbaa54e3c3f7587c60aeacfe6e058358a11f40f8"
+      sha256: "93906636752ea4d4e778afa981fdfe7409f545b3147046300df194330044d349"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.0"
+    version: "4.3.1"
   geolocator_apple:
     dependency: transitive
     description:
@@ -561,7 +529,7 @@ packages:
     source: hosted
     version: "4.0.2"
   image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image
       sha256: "028f61960d56f26414eb616b48b04eb37d700cbe477b7fb09bf1d7ce57fd9271"
@@ -728,14 +696,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  native_device_orientation:
-    dependency: transitive
-    description:
-      name: native_device_orientation
-      sha256: "744a03030fad5a332a54833cd34f1e2ee51ae9acf477b4ef85bacc8823af9937"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.1"
   octo_image:
     dependency: transitive
     description:
@@ -925,14 +885,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  sprintf:
-    dependency: transitive
-    description:
-      name: sprintf
-      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
   sqflite:
     dependency: transitive
     description:
@@ -1081,10 +1033,10 @@ packages:
     dependency: transitive
     description:
       name: uuid
-      sha256: df5a4d8f22ee4ccd77f8839ac7cb274ebc11ef9adcce8b92be14b797fe889921
+      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.1"
+    version: "3.0.7"
   vector_graphics:
     dependency: transitive
     description:
@@ -1117,46 +1069,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  wakelock:
-    dependency: transitive
-    description:
-      name: wakelock
-      sha256: "769ecf42eb2d07128407b50cb93d7c10bd2ee48f0276ef0119db1d25cc2f87db"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.2"
-  wakelock_macos:
-    dependency: transitive
-    description:
-      name: wakelock_macos
-      sha256: "047c6be2f88cb6b76d02553bca5a3a3b95323b15d30867eca53a19a0a319d4cd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
-  wakelock_platform_interface:
-    dependency: transitive
-    description:
-      name: wakelock_platform_interface
-      sha256: "1f4aeb81fb592b863da83d2d0f7b8196067451e4df91046c26b54a403f9de621"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
-  wakelock_web:
-    dependency: transitive
-    description:
-      name: wakelock_web
-      sha256: "1b256b811ee3f0834888efddfe03da8d18d0819317f20f6193e2922b41a501b5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
-  wakelock_windows:
-    dependency: transitive
-    description:
-      name: wakelock_windows
-      sha256: "857f77b3fe6ae82dd045455baa626bc4b93cb9bb6c86bf3f27c182167c3a5567"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   web:
     dependency: transitive
     description:
@@ -1237,30 +1149,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  zego_express_engine:
-    dependency: transitive
-    description:
-      name: zego_express_engine
-      sha256: "33e568db88692171027900361b434e6c9dbce0f32674b1df956a132cf6059ab4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.3"
-  zego_uikit:
-    dependency: transitive
-    description:
-      name: zego_uikit
-      sha256: "18de18fab47fb648c7243af7c5efc6e9680f8a8c4249bea327040092258b67b0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.9.1"
-  zego_uikit_prebuilt_call:
-    dependency: "direct main"
-    description:
-      name: zego_uikit_prebuilt_call
-      sha256: f3abf21c9657183fb04ebfd8c4681fd493c35be9727c3a773fe6159e3415305b
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.4"
 sdks:
   dart: ">=3.1.0 <4.0.0"
   flutter: ">=3.13.0"
