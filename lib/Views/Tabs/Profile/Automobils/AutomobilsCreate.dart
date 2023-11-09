@@ -70,13 +70,19 @@ class AutomobilsCreate extends StatelessWidget {
                             TextField(
                               controller:
                                   _controller.licensePlateController.value,
-                              autocorrect: false,
+                              autocorrect: true,
                               autofocus: false,
                               cursorColor: iconcolor,
                               style: TextStyle(color: primarycolor),
                               inputFormatters: [
                                 LicensePlateInputFormatter(),
                               ],
+                              onChanged: (text) {
+                                if (text.isEmpty) {
+                                  _controller.licensePlateController.value
+                                      .clear();
+                                }
+                              },
                             )
                           ],
                         ))),
@@ -200,7 +206,7 @@ class AutomobilsCreate extends StatelessWidget {
                             )
                           ],
                         ))),
-                Devider(), 
+                Devider(),
                 // Obx(() => _controller.refreshpage.value == true
                 //     ? LoaderScreen()
                 //     :
@@ -268,6 +274,8 @@ class AutomobilsCreate extends StatelessWidget {
 }
 
 class LicensePlateInputFormatter extends TextInputFormatter {
+  final AutomobilsController _controller = Get.put(AutomobilsController());
+
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
@@ -279,18 +287,24 @@ class LicensePlateInputFormatter extends TextInputFormatter {
       String formattedText = '';
 
       if (newText.isNotEmpty) {
-        var firstTwo = newText.substring(0, 2);
-        var lastThree = newText.substring(4, 7).toUpperCase();
-        var middleTwo = newText.substring(2, 4);
+        if (newText.length <= 4) {
+          formattedText = newText;
+        } else {
+          var firstTwo = newText.substring(0, 2);
+          var lastThree = newText.substring(4, 7).toUpperCase();
+          var middleTwo = newText.substring(2, 4);
 
-        formattedText = '$firstTwo-$middleTwo-$lastThree';
+          formattedText = '$firstTwo-$middleTwo-$lastThree';
+        }
       }
 
       return TextEditingValue(
         text: formattedText,
         selection: TextSelection.collapsed(offset: formattedText.length),
       );
+    } else {
+      _controller.licensePlateController.value.clear();
+      return TextEditingValue.empty;
     }
-    return oldValue;
   }
 }

@@ -8,14 +8,11 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
-import 'package:web_socket_channel/status.dart' as status;
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
-import '../Functions/PusherClient.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
@@ -52,10 +49,13 @@ class MessagesController extends GetxController {
   );
   WebSocketChannel? channel;
   Rx<int> countunreadmessages = 0.obs;
-  LaravelEcho? laraecho;
+  // LaravelEcho? laraecho;
 
   MessagesController() {
     getAuthId();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      firebaseMessagingBackgroundHandler(message);
+    });
   }
 
   void dispose() {
@@ -63,28 +63,16 @@ class MessagesController extends GetxController {
     selectedMessageLists.clear();
     getMessages(null, null);
 
-    laraecho?.disconnect();
+    // laraecho?.disconnect();
 
-    if (selectedMessageGroup.value != null &&
-        selectedMessageGroup.value?.id != null &&
-        selectedMessageGroup.value?.id != '' &&
-        selectedMessageGroup.value?.id != ' ') {
-      leaveChatChannel(selectedMessageGroup.value!);
-    }
+    // if (selectedMessageGroup.value != null &&
+    //     selectedMessageGroup.value?.id != null &&
+    //     selectedMessageGroup.value?.id != '' &&
+    //     selectedMessageGroup.value?.id != ' ') {
+    //   leaveChatChannel(selectedMessageGroup.value!);
+    // }
 
     Get.back();
-  }
-
-  void connectandreadsocket() async {
-    final wsUrl = Uri.parse('ws://localhost:1234');
-    var channel = WebSocketChannel.connect(wsUrl);
-    print("--------------------------------------------Connection is started");
-
-    channel.stream.listen((message) {
-      print("--------------------------------------------new Message Getted");
-      channel.sink.add('received!');
-      channel.sink.close(status.goingAway);
-    });
   }
 
   void getcurrentposition(context) async {
@@ -137,12 +125,12 @@ class MessagesController extends GetxController {
       authtype.value = await _maincontroller.getstoragedat('authtype');
       authtoken.value = await _maincontroller.getstoragedat('token');
 
-      if (selectedMessageGroup.value != null &&
-          selectedMessageGroup.value?.id != null &&
-          selectedMessageGroup.value?.id != '' &&
-          selectedMessageGroup.value?.id != ' ') {
-        listenChatChannel(selectedMessageGroup.value!);
-      }
+      // if (selectedMessageGroup.value != null &&
+      //     selectedMessageGroup.value?.id != null &&
+      //     selectedMessageGroup.value?.id != '' &&
+      //     selectedMessageGroup.value?.id != ' ') {
+      //   listenChatChannel(selectedMessageGroup.value!);
+      // }
     } catch (e) {
       print(
           "--------------------------SETTED NOT FOUND ---------------------- ${e.toString()}");
@@ -189,9 +177,9 @@ class MessagesController extends GetxController {
             }
           }
         } else {
-          if (context != null) {
-            showToastMSG(errorcolor, message, context);
-          }
+          // if (context != null) {
+          //   showToastMSG(errorcolor, message, context);
+          // }
         }
         refreshpage.value = false;
       } else {
@@ -334,7 +322,7 @@ class MessagesController extends GetxController {
         } else {
           messagetextcontroller.value.text = '';
           refreshpage.value = false;
-          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+          // showToastMSG(errorcolor, "errordatanotfound".tr, context);
         }
       } else {
         refreshpage.value = false;
@@ -448,14 +436,14 @@ class MessagesController extends GetxController {
   }
 
   void listenChatChannel(MessageGroups messageGroup) {
-    laraecho = LaravelEcho.init(
-        token: authtoken.value!,
-        channel: 'chat-${selectedMessageGroup.value!.id}');
+    // laraecho = LaravelEcho.init(
+    //     token: authtoken.value!,
+    //     channel: 'chat-${selectedMessageGroup.value!.id}');
   }
 
   void leaveChatChannel(MessageGroups messageGroup) {
     try {
-      laraecho?.pusherUnsubscribe('chat.${messageGroup.id}');
+      // laraecho?.pusherUnsubscribe('chat.${messageGroup.id}');
     } catch (e) {
       print(
           "----------------Leaving Error Channel-----------------------${e.toString()}");

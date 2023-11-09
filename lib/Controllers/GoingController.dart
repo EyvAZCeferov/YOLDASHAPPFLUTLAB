@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Controllers/AuthController.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
@@ -89,13 +87,17 @@ class GoingController extends GetxController {
   Rx<int> nonNumericMarkerCount = 0.obs;
 
   GoingController() {
+    initcontrolller();
+  }
+
+  void initcontrolller(){
     getAuthId();
     addorremoveeditingcontroller(0, 'add');
     addorremoveeditingcontroller(1, 'add');
-    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       getandsetcurrentpoisition(null);
     });
-    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       getdriverpositions();
     });
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
@@ -436,7 +438,7 @@ class GoingController extends GetxController {
                           height: 10,
                         ),
                         SizedBox(
-                          height: 250,
+                          height: 200,
                           width: Get.width - 50,
                           child: CupertinoDatePicker(
                             use24hFormat: true,
@@ -466,7 +468,7 @@ class GoingController extends GetxController {
                             : SizedBox(),
                         authtype.value == "rider"
                             ? SizedBox(
-                                height: 250,
+                                height: 200,
                                 width: Get.width - 50,
                                 child: CupertinoDatePicker(
                                   use24hFormat: true,
@@ -1009,7 +1011,6 @@ class GoingController extends GetxController {
       }
     } catch (e) {
       refreshpage.value = false;
-      showToastMSG(errorcolor, e.toString(), context);
       print(e.toString());
     }
   }
@@ -1488,7 +1489,6 @@ class GoingController extends GetxController {
       refreshpage.value = false;
     } else {
       refreshpage.value = false;
-      showToastMSG(errorcolor, "errordatanotfound".tr, context);
     }
   }
 
@@ -1506,8 +1506,6 @@ class GoingController extends GetxController {
           currentrides.value = (response['data'] as List).map((dat) {
             return Rides.fromMap(dat);
           }).toList();
-        } else {
-          showToastMSG(errorcolor, message, context);
         }
         refreshpage.value = false;
       } else {

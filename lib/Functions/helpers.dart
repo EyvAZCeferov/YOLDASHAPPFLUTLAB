@@ -78,7 +78,7 @@ Future<PermissionStatus> handlepermissionreq(
     final status = await permission.request();
     return status;
   } catch (e) {
-    if(context!=null){
+    if (context != null) {
       showToastMSG(errorcolor, "permissiondenied".tr, context);
     }
     return PermissionStatus.denied;
@@ -263,10 +263,17 @@ void FirebaseMessageCall(BuildContext context) {
     e.toString();
   }
 }
-final MessagesController messageController=Get.put(MessagesController());
+
+final MessagesController messageController = Get.put(MessagesController());
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-messageController.getMessages(null,null);
-if(messagecontroller.selectedMessageGroup.value!=null && messagecontroller.selectedMessageGroup.value?.id!=null){
-  messagecontroller.getMessages(null, messagecontroller.selectedMessageGroup.value!.id);
-}
+  print(message);
+  if (messagecontroller.selectedMessageGroup.value != null &&
+      messagecontroller.selectedMessageGroup.value?.id != null) {
+        print("i get up message ${messagecontroller.selectedMessageGroup.value?.id}");
+    messagecontroller.getMessages(
+        null, messagecontroller.selectedMessageGroup.value!.id);
+  }
+
+  messageController.getMessages(null, null);
+
 }

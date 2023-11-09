@@ -217,7 +217,7 @@ class _AddableWidgetState extends State<AddableWidget> {
           () => _automobilscontroller.refreshpage.value == true
               ? LoaderScreen()
               : ListView.builder(
-                  itemCount: _automobilscontroller.data.length,
+                  itemCount: 1,
                   itemBuilder: (context, index) {
                     final item = _automobilscontroller.data[index];
                     return GestureDetector(

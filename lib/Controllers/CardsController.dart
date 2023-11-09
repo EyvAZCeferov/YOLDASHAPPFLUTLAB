@@ -127,11 +127,12 @@ class CardsController extends GetxController {
     var body = {};
     var response = await GetAndPost.patchData(
         "cards/${selectedelement.id}", body, context);
+    refreshpage.value = false;
     if (response != null) {
-      String status = response['status'];
+      String status = response['status'] ?? 'success';
       String message = "";
       if (response['message'] != null) message = response['message'];
-      fetchDatas(context).then((value) {
+      await fetchDatas(context).then((value) {
         if (status == "success") {
           refreshpage.value = false;
         } else {

@@ -238,11 +238,13 @@ class AutomobilsController extends GetxController {
     var body = {};
     var response = await GetAndPost.patchData(
         "automobils/${selectedelement.id}", body, context);
+        
     if (response != null) {
-      String status = response['status'];
-      String message = response['message'];
+      refreshpage.value=false;
+      String status = response['status'] ?? 'success';
+      String message = response['message'] ?? '';
       if (status == "success") {
-        fetchDatas(context);
+       await fetchDatas(context);
       } else {
         showToastMSG(errorcolor, message, context);
       }

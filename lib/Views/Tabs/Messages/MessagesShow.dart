@@ -10,7 +10,6 @@ import '../../../Constants/StaticText.dart';
 import '../../../Controllers/MessagesController.dart';
 import '../../../Functions/helpers.dart';
 import '../../../Theme/ThemeService.dart';
-import '../../../models/message_groups.dart';
 import 'MessageBubble.dart';
 
 class MessagesShow extends StatelessWidget {

@@ -106,7 +106,11 @@ class BalanceController extends GetxController {
           }
         } else {
           refreshpage.value = true;
-          showToastMSG(errorcolor, message, context);
+          if(context!=null){
+            showToastMSG(errorcolor, message, context);
+          }else{
+            print("------------------------Balance Fetch Error----------------${message}");
+          }
         }
       } else {
         refreshpage.value = false;

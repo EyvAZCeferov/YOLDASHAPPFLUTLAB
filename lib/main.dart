@@ -18,7 +18,7 @@ void main() async {
     projectId: 'yoldash-783a4',
   ));
   await CacheManager.createSharedPref();
- 
+
   runApp(Yoldash());
 }
 
@@ -45,8 +45,8 @@ class Yoldash extends StatelessWidget {
   Widget build(BuildContext context) {
     FirebaseMessageCall(context);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    firebaseMessagingBackgroundHandler(message);
-  });
+      firebaseMessagingBackgroundHandler(message);
+    });
     return GetMaterialApp(
       title: 'Yoldash',
       debugShowCheckedModeBanner: false,
@@ -60,7 +60,6 @@ class Yoldash extends StatelessWidget {
       opaqueRoute: Get.isOpaqueRouteDefault,
       popGesture: Get.isPopGestureEnable,
       transitionDuration: Duration(milliseconds: 1000),
-      
     );
   }
 }

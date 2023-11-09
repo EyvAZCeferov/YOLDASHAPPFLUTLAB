@@ -66,7 +66,7 @@ class HistoryController extends GetxController {
 
   HistoryController() {
     getAuthId();
-    timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       _goingController.getandsetcurrentpoisition(null);
     });
   }

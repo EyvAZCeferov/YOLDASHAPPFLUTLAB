@@ -219,7 +219,7 @@ class AuthController extends GetxController {
       if (status == "success") {
         
         getalldataoncache(context);
-        goingcontroller.getAuthId();
+        goingcontroller.initcontrolller();
         goingcontroller.getcurrentrides(context);
         refreshpage.value = false;
       } else {
