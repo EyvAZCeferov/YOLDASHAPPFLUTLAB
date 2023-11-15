@@ -90,7 +90,7 @@ class CardsController extends GetxController {
         refreshpage.value = false;
         data.value = [];
 
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
 
       Cards cashmethod = Cards(

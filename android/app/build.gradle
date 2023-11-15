@@ -36,8 +36,8 @@ def keystoreProperties = new Properties()
 
 android {
     namespace "az.globalmartgroup.yoldash"
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 33
+    // ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -91,4 +91,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
     implementation(platform("com.google.firebase:firebase-bom:32.3.1")) 
+    // implementation 'com.github.zegolibrary:express-video:latest_version'
+
 }

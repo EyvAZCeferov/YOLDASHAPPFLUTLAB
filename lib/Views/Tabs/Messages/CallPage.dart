@@ -51,7 +51,7 @@ class CallPage extends StatelessWidget {
                   size: headingSize,
                 ),
               ),
-              _controller.type.value == "video"
+              _controller.typecalling.value == "video"
                   ? RawMaterialButton(
                       onPressed: () => print("flip cam"),
                       animationDuration: Duration(milliseconds: 300),
@@ -77,7 +77,7 @@ class CallPage extends StatelessWidget {
   }
 
   Center containerArea(width) {
-    if (_controller.type.value == "video") {
+    if (_controller.typecalling.value == "video") {
       return Center(
         child: Container(
           width: width - 40,

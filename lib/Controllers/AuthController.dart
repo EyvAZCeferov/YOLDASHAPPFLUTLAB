@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Controllers/GoingController.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 import '../Functions/CacheManager.dart';
 import '../Functions/GetAndPost.dart';
@@ -388,6 +389,7 @@ class AuthController extends GetxController {
         String status = response['status'];
         String message = response['message'];
         if (status == "success") {
+          ZegoUIKitPrebuiltCallInvitationService().uninit();
           CacheManager.removevaluefromprefences('auth_id');
           CacheManager.removevaluefromprefences('token');
           CacheManager.removevaluefromprefences('name_surname');

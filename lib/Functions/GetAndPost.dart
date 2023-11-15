@@ -41,12 +41,12 @@ class GetAndPost {
           return jsonData;
         } else if (status == 'error') {
           if (context != null) {
-            showToastMSG(errorcolor, "errordatanotfound".tr, context);
+            // showToastMSG(errorcolor, "errordatanotfound".tr, context);
           }
         }
       } else {
         if (context != null) {
-          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+          // showToastMSG(errorcolor, "errordatanotfound".tr, context);
         }
       }
     } catch (e) {
@@ -83,7 +83,7 @@ class GetAndPost {
         return jsonData;
       } else {
         if (context != null) {
-          showToastMSG(errorcolor, "errordatanotfound".tr, context);
+          // showToastMSG(errorcolor, "errordatanotfound".tr, context);
         }
       }
     } catch (e) {

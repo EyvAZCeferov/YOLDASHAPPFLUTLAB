@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:yoldashapp/Functions/helpers.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'Controllers/MainController.dart';
 import 'Functions/CacheManager.dart';
 import 'Theme/Routes.dart';
@@ -25,8 +26,9 @@ void main() async {
 class Yoldash extends StatelessWidget {
   final MainController _maincontroller = Get.put(MainController());
   String selectedlang = 'az';
-
+  var navigatorKey = GlobalKey<NavigatorState>();
   Yoldash() {
+    // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
     _loadLanguage();
   }
 
@@ -60,6 +62,7 @@ class Yoldash extends StatelessWidget {
       opaqueRoute: Get.isOpaqueRouteDefault,
       popGesture: Get.isPopGestureEnable,
       transitionDuration: Duration(milliseconds: 1000),
+      navigatorKey: navigatorKey,
     );
   }
 }

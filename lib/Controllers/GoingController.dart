@@ -88,6 +88,7 @@ class GoingController extends GetxController {
 
   GoingController() {
     initcontrolller();
+    createzego();
   }
 
   void initcontrolller(){
@@ -100,7 +101,7 @@ class GoingController extends GetxController {
     timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       getdriverpositions();
     });
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
       getNonNumericMarkerCount();
     });
   }
@@ -1604,7 +1605,7 @@ class GoingController extends GetxController {
       } else {
         refreshpage.value = false;
         userlocations.value = [];
-        showToastMSG(errorcolor, "errordatanotfound".tr, context);
+        // showToastMSG(errorcolor, "errordatanotfound".tr, context);
       }
     } catch (e) {
       print(e.toString());

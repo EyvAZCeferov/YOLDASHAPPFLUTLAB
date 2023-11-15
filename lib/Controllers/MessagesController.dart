@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
+import 'package:yoldashapp/Controllers/CallingController.dart';
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
@@ -32,6 +32,7 @@ class MessagesController extends GetxController {
     'replies.iamwaiting'.tr
   ];
   late MainController _maincontroller = Get.put(MainController());
+  late CallingController _callingcontroller = Get.put(CallingController());
   final GoingController _goingController = Get.put(GoingController());
   ScrollController scrollController = new ScrollController();
   Rx<int?> auth_id = Rx<int?>(null);
@@ -62,16 +63,6 @@ class MessagesController extends GetxController {
     selectedMessageGroup.value = MessageGroups();
     selectedMessageLists.clear();
     getMessages(null, null);
-
-    // laraecho?.disconnect();
-
-    // if (selectedMessageGroup.value != null &&
-    //     selectedMessageGroup.value?.id != null &&
-    //     selectedMessageGroup.value?.id != '' &&
-    //     selectedMessageGroup.value?.id != ' ') {
-    //   leaveChatChannel(selectedMessageGroup.value!);
-    // }
-
     Get.back();
   }
 
@@ -131,6 +122,10 @@ class MessagesController extends GetxController {
       //     selectedMessageGroup.value?.id != ' ') {
       //   listenChatChannel(selectedMessageGroup.value!);
       // }
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        firebaseMessagingBackgroundHandler(message);
+      });
     } catch (e) {
       print(
           "--------------------------SETTED NOT FOUND ---------------------- ${e.toString()}");
@@ -175,6 +170,10 @@ class MessagesController extends GetxController {
                 return messagegroup;
               }).toList();
             }
+
+            FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+              firebaseMessagingBackgroundHandler(message);
+            });
           }
         } else {
           // if (context != null) {
@@ -319,6 +318,9 @@ class MessagesController extends GetxController {
             showToastMSG(errorcolor, message, context);
           }
           refreshpage.value = false;
+          FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+            firebaseMessagingBackgroundHandler(message);
+          });
         } else {
           messagetextcontroller.value.text = '';
           refreshpage.value = false;
@@ -379,16 +381,38 @@ class MessagesController extends GetxController {
 
   void callpageredirect(type, dynamic? value, context) async {
     try {
-      var statusMic = await handlepermissionreq(Permission.microphone, context);
+      // var statusMic = await handlepermissionreq(Permission.microphone, context);
+      // _callingcontroller.sender_id.value =
+      //     auth_id.value ?? selectedMessageGroup.value?.senderId;
+      // _callingcontroller.receiver_id.value =
+      //     selectedMessageGroup.value?.receiverId == auth_id.value
+      //         ? selectedMessageGroup.value?.senderId
+      //         : selectedMessageGroup.value?.receiverId;
+
+      // _callingcontroller.sender_name.value =
+      //     selectedMessageGroup.value?.receiverId == auth_id.value
+      //         ? selectedMessageGroup.value?.receiverName
+      //         : selectedMessageGroup.value?.senderName;
+      // _callingcontroller.receiver_name.value =
+      //     selectedMessageGroup.value?.receiverId == auth_id.value
+      //         ? selectedMessageGroup.value?.senderName
+      //         : selectedMessageGroup.value?.receiverName;
       if (type == "video") {
         var statusVid = await handlepermissionreq(Permission.camera, context);
+        _callingcontroller.typecalling.value = "video";
         if (statusVid.isGranted) {
-          Get.toNamed('/callpage/${type}', arguments: {type: type});
+          _callingcontroller.callcreate(context);
+          Get.toNamed('/callpage');
         }
       } else {
+        // _callingcontroller.typecalling.value = "audio";
         launchUrlTOSITE("tel:$value");
+        // _callingcontroller.callcreate(context);
+        // Get.toNamed('/callpage');
       }
     } catch (error) {
+      print(
+          "-----------------------CALLING CREATE ERROR-------------------${error.toString()}");
       showToastMSG(errorcolor, error.toString(), context);
     }
   }

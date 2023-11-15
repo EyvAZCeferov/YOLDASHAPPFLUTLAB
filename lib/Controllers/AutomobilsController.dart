@@ -53,7 +53,7 @@ class AutomobilsController extends GetxController {
               return Automobils.fromMap(dat);
             }).toList();
 
-            if (data != null && data.length > 0) {
+            if (data.value != null && data.value.length > 0) {
               selectedAutomobil.value = data.firstWhere(
                   (automobil) => automobil.selected == true,
                   orElse: () => Automobils());
