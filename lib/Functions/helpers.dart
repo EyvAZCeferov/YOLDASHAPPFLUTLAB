@@ -1,5 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -296,3 +296,18 @@ void createzego() {
     // );
   }
 }
+
+void checkconnectionandsendresult(String? pageold) async {
+  final connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    Get.toNamed('connectionlost');
+  }else{
+    if (pageold!=null && pageold == "connectionlost") {
+      Get.back();
+    }else{
+      return;
+    }
+  }
+  pageold=null;
+}
+

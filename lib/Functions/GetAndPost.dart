@@ -14,6 +14,7 @@ class GetAndPost {
   static Future<dynamic> fetchData(
       String urlold, context, Map<String, dynamic> data) async {
     try {
+      checkconnectionandsendresult(null);
       String params = '';
       if (data != null && data.isNotEmpty) {
         data.forEach((key, value) {
@@ -51,7 +52,7 @@ class GetAndPost {
       }
     } catch (e) {
       if (context != null) {
-        showToastMSG(errorcolor, e.toString(), context);
+        
       }
     }
   }
@@ -59,6 +60,7 @@ class GetAndPost {
   static Future<dynamic> fetcOtherhData(
       String urlold, context, Map<String, dynamic> data) async {
     try {
+      checkconnectionandsendresult(null);
       String params = '';
       if (data != null && data.isNotEmpty) {
         data.forEach((key, value) {
@@ -88,7 +90,7 @@ class GetAndPost {
       }
     } catch (e) {
       if (context != null) {
-        showToastMSG(errorcolor, e.toString(), context);
+        
       }
     }
   }
@@ -99,6 +101,7 @@ class GetAndPost {
     context,
   ) async {
     try {
+      checkconnectionandsendresult(null);
       var apiUrl = Uri();
       if (url != "https://yoldash.app/contact") {
         apiUrl = Uri.parse('$baseapiurl/$url');
@@ -127,7 +130,7 @@ class GetAndPost {
       }
     } catch (e) {
       if (context != null) {
-        showToastMSG(errorcolor, e.toString(), context);
+        
       }
     }
   }
@@ -138,6 +141,7 @@ class GetAndPost {
     context,
   ) async {
     try {
+      checkconnectionandsendresult(null);
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
@@ -155,7 +159,7 @@ class GetAndPost {
         showToastMSG(errorcolor, jsonData['message'], context);
       }
     } catch (e) {
-      showToastMSG(errorcolor, e.toString(), context);
+      
     }
   }
 
@@ -165,6 +169,7 @@ class GetAndPost {
     context,
   ) async {
     try {
+      checkconnectionandsendresult(null);
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'multipart/form-data'};
       var token = await _maincontroller.getstoragedat('token');
@@ -182,7 +187,7 @@ class GetAndPost {
       var jsonData = jsonDecode(responseString);
       return jsonData;
     } catch (e) {
-      showToastMSG(errorcolor, e.toString(), context);
+      
     }
   }
 }
