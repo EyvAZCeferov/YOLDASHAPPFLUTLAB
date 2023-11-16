@@ -10,8 +10,8 @@ import 'package:yoldashapp/Controllers/MainController.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/Functions/GetAndPost.dart';
 import 'package:yoldashapp/Functions/PusherClient.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 import '../Constants/StaticText.dart';
 import '../Theme/ThemeService.dart';
@@ -286,13 +286,13 @@ void createzego() {
   var auth_id = mainController.getstoragedat('auth_id');
   var name_surname = mainController.getstoragedat('name_surname');
   if (auth_id != null) {
-    ZegoUIKitPrebuiltCallInvitationService().init(
-      appID: 978230645 ,
-      appSign:
-          'f0f1338574fbcd3846c49c5f766772e41042b518ba9eaa6b4c366efa6abd0947' /*input your AppSign*/,
-      userID: auth_id.toString(),
-      userName: name_surname.toString(),
-      plugins: [ZegoUIKitSignalingPlugin()],
-    );
+    // ZegoUIKitPrebuiltCallInvitationService().init(
+    //   appID: 978230645 ,
+    //   appSign:
+    //       'f0f1338574fbcd3846c49c5f766772e41042b518ba9eaa6b4c366efa6abd0947' /*input your AppSign*/,
+    //   userID: auth_id.toString(),
+    //   userName: name_surname.toString(),
+    //   plugins: [ZegoUIKitSignalingPlugin()],
+    // );
   }
 }
