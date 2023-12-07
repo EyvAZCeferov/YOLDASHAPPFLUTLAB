@@ -11,6 +11,7 @@ const String baseapiurl = "https://sovqat369777.az/api";
 final MainController _maincontroller = Get.put(MainController());
 
 class GetAndPost {
+  static String? token;
   static Future<dynamic> fetchData(
       String urlold, context, Map<String, dynamic> data) async {
     try {
@@ -28,8 +29,11 @@ class GetAndPost {
         url = Uri.parse('$baseapiurl/$urlold');
       }
       var headers = {'Content-Type': 'application/json'};
-      var token = await _maincontroller.getstoragedat('token');
-      if (token != null && token.length > 0) {
+
+      if (token == null || token == '' || token == ' ' || token!.isEmpty) {
+        token = await _maincontroller.getstoragedat('token') ?? '';
+        headers['Authorization'] = 'Bearer $token';
+      } else {
         headers['Authorization'] = 'Bearer $token';
       }
 
@@ -51,9 +55,7 @@ class GetAndPost {
         }
       }
     } catch (e) {
-      if (context != null) {
-        
-      }
+      if (context != null) {}
     }
   }
 
@@ -75,10 +77,6 @@ class GetAndPost {
       }
 
       var headers = {'Content-Type': 'application/json'};
-      var token = await _maincontroller.getstoragedat('token');
-      if (token != null && token.length > 0) {
-        headers['Authorization'] = 'Bearer $token';
-      }
       var response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
@@ -89,9 +87,7 @@ class GetAndPost {
         }
       }
     } catch (e) {
-      if (context != null) {
-        
-      }
+      if (context != null) {}
     }
   }
 
@@ -111,9 +107,10 @@ class GetAndPost {
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
 
-      var token = await _maincontroller.getstoragedat('token');
-
-      if (token != null && token != '' && token != ' ' && token.length > 0) {
+      if (token == null || token == '' || token == ' ' || token!.isEmpty) {
+        token = await _maincontroller.getstoragedat('token') ?? '';
+        headers['Authorization'] = 'Bearer $token';
+      } else {
         headers['Authorization'] = 'Bearer $token';
       }
 
@@ -129,9 +126,7 @@ class GetAndPost {
         }
       }
     } catch (e) {
-      if (context != null) {
-        
-      }
+      if (context != null) {}
     }
   }
 
@@ -145,8 +140,11 @@ class GetAndPost {
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'application/json'};
       var jsonBody = jsonEncode(body);
-      var token = await _maincontroller.getstoragedat('token');
-      if (token != null && token.length > 0) {
+
+      if (token == null || token == '' || token == ' ' || token!.isEmpty) {
+        token = await _maincontroller.getstoragedat('token') ?? '';
+        headers['Authorization'] = 'Bearer $token';
+      } else {
         headers['Authorization'] = 'Bearer $token';
       }
       var response = await http.patch(apiUrl, headers: headers, body: jsonBody);
@@ -158,9 +156,7 @@ class GetAndPost {
       } else if (status == 'error') {
         showToastMSG(errorcolor, jsonData['message'], context);
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }
 
   static Future<dynamic> uploadfile(
@@ -172,9 +168,11 @@ class GetAndPost {
       checkconnectionandsendresult(null);
       var apiUrl = Uri.parse('$baseapiurl/$url');
       var headers = {'Content-Type': 'multipart/form-data'};
-      var token = await _maincontroller.getstoragedat('token');
 
-      if (token != null && token.length > 0) {
+      if (token == null || token == '' || token == ' ' || token!.isEmpty) {
+        token = await _maincontroller.getstoragedat('token') ?? '';
+        headers['Authorization'] = 'Bearer $token';
+      } else {
         headers['Authorization'] = 'Bearer $token';
       }
       var request = await http.MultipartRequest('POST', apiUrl);
@@ -186,8 +184,6 @@ class GetAndPost {
       var responseString = String.fromCharCodes(responseData);
       var jsonData = jsonDecode(responseString);
       return jsonData;
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }
 }

@@ -59,7 +59,6 @@ class GoingController extends GetxController {
   final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
-  Rx<Position?> position_0 = Rx<Position?>(null);
   RxList<SearchingLocations> searchinglocations = <SearchingLocations>[].obs;
   RxList<UserLocations> goinglocations = <UserLocations>[].obs;
   Rx<DistanceDetails?> directiondetails =
@@ -88,19 +87,20 @@ class GoingController extends GetxController {
 
   GoingController() {
     initcontrolller();
-    createzego();
+    // createzego();
   }
 
-  void initcontrolller(){
+  void initcontrolller() {
     getAuthId();
     addorremoveeditingcontroller(0, 'add');
     addorremoveeditingcontroller(1, 'add');
     timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       getandsetcurrentpoisition(null);
+      if (markers.value.length == 0) {
+        getcurrentposition(null);
+      }
     });
-    timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
-      getdriverpositions();
-    });
+
     timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
       getNonNumericMarkerCount();
     });
@@ -115,9 +115,7 @@ class GoingController extends GetxController {
         addresscontrollers.value['position_$index'] = TextEditingController();
       }
     }
-    // Future.delayed(Duration(seconds: 2),(){
     refreshpage.value = false;
-    // });
   }
 
   void getandsetcurrentpoisition(context) async {
@@ -133,26 +131,26 @@ class GoingController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           forceAndroidLocationManager: true);
-      position_0.value = position;
       LatLng latLngPosn = LatLng(position.latitude, position.longitude);
       CameraPosition cameraposition =
           new CameraPosition(target: latLngPosn, zoom: 14);
       kGooglePlex = cameraposition;
-      Map gettednameandplace_id = await getnameviacoords(
+      Map? gettednameandplace_id = await getnameviacoords(
           position.latitude, position.longitude, 'az', context);
-      UserLocations userlocation = await addlocationtodb(
-          gettednameandplace_id['nameaddress'] as String,
-          gettednameandplace_id['place_id'] as String,
-          latLngPosn as LatLng,
-          'position_0' as String,
-          context);
-      newgooglemapcontroller.value
-          ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
-    }
-  }
-
-  void getdriverpositions() async {
-    if (authtype.value == "rider") {
+      if (gettednameandplace_id != null &&
+          gettednameandplace_id['place_id'] != null &&
+          gettednameandplace_id['place_id'] != '' &&
+          gettednameandplace_id['place_id'] != ' ') {
+        UserLocations? userlocation = await addlocationtodb(
+            gettednameandplace_id['nameaddress'] as String,
+            gettednameandplace_id['place_id'] as String,
+            latLngPosn as LatLng,
+            'position_0' as String,
+            context);
+        newgooglemapcontroller.value
+            ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
+      }
+    } else {
       Map<String, dynamic> body = {};
       if (auth_id.value != null &&
           auth_id.value != '' &&
@@ -192,15 +190,20 @@ class GoingController extends GetxController {
 
             if (driverpositions.value.length > 0) {
               for (DriverLocations element in driverpositions.value) {
-                if (element.id != null) {
-                  BitmapDescriptor icon = await addCustomIcon(
+                if (element.id != null &&
+                    element.mapIcon != null &&
+                    element.mapIcon != '' &&
+                    element.mapIcon != ' ') {
+                  BitmapDescriptor? icon_a = await addCustomIcon(
                       getimageurl(
                           "models", 'automobils/types', element.mapIcon),
                       element.model ?? '');
                   markers.add(Marker(
                       markerId: MarkerId(element.id.toString()),
                       draggable: false,
-                      icon: icon,
+                      icon: icon_a ??
+                          BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueYellow),
                       position: LatLng(element.coordinates?.latitude,
                           element.coordinates?.longitude)));
                   circles.value.add(Circle(
@@ -222,23 +225,30 @@ class GoingController extends GetxController {
   }
 
   int getNonNumericMarkerCount() {
-    var nonNumericMarkerCountLocal = 0;
+    var uniqueMarkerIds = <String>{};
+    var uniqueMarkers = <Marker>{};
 
     markers.value.forEach((element) {
       if (element?.markerId != null) {
         final String markerId = element!.markerId.value;
-        if (int.tryParse(markerId) == null) {
-          nonNumericMarkerCountLocal++;
+        final String? infowindowname = element.infoWindow.title;
+        if (!uniqueMarkerIds.contains(markerId) &&
+            infowindowname != null &&
+            infowindowname != '' &&
+            infowindowname != ' ') {
+          uniqueMarkerIds.add(markerId);
+          uniqueMarkers.add(element);
         }
       }
     });
-    nonNumericMarkerCount.value = nonNumericMarkerCountLocal;
-    return nonNumericMarkerCountLocal;
+    markers.value = uniqueMarkers;
+    nonNumericMarkerCount.value = uniqueMarkerIds.length;
+    return uniqueMarkerIds.length ?? 0;
   }
 
   Future<BitmapDescriptor> addCustomIcon(String url, String typeName) async {
     final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response!=null) {
       BitmapDescriptor icon =
           await BitmapDescriptor.fromBytes(response.bodyBytes);
       return icon;
@@ -262,7 +272,7 @@ class GoingController extends GetxController {
     authtype.value = await _maincontroller.getstoragedat('authtype') ?? '';
   }
 
-  void getcurrentposition(context) async {
+  Future<void> getcurrentposition(context) async {
     try {
       refreshpage.value = true;
       var statuslocation =
@@ -273,18 +283,19 @@ class GoingController extends GetxController {
             await handlepermissionreq(Permission.location, context);
       }
 
-      getcurrentrides(context);
+      if (currentrides.value.length == 0) {
+        getcurrentrides(context);
+      }
 
       cardscontroller.fetchDatas(context);
 
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           forceAndroidLocationManager: true);
-      position_0.value = position;
       LatLng latLngPosn = LatLng(position.latitude, position.longitude);
       CameraPosition cameraposition =
           new CameraPosition(target: latLngPosn, zoom: 14);
-      String language = await _maincontroller.getstoragedat('language');
+      String language = await _maincontroller.getstoragedat('language') ?? 'az';
 
       if (authtype.value == "driver") {
         _automobilscontroller.fetchDatas(context);
@@ -292,56 +303,69 @@ class GoingController extends GetxController {
       }
 
       kGooglePlex = cameraposition;
-      Map gettednameandplace_id = await getnameviacoords(
+      Map? gettednameandplace_id = await getnameviacoords(
           position.latitude, position.longitude, language, context);
-      UserLocations userlocation = await addlocationtodb(
-          gettednameandplace_id['nameaddress'] as String,
-          gettednameandplace_id['place_id'] as String,
-          latLngPosn as LatLng,
-          'position_0' as String,
-          context as BuildContext);
-      await fetchlocations(context);
-
-      newgooglemapcontroller.value
-          ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
-
-      refreshpage.value = false;
-      if (gettednameandplace_id['nameaddress'] != null &&
-          gettednameandplace_id['nameaddress'] != ' ' &&
+      if (gettednameandplace_id != null &&
+          gettednameandplace_id['nameaddress'] != null &&
           gettednameandplace_id['nameaddress'] != '' &&
-          userlocation != null) {
-        if (addresscontrollers.value.containsKey('position_0')) {
-          addresscontrollers.value['position_0'].text =
-              getLocalizedValue(userlocation.name, 'name') as String;
-        }
+          gettednameandplace_id['nameaddress'] != ' ' &&
+          gettednameandplace_id['place_id'] != null &&
+          gettednameandplace_id['place_id'] != '' &&
+          gettednameandplace_id['place_id'] != ' ') {
+        UserLocations? userlocation = await addlocationtodb(
+            gettednameandplace_id['nameaddress'] ?? ' ',
+            gettednameandplace_id['place_id'] ?? ' ',
+            latLngPosn as LatLng,
+            'position_0' ?? ' ',
+            context);
 
-        goinglocations.value.add(userlocation);
-        markers.value.add(Marker(
-          markerId: MarkerId(userlocation.type as String),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-            title: getLocalizedValue(userlocation.name, 'name'),
-            snippet: 'mylocation'.tr,
-          ),
-          position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-              userlocation.coordinates!.longitude!.toDouble()),
-          draggable: true,
-          onDragEnd: (LatLng latlng) =>
-              dragortappedmarker(userlocation.type as String, latlng, context),
-        ));
-        circles.value.add(Circle(
-          circleId: CircleId(userlocation.type as String),
-          fillColor: secondarycolor,
-          center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-              userlocation.coordinates!.longitude!.toDouble()),
-          radius: 15,
-          strokeWidth: 4,
-          strokeColor: secondarycolor,
-        ));
+        await fetchlocations(context);
+
+        newgooglemapcontroller.value
+            ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
+
+        refreshpage.value = false;
+        if (gettednameandplace_id['nameaddress'] != null &&
+            gettednameandplace_id['nameaddress'] != ' ' &&
+            gettednameandplace_id['nameaddress'] != '' &&
+            userlocation != null) {
+          if (addresscontrollers.value.containsKey('position_0')) {
+            addresscontrollers.value['position_0'].text =
+                getLocalizedValue(userlocation.name, 'name') ?? ' ';
+          }
+          if (userlocation.coordinates?.latitude != null &&
+              userlocation.coordinates?.latitude != '' &&
+              userlocation.coordinates?.latitude != ' ') {
+            goinglocations.value.add(userlocation);
+            markers.value.add(Marker(
+              markerId: MarkerId(userlocation.type ?? 'position_0'),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueAzure),
+              infoWindow: InfoWindow(
+                title: getLocalizedValue(userlocation.name, 'name'),
+                snippet: 'mylocation'.tr,
+              ),
+              position: LatLng(userlocation.coordinates?.latitude?.toDouble(),
+                  userlocation.coordinates?.longitude?.toDouble()),
+              draggable: true,
+              onDragEnd: (LatLng latlng) => dragortappedmarker(
+                  userlocation.type as String, latlng, context),
+            ));
+            circles.value.add(Circle(
+              circleId: CircleId(userlocation.type ?? 'position_0'),
+              fillColor: secondarycolor,
+              center: LatLng(userlocation.coordinates?.latitude?.toDouble(),
+                  userlocation.coordinates?.longitude?.toDouble()),
+              radius: 15,
+              strokeWidth: 4,
+              strokeColor: secondarycolor,
+            ));
+          }
+        }
       }
-    } catch (e) {
-      print(e.toString());
+    } catch (e, stackTrace) {
+      print("-----------------------Current positiions ------------- ${e}");
+      print("--------------------STACK TRACE------------------${stackTrace}");
     }
   }
 
@@ -349,24 +373,36 @@ class GoingController extends GetxController {
     addedsectionshow.value = !addedsectionshow.value;
   }
 
-  Future<UserLocations> addlocationtodb(String nameaddress, String place_id,
+  Future<UserLocations?> addlocationtodb(String nameaddress, String place_id,
       LatLng latlng, String type, context) async {
     try {
-      var body = {
-        'place_id': place_id,
-        'name': nameaddress,
-        'latitude': latlng.latitude,
-        'longitude': latlng.longitude,
-        'type': type,
-      };
-      var response = await GetAndPost.postData("locations", body, context);
-      if (response != null) {
-        String status = response['status'];
-        String message = "";
-        if (response['message'] != null) message = response['message'];
-        if (status == "success") {
-          UserLocations userlocation = UserLocations.fromMap(response['data']);
-          return userlocation;
+      if (nameaddress != null &&
+          nameaddress.isNotEmpty &&
+          place_id != null &&
+          place_id.isNotEmpty &&
+          type != null &&
+          type.isNotEmpty) {
+        var body = {
+          'place_id': place_id,
+          'name': nameaddress,
+          'latitude': latlng.latitude,
+          'longitude': latlng.longitude,
+          'type': type,
+        };
+        var response = await GetAndPost.postData("locations", body, context);
+        refreshpage.value = false;
+        if (response != null) {
+          String status = response['status'];
+          String message = "";
+          if (response['message'] != null) message = response['message'];
+
+          if (status == "success") {
+            UserLocations userlocation =
+                UserLocations.fromMap(response['data']);
+            return userlocation;
+          } else {
+            return UserLocations();
+          }
         } else {
           return UserLocations();
         }
@@ -374,28 +410,41 @@ class GoingController extends GetxController {
         return UserLocations();
       }
     } catch (e) {
+      print("-------------------ADD LOC TO DB -------------------- ${e}");
       return UserLocations();
     }
   }
 
-  Future<Map> getnameviacoords(
+  Future<Map?> getnameviacoords(
       double latitude, double longitude, String language, context) async {
-    var response = await GetAndPost.fetcOtherhData(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$mapsApiKey&language=$language',
-        context, {});
-    Map data = {};
-    if (response != null) {
-      data['nameaddress'] = response['results'][0]["address_components"][3]
-              ['long_name'] +
-          ", " +
-          response['results'][0]["address_components"][2]['long_name'] +
-          ", " +
-          response['results'][0]["address_components"][1]['long_name'];
+    try {
+      var response = await GetAndPost.fetcOtherhData(
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$mapsApiKey&language=$language',
+          context, {});
+      Map data = {};
+      if (response != null &&
+          response['results'] != null &&
+          response['results'].isNotEmpty &&
+          response['results'][0]['address_components'] != null &&
+          response['results'][0]['address_components'].isNotEmpty) {
+        data['nameaddress'] = response['results'][0]["address_components"][3]
+                ['long_name'] ??
+            ' ' +
+                ", " +
+                response['results'][0]["address_components"][2]['long_name'] ??
+            ' ' +
+                ", " +
+                response['results'][0]["address_components"][1]['long_name'] ??
+            ' ';
 
-      data['place_id'] = response['results'][0]['place_id'];
-      return data;
-    } else {
-      return data;
+        data['place_id'] = response['results'][0]['place_id'] ?? ' ';
+        return data;
+      } else {
+        return data;
+      }
+    } catch (e) {
+      print(
+          "----------------------------GET NAME VIA COORDS-------------------${e}");
     }
   }
 
@@ -553,7 +602,7 @@ class GoingController extends GetxController {
               response['result']['formatted_address'];
           editingcontroller.value = TextEditingController();
           searchinglocations.value = [];
-          UserLocations userlocation = await addlocationtodb(
+          UserLocations? userlocation = await addlocationtodb(
               response['result']['formatted_address'],
               place_id,
               LatLng(response['result']['geometry']['location']['lat'],
@@ -561,63 +610,77 @@ class GoingController extends GetxController {
               inptype.value,
               context);
 
-          if (goinglocations.value.length > 0) {
+          if (goinglocations.value.length > 0 &&
+              userlocation != null &&
+              userlocation.id != null &&
+              userlocation.placeId != null &&
+              userlocation.placeId != '' &&
+              userlocation.placeId != ' ') {
             goinglocations.value
                 .removeWhere((element) => element.type == inptype.value);
           }
-          goinglocations.value.add(userlocation);
+          if (userlocation != null &&
+              userlocation.id != null &&
+              userlocation.placeId != null &&
+              userlocation.placeId != '' &&
+              userlocation.placeId != ' ') {
+            goinglocations.value.add(userlocation);
 
-          if (nonNumericMarkerCount > 0) {
-            markers.value.removeWhere((marker) =>
-                marker?.markerId.value == userlocation.type as String);
-          }
+            if (nonNumericMarkerCount > 0) {
+              markers.value.removeWhere((marker) =>
+                  marker?.markerId.value == userlocation.type as String);
+            }
 
-          if (nonNumericMarkerCount > 0) {
-            circles.value.removeWhere((circle) =>
-                circle?.circleId.value == userlocation.type as String);
-          }
+            if (nonNumericMarkerCount > 0) {
+              circles.value.removeWhere((circle) =>
+                  circle?.circleId.value == userlocation.type as String);
+            }
 
-          markers.value.add(Marker(
-            markerId: MarkerId(userlocation.type as String),
-            onDragEnd: (LatLng latlng) => dragortappedmarker(
-                userlocation.type as String, latlng, context),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                userlocation.type == "position_0"
-                    ? BitmapDescriptor.hueAzure
-                    : BitmapDescriptor.hueRed),
-            infoWindow: InfoWindow(
-              title: getLocalizedValue(userlocation.name, 'name'),
-              snippet: 'mylocation'.tr,
-            ),
-            position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-                userlocation.coordinates!.longitude!.toDouble()),
-            draggable: true,
-          ));
+            markers.value.add(Marker(
+              markerId: MarkerId(userlocation.type as String),
+              onDragEnd: (LatLng latlng) => dragortappedmarker(
+                  userlocation.type as String, latlng, context),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  userlocation.type == "position_0"
+                      ? BitmapDescriptor.hueAzure
+                      : BitmapDescriptor.hueRed),
+              infoWindow: InfoWindow(
+                title: getLocalizedValue(userlocation.name, 'name'),
+                snippet: 'mylocation'.tr,
+              ),
+              position: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+                  userlocation.coordinates!.longitude!.toDouble()),
+              draggable: true,
+            ));
 
-          circles.value.add(Circle(
-            circleId: CircleId(userlocation.type as String),
-            fillColor: secondarycolor,
-            center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
-                userlocation.coordinates!.longitude!.toDouble()),
-            radius: 15,
-            strokeWidth: 4,
-            strokeColor:
-                userlocation.type == "position_0" ? secondarycolor : errorcolor,
-          ));
+            circles.value.add(Circle(
+              circleId: CircleId(userlocation.type as String),
+              fillColor: secondarycolor,
+              center: LatLng(userlocation.coordinates!.latitude!.toDouble(),
+                  userlocation.coordinates!.longitude!.toDouble()),
+              radius: 15,
+              strokeWidth: 4,
+              strokeColor: userlocation.type == "position_0"
+                  ? secondarycolor
+                  : errorcolor,
+            ));
 
-          if (goinglocations.value.length >= 2) {
-            createroute(context);
+            if (goinglocations.value.length >= 2) {
+              createroute(context);
+            } else {
+              refreshpage.value = false;
+              openmodal.value = false;
+              CameraPosition cameraposition = new CameraPosition(
+                  target: LatLng(
+                      response['result']['geometry']['location']['lat'],
+                      response['result']['geometry']['location']['lng']),
+                  zoom: 14);
+              kGooglePlex = cameraposition;
+              newgooglemapcontroller.value
+                  ?.animateCamera(cameraposition as CameraUpdate);
+            }
           } else {
             refreshpage.value = false;
-            openmodal.value = false;
-            CameraPosition cameraposition = new CameraPosition(
-                target: LatLng(
-                    response['result']['geometry']['location']['lat'],
-                    response['result']['geometry']['location']['lng']),
-                zoom: 14);
-            kGooglePlex = cameraposition;
-            newgooglemapcontroller.value
-                ?.animateCamera(cameraposition as CameraUpdate);
           }
         } else {
           refreshpage.value = false;
@@ -786,68 +849,69 @@ class GoingController extends GetxController {
     var url =
         "https://maps.googleapis.com/maps/api/directions/json?key=$mapsApiKey&language=$language";
     List<LatLng>? destinations;
+    if (goinglocations.value != null && goinglocations.value.length > 1) {
+      for (var location in goinglocations.value) {
+        LatLng destination = LatLng(
+          location.coordinates!.latitude as double,
+          location.coordinates!.longitude as double,
+        );
 
-    for (var location in goinglocations.value) {
-      LatLng destination = LatLng(
-        location.coordinates!.latitude as double,
-        location.coordinates!.longitude as double,
-      );
+        if (destinations == null) {
+          destinations = [destination];
+        } else {
+          destinations.add(destination);
+        }
+      }
+      if (destinations != null && destinations.length > 1) {
+        var origin = destinations.first;
+        var destination = destinations.last;
 
-      if (destinations == null) {
-        destinations = [destination];
+        url = url +
+            "&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}";
+
+        for (var i = 1; i < destinations.length - 1; i++) {
+          var waypoint = destinations[i];
+          url = url + "&waypoints=${waypoint.latitude},${waypoint.longitude}";
+        }
       } else {
-        destinations.add(destination);
+        showToastMSG(errorcolor, "pleaseselectplaceandclick".tr, context);
       }
-    }
-    if (destinations != null && destinations.length > 1) {
-      var origin = destinations.first;
-      var destination = destinations.last;
+      var response = await GetAndPost.fetcOtherhData(url, context, {});
+      if (response['status'] == "OK") {
+        directiondetails.value = DistanceDetails(
+          encodedPoints: response['routes'][0]['overview_polyline']['points'],
+          distanceText: response['routes'][0]['legs'][0]['distance']['text'],
+          distanceValue: response['routes'][0]['legs'][0]['distance']['value'],
+          durationText: response['routes'][0]['legs'][0]['duration']['text'],
+          durationValue: response['routes'][0]['legs'][0]['duration']['value'],
+        );
+        latlngs.clear();
 
-      url = url +
-          "&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}";
+        PolylinePoints polylinePoints = PolylinePoints();
+        List<PointLatLng> pointslatlang = polylinePoints.decodePolyline(
+            response['routes'][0]['overview_polyline']['points']);
+        if (pointslatlang.isNotEmpty) {
+          pointslatlang.forEach((PointLatLng element) {
+            latlngs.add(LatLng(element.latitude, element.longitude));
+          });
+        }
 
-      for (var i = 1; i < destinations.length - 1; i++) {
-        var waypoint = destinations[i];
-        url = url + "&waypoints=${waypoint.latitude},${waypoint.longitude}";
+        polyline.clear();
+        Polyline polylinenew = Polyline(
+            polylineId: PolylineId("current_destination"),
+            color: primarycolor,
+            points: latlngs.value,
+            jointType: JointType.mitered,
+            width: 5,
+            startCap: Cap.roundCap,
+            endCap: Cap.roundCap,
+            geodesic: true);
+        polyline.add(polylinenew);
+
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
       }
-    } else {
-      showToastMSG(errorcolor, "pleaseselectplaceandclick".tr, context);
-    }
-    var response = await GetAndPost.fetcOtherhData(url, context, {});
-    if (response['status'] == "OK") {
-      directiondetails.value = DistanceDetails(
-        encodedPoints: response['routes'][0]['overview_polyline']['points'],
-        distanceText: response['routes'][0]['legs'][0]['distance']['text'],
-        distanceValue: response['routes'][0]['legs'][0]['distance']['value'],
-        durationText: response['routes'][0]['legs'][0]['duration']['text'],
-        durationValue: response['routes'][0]['legs'][0]['duration']['value'],
-      );
-      latlngs.clear();
-
-      PolylinePoints polylinePoints = PolylinePoints();
-      List<PointLatLng> pointslatlang = polylinePoints
-          .decodePolyline(response['routes'][0]['overview_polyline']['points']);
-      if (pointslatlang.isNotEmpty) {
-        pointslatlang.forEach((PointLatLng element) {
-          latlngs.add(LatLng(element.latitude, element.longitude));
-        });
-      }
-
-      polyline.clear();
-      Polyline polylinenew = Polyline(
-          polylineId: PolylineId("current_destination"),
-          color: primarycolor,
-          points: latlngs.value,
-          jointType: JointType.mitered,
-          width: 5,
-          startCap: Cap.roundCap,
-          endCap: Cap.roundCap,
-          geodesic: true);
-      polyline.add(polylinenew);
-
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
     }
   }
 
@@ -1368,132 +1432,164 @@ class GoingController extends GetxController {
   }
 
   void getrequestforride(Rides ride, BuildContext context) async {
-    refreshpage.value = true;
+    try {
+      refreshpage.value = true;
+      var nextprocess = true;
 
-    List<LatLng> points = [];
+      List<LatLng> points = [];
 
-    polyline.forEach((polyline) {
-      if (polyline != null) {
-        polyline.points.forEach((element) {
-          points.add(element);
-        });
-      }
-    });
-
-    Map<String, dynamic> body = {
-      "ride_id": ride.id,
-      "price": priceofwaycontroller.value.text ?? 0,
-      "position": selectedplace.value ?? null,
-      "coordinates": <Map<String, dynamic>>[],
-      'start_time': fromTimeSelectable.value.toString() ?? null,
-      'end_time': toTimeSelectable.value.toString() ?? null,
-      'kmofway': directiondetails.value!.distanceValue ?? 0,
-      'durationofway': directiondetails.value!.durationValue ?? 0,
-      "polyline_points": points,
-      'minimal_price_of_way': minimumpriceofwaycontroller.value.text != null &&
-              minimumpriceofwaycontroller.value.text != '' &&
-              minimumpriceofwaycontroller.value.text != ' '
-          ? minimumpriceofwaycontroller.value.text
-          : 0,
-      'price_of_way': priceofwaycontroller.value.text != null &&
-              priceofwaycontroller.value.text != '' &&
-              priceofwaycontroller.value.text != ' '
-          ? priceofwaycontroller.value.text
-          : 0,
-      'payment_method': cardscontroller.selectedCards.value!.id == null ||
-              cardscontroller.selectedCards.value!.id == 0
-          ? 'nagd'
-          : 'card',
-      'payment_card': cardscontroller.selectedCards.value!.id == null ||
-              cardscontroller.selectedCards.value!.id == 0
-          ? null
-          : cardscontroller.selectedCards.value!.id,
-      'status': 'waiting',
-      'weight': weightcontroller.value.text != null &&
-              weightcontroller.value.text != '' &&
-              weightcontroller.value.text != ' '
-          ? weightcontroller.value.text
-          : 0,
-      'place_id': null,
-    };
-
-    List<Map<String, dynamic>> coordinates = [];
-
-    addresscontrollers.value.forEach((key, value) {
-      coordinates.add({
-        "latitude": markers.value
-            .firstWhere((element) => element?.markerId.value == key)!
-            .position!
-            .latitude
-            .toString(),
-        "longitude": markers.value
-            .firstWhere((element) => element?.markerId.value == key)!
-            .position!
-            .longitude
-            .toString(),
-        "address": markers.value
-            .firstWhere((element) => element?.markerId.value == key)!
-            .infoWindow
-            .title,
-        "type": key
-      });
-    });
-
-    body['coordinates'] = coordinates;
-
-    if (auth_id.value != null && auth_id.value != '' && auth_id.value != ' ') {
-      body['user_id'] = auth_id.value;
-    }
-    var response =
-        await GetAndPost.postData("rides_sendrequest", body, context);
-
-    Get.back();
-
-    if (response != null) {
-      String status = response['status'];
-      String message = '';
-      if (response['message'] != null) message = response['message'];
-      if (status == "success") {
-        data.value = [];
-        searchinglocations.value = [];
-        selectedindex.value = 0;
-        weightcontroller.value = TextEditingController();
-        priceofwaycontroller.value = TextEditingController();
-        addresscontrollers.value.clear();
-        addorremoveeditingcontroller(0, "add");
-        addorremoveeditingcontroller(1, "add");
-        markers.removeWhere((element) => element?.markerId != "position_0");
-        circles.removeWhere((element) => element?.circleId != "position_0");
-        minimumpriceofwaycontroller.value = TextEditingController();
-        openmodal.value = false;
-        addedsectionshow.value = false;
-        loading.value = false;
-        fromTime.value = DateTime.now();
-        toTime.value = DateTime.now().add(Duration(days: 4));
-        fromTimeSelectable.value = DateTime.now();
-        toTimeSelectable.value = DateTime.now().add(Duration(days: 4));
-        goinglocations.removeWhere((element) => element?.type != "position_0");
-        polyline.value = {};
-        inptype.value = "position_1";
-        mapped?.value = {};
-        resulttext.value = null;
-        if (response['data'] != null) {
-          currentrides.value.add(Rides.fromMap(response['data']));
+      polyline.forEach((polyline) {
+        if (polyline != null) {
+          polyline.points.forEach((element) {
+            points.add(element);
+          });
         }
-        refreshpage.value = true;
-      } else {
-        print(
-            "--------------------------------Xeta---------------------------------------------------");
-        print(message);
-        showToastMSG(errorcolor, message, context);
+      });
+
+      if (ride.minimalPriceOfWay != null &&
+          ride.minimalPriceOfWay != 0 &&
+          ride.minimalPriceOfWay != '0' &&
+          ride.minimalPriceOfWay != '' &&
+          ride.minimalPriceOfWay != ' ' &&
+          priceofwaycontroller.value.text.isNotEmpty) {
+        double minimalPrice = double.tryParse(ride.minimalPriceOfWay) ?? 0;
+        double priceOfWay =
+            double.tryParse(priceofwaycontroller.value.text) ?? 0.0;
+        if (priceOfWay > minimalPrice) {
+          nextprocess = true;
+        } else {
+          nextprocess = false;
+        }
       }
-      refreshpage.value = false;
-    } else {
+
+      if (nextprocess == true) {
+        Map<String, dynamic> body = {
+          "ride_id": ride.id,
+          "price": priceofwaycontroller.value.text ?? 0,
+          "position": selectedplace.value ?? null,
+          "coordinates": <Map<String, dynamic>>[],
+          'start_time': fromTimeSelectable.value.toString() ?? null,
+          'end_time': toTimeSelectable.value.toString() ?? null,
+          'kmofway': directiondetails.value!.distanceValue ?? 0,
+          'durationofway': directiondetails.value!.durationValue ?? 0,
+          "polyline_points": points,
+          'minimal_price_of_way':
+              minimumpriceofwaycontroller.value.text != null &&
+                      minimumpriceofwaycontroller.value.text != '' &&
+                      minimumpriceofwaycontroller.value.text != ' '
+                  ? minimumpriceofwaycontroller.value.text
+                  : 0,
+          'price_of_way': priceofwaycontroller.value.text != null &&
+                  priceofwaycontroller.value.text != '' &&
+                  priceofwaycontroller.value.text != ' '
+              ? priceofwaycontroller.value.text
+              : 0,
+          'payment_method': cardscontroller.selectedCards.value!.id == null ||
+                  cardscontroller.selectedCards.value!.id == 0
+              ? 'nagd'
+              : 'card',
+          'payment_card': cardscontroller.selectedCards.value!.id == null ||
+                  cardscontroller.selectedCards.value!.id == 0
+              ? null
+              : cardscontroller.selectedCards.value!.id,
+          'status': 'waiting',
+          'weight': weightcontroller.value.text != null &&
+                  weightcontroller.value.text != '' &&
+                  weightcontroller.value.text != ' '
+              ? weightcontroller.value.text
+              : 0,
+          'place_id': null,
+        };
+
+        List<Map<String, dynamic>> coordinates = [];
+
+        addresscontrollers.value.forEach((key, value) {
+          coordinates.add({
+            "latitude": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .position!
+                .latitude
+                .toString(),
+            "longitude": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .position!
+                .longitude
+                .toString(),
+            "address": markers.value
+                .firstWhere((element) => element?.markerId.value == key)!
+                .infoWindow
+                .title,
+            "type": key
+          });
+        });
+
+        body['coordinates'] = coordinates;
+
+        if (auth_id.value != null &&
+            auth_id.value != '' &&
+            auth_id.value != ' ') {
+          body['user_id'] = auth_id.value;
+        }
+        var response =
+            await GetAndPost.postData("rides_sendrequest", body, context);
+
+        Get.back();
+
+        if (response != null) {
+          String status = response['status'];
+          String message = '';
+          if (response['message'] != null) message = response['message'];
+          if (status == "success") {
+            data.value = [];
+            searchinglocations.value = [];
+            selectedindex.value = 0;
+            weightcontroller.value = TextEditingController();
+            priceofwaycontroller.value = TextEditingController();
+            addresscontrollers.value.clear();
+            addorremoveeditingcontroller(0, "add");
+            addorremoveeditingcontroller(1, "add");
+            markers.removeWhere((element) => element?.markerId != "position_0");
+            circles.removeWhere((element) => element?.circleId != "position_0");
+            minimumpriceofwaycontroller.value = TextEditingController();
+            openmodal.value = false;
+            addedsectionshow.value = false;
+            loading.value = false;
+            fromTime.value = DateTime.now();
+            toTime.value = DateTime.now().add(Duration(days: 4));
+            fromTimeSelectable.value = DateTime.now();
+            toTimeSelectable.value = DateTime.now().add(Duration(days: 4));
+            goinglocations
+                .removeWhere((element) => element?.type != "position_0");
+            polyline.value = {};
+            inptype.value = "position_1";
+            mapped?.value = {};
+            resulttext.value = null;
+            if (response['data'] != null) {
+              currentrides.value.add(Rides.fromMap(response['data']));
+            }
+            refreshpage.value = true;
+          } else {
+            print(
+                "--------------------------------Xeta---------------------------------------------------");
+            print(message);
+            showToastMSG(errorcolor, message, context);
+          }
+          refreshpage.value = false;
+        } else {
+          refreshpage.value = false;
+        }
+      } else {
+        refreshpage.value = false;
+        showToastMSG(errorcolor, "minumumwayofprice".tr, context);
+        Get.back();
+      }
+    } catch (e) {
+      print("----------GET REQ FOR RIDE-------------${e}");
       refreshpage.value = false;
     }
   }
 
-  void getcurrentrides(BuildContext context) async {
+  Future<void> getcurrentrides(context) async {
     try {
       refreshpage.value = true;
       Map<String, dynamic> body = {};
@@ -1614,19 +1710,25 @@ class GoingController extends GetxController {
 
   void getnewmark(LatLng latlng, context) async {
     markers.value = {};
-    Map mappeda = await getnameviacoords(
+    Map? mappeda = await getnameviacoords(
         latlng.latitude, latlng.longitude, 'az', context);
-    mapped?.value = mappeda;
-    latLngPos.value = latlng;
-    markers.value.add(Marker(
-      markerId: MarkerId("position_0"),
-      onDragEnd: (LatLng latlng) =>
-          dragortappedmarker("position_0", latlng, context),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      infoWindow: InfoWindow(title: "mylocation".tr, snippet: 'mylocation'.tr),
-      position: latlng,
-      draggable: true,
-    ));
+    if (mappeda != null &&
+        mapped?['place_id'] != null &&
+        mapped?['place_id'] != '' &&
+        mapped?['place_id'] != ' ') {
+      mapped?.value = mappeda;
+      latLngPos.value = latlng;
+      markers.value.add(Marker(
+        markerId: MarkerId("position_0"),
+        onDragEnd: (LatLng latlng) =>
+            dragortappedmarker("position_0", latlng, context),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow:
+            InfoWindow(title: "mylocation".tr, snippet: 'mylocation'.tr),
+        position: latlng,
+        draggable: true,
+      ));
+    }
   }
 
   Future<void> createorselectlocation(String type, context) async {
@@ -1705,89 +1807,114 @@ class GoingController extends GetxController {
     }
   }
 
-  void dragortappedmarker(
+  Future<void> dragortappedmarker(
       String markerId, LatLng? latlng, BuildContext context) async {
     try {
       if (latlng != null) {
-        refreshpage.value = true;
+        // refreshpage.value = true;
         CameraPosition cameraposition =
             new CameraPosition(target: latlng, zoom: 14);
 
         kGooglePlex = cameraposition;
-        Map gettednameandplace_id = await getnameviacoords(
+        Map? gettednameandplace_id = await getnameviacoords(
             latlng.latitude, latlng.longitude, 'az', context);
 
-        goinglocations.value.removeWhere((element) => element.type == markerId);
-        markers.value
-            .removeWhere((element) => element?.markerId == MarkerId(markerId));
-        circles.value
-            .removeWhere((element) => element?.circleId == CircleId(markerId));
+        if (gettednameandplace_id != null &&
+            gettednameandplace_id['place_id'] != null &&
+            gettednameandplace_id['place_id'] != '' &&
+            gettednameandplace_id['place_id'] != ' ' &&
+            gettednameandplace_id['nameaddress'] != null &&
+            gettednameandplace_id['nameaddress'] != '' &&
+            gettednameandplace_id['nameaddress'] != ' ') {
+          goinglocations.value
+              .removeWhere((element) => element.type == markerId);
+          markers.value.removeWhere(
+              (element) => element?.markerId == MarkerId(markerId));
+          circles.value.removeWhere(
+              (element) => element?.circleId == CircleId(markerId));
 
-        UserLocations userlocationtoingdb = await addlocationtodb(
-            gettednameandplace_id['nameaddress'] ?? '',
-            gettednameandplace_id['place_id'] as String,
-            latlng as LatLng,
-            markerId,
-            context as BuildContext);
+          UserLocations? userlocationtoingdb = await addlocationtodb(
+              gettednameandplace_id['nameaddress'] ?? '',
+              gettednameandplace_id['place_id'] as String,
+              latlng as LatLng,
+              markerId,
+              context as BuildContext);
 
-        await fetchlocations(context);
-
-        if (userlocationtoingdb.type != null &&
-            userlocationtoingdb.placeId != null) {
-          newgooglemapcontroller.value
-              ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
-          refreshpage.value = false;
-
-          if (userlocationtoingdb.name != null &&
-              userlocationtoingdb.name != ' ' &&
-              userlocationtoingdb.name != '' &&
-              userlocationtoingdb.placeId != null &&
+          if (userlocationtoingdb != null &&
+              userlocationtoingdb.type != '' &&
+              userlocationtoingdb != ' ' &&
+              userlocationtoingdb.type != null &&
               userlocationtoingdb.placeId != '' &&
-              userlocationtoingdb.placeId != ' ') {
-            if (addresscontrollers.value.containsKey(markerId)) {
-              addresscontrollers.value[markerId].text =
-                  getLocalizedValue(userlocationtoingdb.name, 'name') as String;
-            }
-            goinglocations.value.add(userlocationtoingdb);
-            markers.value.add(Marker(
-              markerId: MarkerId(userlocationtoingdb.type as String),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  markerId == "position_0"
-                      ? BitmapDescriptor.hueAzure
-                      : BitmapDescriptor.hueRed),
-              infoWindow: InfoWindow(
-                title: getLocalizedValue(userlocationtoingdb.name, 'name'),
-                snippet: 'mylocation'.tr,
-              ),
-              position: LatLng(
-                  userlocationtoingdb.coordinates!.latitude!.toDouble(),
-                  userlocationtoingdb.coordinates!.longitude!.toDouble()),
-              draggable: true,
-              onDragEnd: (LatLng latlng) => dragortappedmarker(
-                  userlocationtoingdb.type as String, latlng, context),
-            ));
+              userlocationtoingdb.placeId != ' ' &&
+              userlocationtoingdb.placeId != null) {
+            newgooglemapcontroller.value
+                ?.animateCamera(CameraUpdate.newCameraPosition(cameraposition));
+            refreshpage.value = false;
 
-            circles.value.add(Circle(
-              circleId: CircleId(userlocationtoingdb.type as String),
-              fillColor: markerId == "position_0" ? secondarycolor : errorcolor,
-              center: LatLng(
-                  userlocationtoingdb.coordinates!.latitude!.toDouble(),
-                  userlocationtoingdb.coordinates!.longitude!.toDouble()),
-              radius: 15,
-              strokeWidth: 4,
-              strokeColor:
-                  markerId == "position_0" ? secondarycolor : errorcolor,
-            ));
+            if (userlocationtoingdb.name != null &&
+                userlocationtoingdb.name != ' ' &&
+                userlocationtoingdb.name != '' &&
+                userlocationtoingdb.placeId != null &&
+                userlocationtoingdb.placeId != '' &&
+                userlocationtoingdb.placeId != ' ') {
+              if (addresscontrollers.value.containsKey(markerId)) {
+                addresscontrollers.value[markerId].text =
+                    getLocalizedValue(userlocationtoingdb.name, 'name')
+                        as String;
+              }
+              refreshpage.value = false;
+              goinglocations.value.add(userlocationtoingdb);
+              markers.value.add(Marker(
+                markerId: MarkerId(userlocationtoingdb.type as String),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    markerId == "position_0"
+                        ? BitmapDescriptor.hueAzure
+                        : BitmapDescriptor.hueRed),
+                infoWindow: InfoWindow(
+                  title: getLocalizedValue(userlocationtoingdb.name, 'name'),
+                  snippet: 'mylocation'.tr,
+                ),
+                position: LatLng(
+                    userlocationtoingdb.coordinates!.latitude!.toDouble(),
+                    userlocationtoingdb.coordinates!.longitude!.toDouble()),
+                draggable: true,
+                onDragEnd: (LatLng latlng) => dragortappedmarker(
+                    userlocationtoingdb.type as String, latlng, context),
+              ));
 
-            if (markers.length > 1) {
-              createroute(context);
+              circles.value.add(Circle(
+                circleId: CircleId(userlocationtoingdb.type as String),
+                fillColor:
+                    markerId == "position_0" ? secondarycolor : errorcolor,
+                center: LatLng(
+                    userlocationtoingdb.coordinates!.latitude!.toDouble(),
+                    userlocationtoingdb.coordinates!.longitude!.toDouble()),
+                radius: 15,
+                strokeWidth: 4,
+                strokeColor:
+                    markerId == "position_0" ? secondarycolor : errorcolor,
+              ));
+
+              if (markers.length > 1) {
+                refreshpage.value = false;
+                createroute(context);
+              } else {
+                refreshpage.value = false;
+              }
+            } else {
+              refreshpage.value = false;
             }
+          } else {
+            refreshpage.value = false;
           }
         } else {
           refreshpage.value = false;
         }
+      } else {
+        refreshpage.value = false;
       }
     } catch (e) {
+      refreshpage.value = false;
       print(
           "-------------------------------------dragortappedmarker--------------------------------- ${e.toString()}");
     }

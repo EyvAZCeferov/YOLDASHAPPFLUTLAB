@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +10,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yoldashapp/Controllers/MainController.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
+import 'package:yoldashapp/Controllers/NotificationsController.dart';
 import 'package:yoldashapp/Functions/GetAndPost.dart';
 import 'package:yoldashapp/Functions/PusherClient.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 // import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 import '../Constants/StaticText.dart';
+import '../Controllers/GoingController.dart';
+import '../Controllers/HistoryController.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
 
@@ -36,7 +41,7 @@ const String appagcert2 = "5f93b97444044e53b97be9006828c102";
 const String appcert1token =
     "007eJxTYGCJ8luUxbyzLDg4ym277AdVBa2W+qK4Ja8ehD+1kf5a9FGBwdIw1djE1DjV1CDV1MQ42SzJ1MggzTwpLdUgLdEiydJMz3BNSkMgI8NGASVWRgYIBPHZGSrzc1ISizMYGAAP2x6P";
 const String imageurl = 'https://sovqat369777.az/uploads/';
-const String mapsApiKey = "AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4";
+const String mapsApiKey = "AIzaSyDRcEY33bwqzUEvFjxM7k9db1oIzqRHmis";
 
 Future<void> launchUrlTOSITE(url) async {
   Uri uri = Uri.parse(url);
@@ -263,23 +268,74 @@ void FirebaseMessageCall(BuildContext context) {
       var response = await GetAndPost.postData("auth/set_token", body, context);
     });
   } catch (e) {
-    e.toString();
+    print(
+        "--------------------------------FIREBASE MESSAGE CALLING-----------------------${e.toString()}");
   }
 }
 
 final MessagesController messageController = Get.put(MessagesController());
 final MainController mainController = Get.put(MainController());
+final HistoryController historycontroller = Get.put(HistoryController());
+final GoingController goingcontroller = Get.put(GoingController());
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  if (messagecontroller.selectedMessageGroup.value != null &&
-      messagecontroller.selectedMessageGroup.value?.id != null) {
-    print(
-        "i get up message ${messagecontroller.selectedMessageGroup.value?.id}");
-    messagecontroller.getMessages(
-        null, messagecontroller.selectedMessageGroup.value!.id);
-  }
+  try {
+    Map<String, dynamic> parsedJson = message.data;
+    if (parsedJson != null) {
+      dynamic notificationData = parsedJson['notification_data'];
+      dynamic parsedNotDat;
+      dynamic parsedDat;
 
-  messageController.getMessages(null, null);
+      if (notificationData is String) {
+        parsedNotDat = jsonDecode(notificationData);
+      } else {
+        parsedNotDat = notificationData;
+      }
+      dynamic data = parsedNotDat['data'];
+      if (data is String) {
+        parsedDat = jsonDecode(data);
+      } else {
+        parsedDat = data;
+      }
+      if (parsedNotDat != null && parsedNotDat['from_type'] == 'message') {
+        messageController.getMessages(null, null);
+
+        if (parsedDat != null && parsedDat['id'] != null) {
+          if ((messageController.selectedMessageGroup?.value?.id !=
+                  parsedDat['message_group_id']) ||
+              messageController.selectedMessageGroup?.value?.id == null) {
+            NotificationsController().showMessageNotify(parsedNotDat['id'],
+                parsedNotDat['title'], parsedNotDat['message'], null);
+          }
+
+          messageController.getMessages(null, parsedDat['message_group_id']);
+        }
+      } else if (parsedNotDat != null &&
+          parsedNotDat['from_type'] == "ride_info") {
+        if (historycontroller.selectedRide?.value?.id != null &&
+            historycontroller.selectedRide?.value?.id != '' &&
+            historycontroller.selectedRide?.value?.id != ' ') {
+          historycontroller.getRides(
+              null, historycontroller.selectedRide?.value?.id, true);
+
+          NotificationsController().showMessageNotify(parsedNotDat['id'],
+              parsedNotDat['title'], parsedNotDat['message'], null);
+        }
+
+        if (goingcontroller.currentrides.value != null &&
+            goingcontroller.currentrides.value.length > 0) {
+          goingcontroller.getcurrentrides(null);
+        }
+      } else if (parsedNotDat != null &&
+          parsedNotDat['from_type'] == "automobil") {
+        NotificationsController().showMessageNotify(parsedNotDat['id'],
+            parsedNotDat['title'], parsedNotDat['message'], null);
+      }
+    }
+  } catch (e) {
+    print(
+        "--------------------------------FIREBASE MESSAGE CALLING-----------------------${e.toString()}");
+  }
 }
 
 void createzego() {
@@ -301,13 +357,12 @@ void checkconnectionandsendresult(String? pageold) async {
   final connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.none) {
     Get.toNamed('connectionlost');
-  }else{
-    if (pageold!=null && pageold == "connectionlost") {
+  } else {
+    if (pageold != null && pageold == "connectionlost") {
       Get.back();
-    }else{
+    } else {
       return;
     }
   }
-  pageold=null;
+  pageold = null;
 }
-

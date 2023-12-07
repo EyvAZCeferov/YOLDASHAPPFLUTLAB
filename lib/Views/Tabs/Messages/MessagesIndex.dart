@@ -3,6 +3,7 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Controllers/NotificationsController.dart';
 import 'package:yoldashapp/models/message_groups.dart';
 
 import '../../../Constants/BaseAppBar.dart';
@@ -43,9 +44,8 @@ class MessagesIndex extends StatelessWidget {
                     "Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
                 weight: FontWeight.bold,
                 size: 12,
-                  color: whitecolor),
+                color: whitecolor),
           ),
-
           child: Obx(() => _controller.refreshpage.value == true
               ? LoaderScreen()
               : _controller.data.length > 0
@@ -69,7 +69,8 @@ class MessagesIndex extends StatelessWidget {
                             onTap: () {
                               _controller.selectedMessageGroup.value = item;
                               _controller.getMessages(context, item.id);
-                              _controller.listenChatChannel(_controller.selectedMessageGroup.value!);
+                              // _controller.listenChatChannel(
+                              //     _controller.selectedMessageGroup.value!);
                               Get.toNamed('/messages/${item.id}',
                                   arguments: item);
                             },
@@ -151,7 +152,7 @@ class MessagesIndex extends StatelessWidget {
                                               color: darkcolor,
                                               align: TextAlign.left),
                                           StaticText(
-                                              text: firstTextMessage != null
+                                              text: firstTextMessage != null && firstTextMessage.message!=null && firstTextMessage.message!='' && firstTextMessage.message!=' '
                                                   ? firstTextMessage.message
                                                               .toString()
                                                               .length >
@@ -206,40 +207,30 @@ class MessagesIndex extends StatelessWidget {
                                                   align: TextAlign.center,
                                                 ),
                                               )
-                                            : SizedBox(),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            item.count != 0
-                                                ? SizedBox()
-                                                : Icon(
+                                            : item.messages != null &&
+                                                    item.messages!.length > 0
+                                                ? Icon(
                                                     FontAwesomeIcons
                                                         .checkDouble,
                                                     color: secondarycolor,
-                                                    size: buttontextSize),
-                                            SizedBox(width: 10),
-                                            (item.messages != null &&
-                                                    item.messages!.isNotEmpty)
-                                                ? StaticText(
-                                                    text: formatDateTime(
-                                                        DateTime.parse(item
-                                                                .messages![0]!
-                                                                .createdAt!
-                                                            as String)),
-                                                    weight: FontWeight.w400,
-                                                    size: smalltextSize,
-                                                    color: iconcolor,
-                                                    align: TextAlign.center,
-                                                  )
+                                                    size: buttontextSize)
                                                 : SizedBox(),
-                                          ],
+                                        SizedBox(
+                                          height: 10,
                                         ),
+                                        (item.messages != null &&
+                                                item.messages!.isNotEmpty)
+                                            ? StaticText(
+                                                text: formatDateTime(
+                                                    DateTime.parse(item
+                                                        .messages![0]!
+                                                        .createdAt! as String)),
+                                                weight: FontWeight.w400,
+                                                size: smalltextSize,
+                                                color: iconcolor,
+                                                align: TextAlign.center,
+                                              )
+                                            : SizedBox(),
                                       ]),
                                 ],
                               ),

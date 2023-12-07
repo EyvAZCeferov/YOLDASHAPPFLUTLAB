@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:yoldashapp/Controllers/NotificationsController.dart';
 import 'package:yoldashapp/Functions/helpers.dart';
 import 'Controllers/MainController.dart';
 import 'Functions/CacheManager.dart';
@@ -18,14 +19,17 @@ void main() async {
     projectId: 'yoldash-783a4',
   ));
   await CacheManager.createSharedPref();
-
-  runApp(Yoldash());
+  NotificationsController notificationsController = NotificationsController();
+  notificationsController.init().then((_) {
+    runApp(Yoldash());
+  });
 }
 
 class Yoldash extends StatelessWidget {
   final MainController _maincontroller = Get.put(MainController());
   String selectedlang = 'az';
   var navigatorKey = GlobalKey<NavigatorState>();
+
   Yoldash() {
     // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
     _loadLanguage();

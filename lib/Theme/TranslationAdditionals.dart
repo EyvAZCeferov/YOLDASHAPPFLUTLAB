@@ -159,6 +159,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Tamamlanmadı",
           'ride_cancelled': "Ləğv edildi",
           'ride_ontheway': "Yolda",
+          'ride_accepted': "Təsdiq edildi",
           'subject': "Mövzu",
           'social_status': "Sosial statusunuz",
           'social_status_telebe': "Tələbə",
@@ -168,7 +169,9 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Silməyə əminsiniz? Məlumatlar geri qaytarılmır.",
           "really_delete_yes": "Bəli",
           "really_delete_no": "Xeyr",
-          "proqramexit":"Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun."
+          "proqramexit":"Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
+          "status_accepted":"Sürücü sorğunuzu qəbul etdi.",
+          "status_arrivedoncustomer":"Yolunuz uğurlu olsun.",
         },
         'ru_RU': {
           'login': 'Входить',
@@ -327,6 +330,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "неполный",
           'ride_cancelled': "Отменено",
           'ride_ontheway': "на дороге",
+          'ride_accepted': "Подтвержденный",
           'subject': "Предмет",
           'social_status': "Социальный статус",
           'social_status_telebe': "Студент",
@@ -336,7 +340,9 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Вы уверены, что хотите удалить? Данные не возвращаются.",
           "really_delete_yes": "Да",
           "really_delete_no": "Нет",
-          "proqramexit":"Дважды нажмите кнопку «Назад», чтобы выйти из приложения."
+          "proqramexit":"Дважды нажмите кнопку «Назад», чтобы выйти из приложения.",
+          "status_accepted":"Водитель принял ваш запрос.",
+          "status_arrivedoncustomer":"Удачи в вашем путешествии.",
         },
         'en_EN': {
           'login': 'Login',
@@ -495,6 +501,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Not completed",
           'ride_cancelled': "Cancelled",
           'ride_ontheway': "On The Way",
+          'ride_accepted': "Confirmed",
           'subject': "Subject",
           'social_status': "Social status",
           'social_status_telebe': "Student",
@@ -504,7 +511,9 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Are you sure to delete? Data is not returned.",
           "really_delete_yes": "Yes",
           "really_delete_no": "No",
-          "programexit":"Tap the back button twice to exit the application."
+          "programexit":"Tap the back button twice to exit the application.",
+          "status_accepted":"The driver has accepted your request.",
+          "status_arrivedoncustomer":"Have a blessed journey.",
         },
         'tr_TR': {
           'login': 'Giriş yapın',
@@ -662,6 +671,7 @@ class TranslationAdditionals extends Translations {
           'ride_notcompleted': "Tamamlanmadı",
           'ride_cancelled': "İptal edildi",
           'ride_ontheway': "Yolda",
+          'ride_accepted': "Onaylanmış",
           'subject': "Mevzu",
           'social_status': "Sosial statu",
           'social_status_telebe': "Öğrenci",
@@ -671,7 +681,9 @@ class TranslationAdditionals extends Translations {
           "really_delete": "Silmek istediğinizden emin misiniz? Veriler döndürülmedi.",
           "really_delete_yes": "Evet",
           "really_delete_no": "Hayır",
-          "programexit":"Uygulamadan çıkmak için geri düğmesine iki kez dokunun."
+          "programexit":"Uygulamadan çıkmak için geri düğmesine iki kez dokunun.",
+          "status_accepted":"Sürücü isteğinizi kabul etti.",
+          "status_arrivedoncustomer":"Kutlu yolculuklar.",
         },
       };
 }

@@ -2,7 +2,7 @@ name: yoldashapp
 description: Azərbaycanı bizimlə gəzin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.2+27
+version: 1.1.2+30
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
@@ -47,6 +47,7 @@ dependencies:
   pusher_channels_flutter: ^2.2.0
   image: ^4.1.3
   connectivity_plus: ^5.0.1
+  flutter_local_notifications: ^16.2.0
   # zego_uikit_prebuilt_call: ^3.17.9
   # flutter_screenutil: ^5.9.0
   # zego_uikit_signaling_plugin: ^2.6.6

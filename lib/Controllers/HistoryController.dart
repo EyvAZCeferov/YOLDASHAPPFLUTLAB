@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -27,6 +29,7 @@ import 'MainController.dart';
 class HistoryController extends GetxController {
   final MainController _maincontroller = Get.put(MainController());
   final GoingController _goingController = Get.put(GoingController());
+  final MessagesController messagescontroller = Get.put(MessagesController());
   RxBool openmodalval = false.obs;
   Rx<String> image = "".obs;
   Rx<bool> refreshpage = Rx<bool>(false);
@@ -34,6 +37,7 @@ class HistoryController extends GetxController {
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
   RxSet<Polyline?> polyline = RxSet<Polyline?>({});
+  RxSet<Polyline?> updatedPolylineList = RxSet<Polyline?>({});
   RxSet<Marker?> markers = RxSet<Marker?>({});
   RxSet<Circle?> circles = RxSet<Circle?>({});
   Rx<dynamic?> auth_id = Rx<dynamic?>(null);
@@ -63,24 +67,101 @@ class HistoryController extends GetxController {
   RxList<Reason?> reasons = <Reason>[].obs;
   Rx<bool> ridedriver = Rx<bool>(false);
   Timer? timer;
+  Timer? timer1;
+  RxList<LatLng> latlngs = <LatLng>[].obs;
 
   HistoryController() {
     getAuthId();
     timer = Timer.periodic(Duration(seconds: 15), (Timer t) {
       _goingController.getandsetcurrentpoisition(null);
     });
+
+    timer1 = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      createroute();
+    });
   }
 
   void getAuthId() async {
     auth_id.value = await _maincontroller.getstoragedat('auth_id');
     authtype.value = await _maincontroller.getstoragedat('authtype');
+    getreasons(null);
+  }
+
+  void createroute() async {
+    var language = await _maincontroller.getstoragedat('language');
+    var url =
+        "https://maps.googleapis.com/maps/api/directions/json?key=$mapsApiKey&language=$language";
+    List<LatLng> destinations = [];
+    if (selectedRide.value != null && selectedRide.value?.id != null) {
+      if (selectedRide.value?.coordinates != null) {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          forceAndroidLocationManager: true,
+        );
+        if (position.latitude != null && position.longitude != null) {
+          LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+          destinations.add(currentLatLng);
+          var coordinatesLength =
+              selectedRide.value?.coordinates?.length ?? 0;
+          if (coordinatesLength > 0) {
+            var lastIndex = coordinatesLength-1;
+            double? latitude = double.tryParse(
+                selectedRide.value?.coordinates?[lastIndex].latitude ?? '');
+            double? longitude = double.tryParse(
+                selectedRide.value?.coordinates?[lastIndex].longitude ?? '');
+
+            if (latitude != null && longitude != null) {
+              LatLng destination = LatLng(latitude, longitude);
+
+              if (destinations == null) {
+                destinations = [destination];
+              } else {
+                destinations.add(destination);
+              }
+            }
+          }
+
+          if (destinations != null && destinations.length > 1) {
+            var origin = destinations.first;
+            var destination = destinations.last;
+
+            url = url +
+                "&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}";
+            
+          }
+          var response = await GetAndPost.fetcOtherhData(url, null, {});
+          if (response['status'] == "OK") {
+            PolylinePoints polylinePoints = PolylinePoints();
+            List<PointLatLng> pointslatlang = polylinePoints.decodePolyline(
+                response['routes'][0]['overview_polyline']['points']);
+            if (pointslatlang.isNotEmpty) {
+              pointslatlang.forEach((PointLatLng element) {
+                latlngs.add(LatLng(element.latitude, element.longitude));
+              });
+            }
+
+            polyline.clear();
+            Polyline polylinenew = Polyline(
+                polylineId: PolylineId("going_destiona"),
+                color: primarycolor,
+                points: latlngs.value,
+                jointType: JointType.mitered,
+                width: 5,
+                startCap: Cap.roundCap,
+                endCap: Cap.roundCap,
+                geodesic: true);
+            updatedPolylineList.add(polylinenew);
+          }
+        }
+      }
+    }
   }
 
   Future<void> getRides(context, int? selectedHistoryId, bool? page) async {
     refreshpage.value = true;
     Map<String, dynamic> body = {};
-    if(page==true){
-      body['page']='rides';
+    if (page == true) {
+      body['page'] = 'rides';
     }
     var response;
 
@@ -91,7 +172,6 @@ class HistoryController extends GetxController {
       response = await GetAndPost.fetchData("rides", context, body);
     }
 
-      getreasons(context);
     if (response != null) {
       String status = response['status'];
       String message = '';
@@ -100,16 +180,16 @@ class HistoryController extends GetxController {
         ridedriver.value = false;
         if (selectedHistoryId != null && selectedHistoryId > 0) {
           selectedRide.value = Rides.fromMap(response['data']);
+          polyline.value = Set<Polyline>.from(
+              selectedRide.value!.polylinePoints as Iterable);
 
           if (selectedRide.value?.userId == auth_id.value) {
             ridedriver.value = true;
           }
-
         } else {
           data.value = (response['data'] as List).map((dat) {
             return Rides.fromMap(dat);
           }).toList();
-
         }
 
         refreshpage.value = false;
@@ -131,120 +211,126 @@ class HistoryController extends GetxController {
     openmodalval.value = !openmodalval.value;
   }
 
-  void getridecoordsandmarks(context) async {
-    refreshpage.value = true;
+  Future<void> getridecoordsandmarks(context) async {
+    try {
+      refreshpage.value = true;
 
-    List<LatLng> polylineList = [];
+      List<LatLng> polylineList = [];
 
-    selectedRide.value?.polylinePoints?.forEach((element) {
-      if (element.length >= 2) {
-        LatLng latLng = LatLng(element[0], element[1]);
-        polylineList.add(latLng);
+      selectedRide.value?.polylinePoints?.forEach((element) {
+        if (element.length >= 2) {
+          LatLng latLng = LatLng(element[0], element[1]);
+          polylineList.add(latLng);
+        }
+      });
+
+      if (selectedRide.value?.polylinePoints != null) {
+        List polylinePoints = selectedRide.value?.polylinePoints ?? [];
+
+        if (polylinePoints.isNotEmpty) {
+          double firstLatitude = polylinePoints.first[0];
+          double firstLongitude = polylinePoints.first[1];
+
+          markers.value.add(Marker(
+            markerId: MarkerId("marker-first"),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure),
+            infoWindow: InfoWindow(
+              title: "mylocation".tr,
+              snippet: 'mylocation'.tr,
+            ),
+            position: LatLng(firstLatitude, firstLongitude),
+            draggable: false,
+          ));
+
+          circles.value.add(Circle(
+            circleId: CircleId("circle-first"),
+            fillColor: secondarycolor,
+            center: LatLng(firstLatitude, firstLongitude),
+            radius: 15,
+            strokeWidth: 4,
+            strokeColor: errorcolor,
+          ));
+
+          double lastLatitude = polylinePoints.last[0];
+          double lastLongitude = polylinePoints.last[1];
+
+          markers.value.add(Marker(
+            markerId: MarkerId("marker-last"),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            infoWindow: InfoWindow(
+              title: "destinationlocation".tr,
+              snippet: 'destinationlocation'.tr,
+            ),
+            position: LatLng(lastLatitude, lastLongitude),
+            draggable: false,
+          ));
+
+          circles.value.add(Circle(
+            circleId: CircleId("circle-last"),
+            fillColor: errorcolor,
+            center: LatLng(lastLatitude, lastLongitude),
+            radius: 15,
+            strokeWidth: 4,
+            strokeColor: errorcolor,
+          ));
+        }
+
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
       }
-    });
 
-    if (selectedRide.value?.polylinePoints != null) {
-      List polylinePoints = selectedRide.value?.polylinePoints ?? [];
-
-      if (polylinePoints.isNotEmpty) {
-        double firstLatitude = polylinePoints.first[0];
-        double firstLongitude = polylinePoints.first[1];
-
-        markers.value.add(Marker(
-          markerId: MarkerId("marker-first"),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-            title: "mylocation".tr,
-            snippet: 'mylocation'.tr,
-          ),
-          position: LatLng(firstLatitude, firstLongitude),
-          draggable: false,
-        ));
-
-        circles.value.add(Circle(
-          circleId: CircleId("circle-first"),
-          fillColor: secondarycolor,
-          center: LatLng(firstLatitude, firstLongitude),
-          radius: 15,
-          strokeWidth: 4,
-          strokeColor: errorcolor,
-        ));
-
-        double lastLatitude = polylinePoints.last[0];
-        double lastLongitude = polylinePoints.last[1];
-
-        markers.value.add(Marker(
-          markerId: MarkerId("marker-last"),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          infoWindow: InfoWindow(
-            title: "destinationlocation".tr,
-            snippet: 'destinationlocation'.tr,
-          ),
-          position: LatLng(lastLatitude, lastLongitude),
-          draggable: false,
-        ));
-
-        circles.value.add(Circle(
-          circleId: CircleId("circle-last"),
-          fillColor: errorcolor,
-          center: LatLng(lastLatitude, lastLongitude),
-          radius: 15,
-          strokeWidth: 4,
-          strokeColor: errorcolor,
-        ));
-      }
-
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-    }
-
-    Polyline polylineNew = Polyline(
-      polylineId: PolylineId("current_destination"),
-      color: primarycolor,
-      points: polylineList,
-      jointType: JointType.mitered,
-      width: 5,
-      startCap: Cap.roundCap,
-      endCap: Cap.roundCap,
-      geodesic: true,
-    );
-
-    polyline.value.add(polylineNew);
-    if (markers.value.length >= 2) {
-      Marker? firstMarker = markers.value.first;
-      Marker? lastMarker = markers.value.last;
-
-      LatLngBounds bounds = LatLngBounds(
-        southwest: LatLng(
-          firstMarker!.position.latitude,
-          lastMarker!.position.longitude,
-        ),
-        northeast: LatLng(
-          lastMarker!.position.latitude,
-          firstMarker!.position.longitude,
-        ),
+      Polyline polylineNew = Polyline(
+        polylineId: PolylineId("current_destination"),
+        color: primarycolor,
+        points: polylineList,
+        jointType: JointType.mitered,
+        width: 5,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+        geodesic: true,
       );
 
-      newgooglemapcontroller.value?.animateCamera(
-        CameraUpdate.newLatLngBounds(
-          bounds,
-          100,
-        ),
-      );
-      refreshpage.value = false;
-    } else {
-      refreshpage.value = false;
-    }
+      polyline.value.add(polylineNew);
+      if (markers.value.length >= 2) {
+        Marker? firstMarker = markers.value.first;
+        Marker? lastMarker = markers.value.last;
 
-    refreshpage.value = false;
+        LatLngBounds bounds = LatLngBounds(
+          southwest: LatLng(
+            firstMarker!.position.latitude,
+            lastMarker!.position.longitude,
+          ),
+          northeast: LatLng(
+            lastMarker!.position.latitude,
+            firstMarker!.position.longitude,
+          ),
+        );
+
+        newgooglemapcontroller.value?.animateCamera(
+          CameraUpdate.newLatLngBounds(
+            bounds,
+            100,
+          ),
+        );
+        refreshpage.value = false;
+      } else {
+        refreshpage.value = false;
+      }
+
+      refreshpage.value = false;
+    } catch (e, stackTrace) {
+      print(
+          "-----------------------Current error History show ------------- ${e}");
+      print(
+          "--------------------Current error History show------------------${stackTrace}");
+    }
   }
 
   void bottombutton(context) async {
     if (authtype.value == "rider") {
-      final MessagesController messagescontroller =
-          Get.put(MessagesController());
       messagescontroller.createandredirectchat(
           auth_id.value, selectedRide.value?.userId, context);
     } else {
@@ -657,7 +743,7 @@ class HistoryController extends GetxController {
         });
   }
 
-  void sendrequest(BuildContext context) async {
+  void sendrequest(context) async {
     refreshpage.value = true;
     List<CoordinatesRides> coordinatesList = selectedRide.value!.coordinates!;
     List<Map<String, dynamic>> coordinatesMapList =
@@ -667,7 +753,6 @@ class HistoryController extends GetxController {
     if ((namesurnamecontroller.value.text != null &&
             namesurnamecontroller.value.text != '' &&
             namesurnamecontroller.value.text != ' ') &&
-       
         (priceofwaycontroller.value.text != null &&
             priceofwaycontroller.value.text != '' &&
             priceofwaycontroller.value.text != ' ') &&
@@ -750,7 +835,7 @@ class HistoryController extends GetxController {
     refreshpage.value = true;
     if (id != null && id != 0) {
       var nextprocess = true;
-      if ((type == 'cancelled' || type=="notaccepted") &&
+      if ((type == 'cancelled' || type == "notaccepted") &&
           (selectedReason.value == null && selectedReason.value?.id == null)) {
         nextprocess = false;
         refreshpage.value = false;
@@ -884,8 +969,11 @@ class HistoryController extends GetxController {
         refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
+    } else {
+      refreshpage.value = false;
+      Get.back();
+      rateride(id, rating, context);
     }
-    refreshpage.value = false;
   }
 
   void updateridestatus(type, context) async {
@@ -963,7 +1051,7 @@ class HistoryController extends GetxController {
     }
   }
 
-  void showroadinfo(Queries query, BuildContext context) async {
+  void showroadinfo(Queries query, context) async {
     refreshpage.value = true;
     showModalBottomSheet(
         context: context,
@@ -1055,9 +1143,8 @@ class HistoryController extends GetxController {
         }).toList();
         refreshpage.value = false;
       } else {
-        print(message);
         refreshpage.value = false;
-        showToastMSG(errorcolor, message, context);
+        // showToastMSG(errorcolor, message, context);
       }
     }
   }

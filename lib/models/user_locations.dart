@@ -59,8 +59,8 @@ class UserLocations {
   final String? type;
   final bool? status;
   final int? orderNumber;
-  final String? createdAt;
-  final String? updatedAt;
+  final dynamic? createdAt;
+  final dynamic? updatedAt;
   final dynamic deletedAt;
 
   Map<String, dynamic> toMap() => {

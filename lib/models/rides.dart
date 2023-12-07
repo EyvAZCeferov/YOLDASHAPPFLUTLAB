@@ -74,9 +74,9 @@ class Rides {
   final dynamic? durationofway;
   final dynamic? minimalPriceOfWay;
   final dynamic? priceOfWay;
-  final String? paymentMethod;
+  final dynamic? paymentMethod;
   final int? paymentCard;
-  final String? status;
+  final dynamic? status;
   final dynamic? createdAt;
   final dynamic? updatedAt;
   final dynamic? deletedAt;
@@ -196,7 +196,7 @@ class Queries {
   final PlacesMark? place;
   final int? usedEndirim;
   final Endirim? endirim;
-  final String? paymentMethod;
+  final dynamic? paymentMethod;
   final int? paymentCard;
 
   Map<String, dynamic> toMap() => {

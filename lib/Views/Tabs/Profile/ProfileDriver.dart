@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:yoldashapp/Constants/IconButtonElement.dart';
 import 'package:yoldashapp/Controllers/AutomobilsController.dart';
+import 'package:yoldashapp/Controllers/MainController.dart';
+import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/models/automobils.dart';
 import '../../../Constants/BaseAppBar.dart';
 import '../../../Constants/Devider.dart';
@@ -22,8 +23,11 @@ class ProfileDriver extends StatefulWidget {
 
 class _ProfileDriverState extends State<ProfileDriver> {
   final AuthController _controller = Get.put(AuthController());
+  final MainController mainController = Get.put(MainController());
   final AutomobilsController _automobilsController =
       Get.put(AutomobilsController());
+      final MessagesController messagesController =
+      Get.put(MessagesController());
   bool showimagemodal = false;
   String selectedimage = '';
 
@@ -49,7 +53,7 @@ class _ProfileDriverState extends State<ProfileDriver> {
         backgroundColor: bodycolor,
         appBar: BaseAppBar(
           backbutton: true,
-          title: _controller.driverpage.value?.nameSurname,
+          title:_controller.driverpage.value?.nameSurname,
           changeprof: false,
           titlebg: false,
         ),
@@ -262,27 +266,26 @@ class _ProfileDriverState extends State<ProfileDriver> {
                       ),
                       Devider(),
                     ]))),
-        bottomNavigationBar: Container(
-          height: 60,
-          margin: EdgeInsets.only(bottom: 15),
-          color: primarycolor,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              onTap: () {
-                Get.toNamed("/messages/${_controller.driverpage.value?.id}");
-              },
+        bottomNavigationBar: GestureDetector(
+          onTap: () {
+                  print(mainController.auth_id.value);
+                  print(_controller.driverpage.value?.id);
+                   messagesController.createandredirectchat(mainController.auth_id?.value,_controller.driverpage.value?.id,context);
+                },
+          child: Container(
+            height: 60,
+            margin: EdgeInsets.only(bottom: 15),
+            color: primarycolor,
+            child: Align(
+              alignment: Alignment.center,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  IconButtonElement(
-                      icon: FeatherIcons.messageCircle,
-                      bgColor: primarycolor,
+                  Icon(
+                      FeatherIcons.messageCircle,
                       color: whitecolor,
-                      size: 22,
-                      onPressed: () => Get.toNamed(
-                          "/messages/${_controller.driverpage.value?.id}")),
+                      size: 22,),
                   SizedBox(
                     width: 5,
                   ),

@@ -13,6 +13,7 @@ import 'package:yoldashapp/Controllers/CallingController.dart';
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
+import '../Functions/PusherClient.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
@@ -50,13 +51,13 @@ class MessagesController extends GetxController {
   );
   WebSocketChannel? channel;
   Rx<int> countunreadmessages = 0.obs;
-  // LaravelEcho? laraecho;
+  LaravelEcho? laraecho;
 
   MessagesController() {
     getAuthId();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      firebaseMessagingBackgroundHandler(message);
-    });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   firebaseMessagingBackgroundHandler(message);
+    // });
   }
 
   void dispose() {
@@ -159,7 +160,7 @@ class MessagesController extends GetxController {
                   MessageGroups.fromMap(response['data']);
               selectedMessageLists.value =
                   selectedMessageGroup.value?.messages! ?? [];
-              listenChatChannel(selectedMessageGroup.value!);
+              // listenChatChannel(selectedMessageGroup.value!);
               scrollDown();
             } else {
               data.value = (response['data'] as List).map((dat) {
@@ -171,9 +172,9 @@ class MessagesController extends GetxController {
               }).toList();
             }
 
-            FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-              firebaseMessagingBackgroundHandler(message);
-            });
+            // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+            //   firebaseMessagingBackgroundHandler(message);
+            // });
           }
         } else {
           // if (context != null) {
@@ -337,11 +338,13 @@ class MessagesController extends GetxController {
   }
 
   void scrollDown() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent + 150,
-      duration: Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent + 150,
+        duration: Duration(seconds: 2),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
   }
 
   void sendlocationviamessage(context) async {
@@ -460,9 +463,9 @@ class MessagesController extends GetxController {
   }
 
   void listenChatChannel(MessageGroups messageGroup) {
-    // laraecho = LaravelEcho.init(
-    //     token: authtoken.value!,
-    //     channel: 'chat-${selectedMessageGroup.value!.id}');
+    laraecho = LaravelEcho.init(
+        token: authtoken.value!,
+        channel: 'chat-${selectedMessageGroup.value!.id}');
   }
 
   void leaveChatChannel(MessageGroups messageGroup) {

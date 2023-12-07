@@ -247,8 +247,9 @@ class _HomePageState extends State<HomePage> {
                                   ? Set<Circle>.from(_controller.circles)
                                   : {},
                               onMapCreated: (GoogleMapController controller) {
-                                _controller.googlemapcontroller
-                                    .complete(controller);
+                                if(_controller.googlemapcontroller!=null){
+                                _controller.googlemapcontroller?.complete(controller);
+                                }
                                 _controller.newgooglemapcontroller.value =
                                     controller;
                                 _controller.getcurrentposition(context);
@@ -1321,7 +1322,7 @@ class _HomePageState extends State<HomePage> {
                                                   type: false,
                                                   boxfit: BoxFit.contain,
                                                   url:
-                                                      "assets/images/findcar.png"),
+                                                      "assets/images/caricon-min.png"),
                                         ),
                                       ),
                             Devider(size: 10),

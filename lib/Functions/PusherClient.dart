@@ -2,8 +2,12 @@ import 'package:get/get.dart';
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
 
+import '../Controllers/HistoryController.dart';
+
 MessagesController messagecontroller = Get.put(MessagesController());
+HistoryController historycontroller = Get.put(HistoryController());
 PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
+
 class LaravelEcho {
   static LaravelEcho? _singleton;
   final String token;
@@ -23,7 +27,8 @@ class LaravelEcho {
 
   void createPusherClient(String token, String channel) async {
     try {
-      print("PusherClient");
+      print(
+          "-------------------------------------------------PusherClient---------------------------------------");
       await pusher.init(
         apiKey: PusherConfig.key,
         cluster: PusherConfig.cluster,
@@ -55,16 +60,16 @@ class LaravelEcho {
   }
 
   void onEvent(event) {
-    print("EVENT LISTENING------------------------${event}");
-    if (event.channelName.contains('chat')) {
-      print("------------------Function Started------------------------");
-      String channelName = event.channelName;
-      int chatId =
-          int.parse(channelName.substring(channelName.indexOf('-') + 1));
+    if(historycontroller.selectedRide?.value?.id!=null && historycontroller.selectedRide?.value?.id!='' && historycontroller.selectedRide?.value?.id!=' '){
+      historycontroller.getRides(null, historycontroller.selectedRide?.value?.id, true);
+    }
+    if (event.channelName.contains('chat') &&
+        event.eventName == 'new_message') {
+          messagecontroller.getMessages(null, null);
+      int chatId = int.parse(
+          event.channelName.substring(event.channelName.indexOf('-') + 1));
       messagecontroller.getMessages(null, chatId);
     }
-    print(
-        "--------------------------onEvent:--------------------------- $event");
   }
 
   void onSubscriptionSucceeded(String channelName, dynamic data) {

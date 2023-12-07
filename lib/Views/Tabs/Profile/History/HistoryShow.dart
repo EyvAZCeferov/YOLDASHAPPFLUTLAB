@@ -93,8 +93,8 @@ class HistoryShow extends StatelessWidget {
                           zoomControlsEnabled: true,
                           mapToolbarEnabled: true,
                           myLocationEnabled: true,
-                          polylines: _controller.polyline.isNotEmpty
-                              ? Set<Polyline>.from(_controller.polyline)
+                          polylines: _controller.updatedPolylineList.isNotEmpty
+                              ? Set<Polyline>.from(_controller.updatedPolylineList)
                               : {},
                           markers: _controller.markers.isNotEmpty
                               ? Set<Marker>.from(_controller.markers)
@@ -173,10 +173,9 @@ class HistoryShow extends StatelessWidget {
                             ),
                           )
                         : SizedBox(),
-                    _controller.ontheway.value == true
-                        ? Positioned(
+                     Positioned(
                             top: 0,
-                            left: 0,
+                            left: 10,
                             child: GestureDetector(
                               onTap: () {
                                 _controller.launchWaze(
@@ -187,8 +186,8 @@ class HistoryShow extends StatelessWidget {
                                         ?.longitude as double);
                               },
                               child: Container(
-                                width: 70,
-                                height: 70,
+                                width: 65,
+                                height: 65,
                                 decoration: BoxDecoration(
                                     color: whitecolor,
                                     border: Border.all(
@@ -205,7 +204,7 @@ class HistoryShow extends StatelessWidget {
                               ),
                             ),
                           )
-                        : SizedBox(),
+                       ,
                     Positioned.fill(
                         top: _controller.ontheway.value == true
                             ? Get.width - 40
@@ -424,6 +423,8 @@ class HistoryShow extends StatelessWidget {
               endirimWidget(query),
             ],
           ),
+          Devider(),
+          query?.status=="accepted" || query?.status=="arrivedoncustomer" ? StaticText(text: "status_${query?.status}".tr, weight: FontWeight.w400, size: smalltextSize, color: secondarycolor, align: TextAlign.left, maxline: 1,) : SizedBox(),
           Devider(),
           Center(
             child: SizedBox(
