@@ -877,6 +877,7 @@ class GoingController extends GetxController {
         showToastMSG(errorcolor, "pleaseselectplaceandclick".tr, context);
       }
       var response = await GetAndPost.fetcOtherhData(url, context, {});
+      print(response);
       if (response['status'] == "OK") {
         directiondetails.value = DistanceDetails(
           encodedPoints: response['routes'][0]['overview_polyline']['points'],
