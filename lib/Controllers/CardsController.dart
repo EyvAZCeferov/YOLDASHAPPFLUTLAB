@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_credit_card/flutter_credit_card.dart';
+// import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:get/get.dart';
 import '../Constants/ButtonElement.dart';
 import '../Constants/Devider.dart';
@@ -232,16 +232,16 @@ class CardsController extends GetxController {
     }
   }
 
-  CardType getcardtype() {
-    var cardNumber = cardNumberController.value.text;
-    if (cardNumber.startsWith('4')) {
-      return CardType.visa;
-    } else if (cardNumber.startsWith('5')) {
-      return CardType.mastercard;
-    } else if (cardNumber.startsWith('3')) {
-      return CardType.americanExpress;
-    } else {
-      return CardType.elo;
-    }
-  }
+  // CardType getcardtype() {
+  //   var cardNumber = cardNumberController.value.text;
+  //   if (cardNumber.startsWith('4')) {
+  //     return CardType.visa;
+  //   } else if (cardNumber.startsWith('5')) {
+  //     return CardType.mastercard;
+  //   } else if (cardNumber.startsWith('3')) {
+  //     return CardType.americanExpress;
+  //   } else {
+  //     return CardType.elo;
+  //   }
+  // }
 }

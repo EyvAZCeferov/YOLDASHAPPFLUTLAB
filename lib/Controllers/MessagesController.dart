@@ -7,13 +7,13 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+// import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:yoldashapp/Constants/StaticText.dart';
 import 'package:yoldashapp/Controllers/CallingController.dart';
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
 import '../Functions/GetAndPost.dart';
-import '../Functions/PusherClient.dart';
+// import '../Functions/PusherClient.dart';
 import '../Functions/helpers.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
@@ -51,7 +51,7 @@ class MessagesController extends GetxController {
   );
   WebSocketChannel? channel;
   Rx<int> countunreadmessages = 0.obs;
-  LaravelEcho? laraecho;
+  // LaravelEcho? laraecho;
 
   MessagesController() {
     getAuthId();
@@ -463,9 +463,9 @@ class MessagesController extends GetxController {
   }
 
   void listenChatChannel(MessageGroups messageGroup) {
-    laraecho = LaravelEcho.init(
-        token: authtoken.value!,
-        channel: 'chat-${selectedMessageGroup.value!.id}');
+    // laraecho = LaravelEcho.init(
+    //     token: authtoken.value!,
+    //     channel: 'chat-${selectedMessageGroup.value!.id}');
   }
 
   void leaveChatChannel(MessageGroups messageGroup) {

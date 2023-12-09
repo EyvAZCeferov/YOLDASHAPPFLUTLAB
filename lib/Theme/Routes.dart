@@ -19,7 +19,7 @@ import '../Views/Tabs/Profile/Automobils/AutomobilsCreate.dart';
 import '../Views/Tabs/Profile/Automobils/AutomobilsIndex.dart';
 import '../Views/Tabs/Profile/Balance/BalanceCreate.dart';
 import '../Views/Tabs/Profile/Balance/BalanceIndex.dart';
-import '../Views/Tabs/Profile/Cards/CardsAdd.dart';
+// import '../Views/Tabs/Profile/Cards/CardsAdd.dart';
 import '../Views/Tabs/Profile/Cards/CardsIndex.dart';
 import '../Views/Tabs/Profile/History/HistoryIndex.dart';
 import '../Views/Tabs/Profile/History/HistoryShow.dart';
@@ -49,13 +49,13 @@ final List<GetPage> Routes = [
       Get.put(CardsController());
     }),
   ),
-  GetPage(
-    name: '/cards/add',
-    page: () => CardsAdd(),
-    binding: BindingsBuilder(() {
-      Get.put(CardsController());
-    }),
-  ),
+  // GetPage(
+  //   name: '/cards/add',
+  //   page: () => CardsAdd(),
+  //   binding: BindingsBuilder(() {
+  //     Get.put(CardsController());
+  //   }),
+  // ),
   GetPage(
     name: '/automobils',
     page: () => AutomobilsIndex(),

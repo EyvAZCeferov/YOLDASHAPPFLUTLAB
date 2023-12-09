@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps
-import Firebase;
+import Firebase
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,8 +9,8 @@ import Firebase;
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    FirebaseApp.configre()
-    GMSServices.provideAPIKey("AIzaSyCIiz_JtpZCDCgBUQeh_lgVILNEH88zUY4")
+    FirebaseApp.configure()
+    GMSServices.provideAPIKey("AIzaSyDKVPAVqEWuZSh0w1sOKRmr-ykc5xkHE0g") 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

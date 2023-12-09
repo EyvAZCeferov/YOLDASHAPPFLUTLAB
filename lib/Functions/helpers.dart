@@ -12,7 +12,7 @@ import 'package:yoldashapp/Controllers/MainController.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/Controllers/NotificationsController.dart';
 import 'package:yoldashapp/Functions/GetAndPost.dart';
-import 'package:yoldashapp/Functions/PusherClient.dart';
+// import 'package:yoldashapp/Functions/PusherClient.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 // import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
