@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 import 'package:yoldashapp/models/rides.dart';
@@ -33,7 +34,6 @@ class HistoryController extends GetxController {
   RxBool openmodalval = false.obs;
   Rx<String> image = "".obs;
   Rx<bool> refreshpage = Rx<bool>(false);
-  final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
   RxSet<Polyline?> polyline = RxSet<Polyline?>({});
@@ -84,6 +84,7 @@ class HistoryController extends GetxController {
   void getAuthId() async {
     auth_id.value = await _maincontroller.getstoragedat('auth_id');
     authtype.value = await _maincontroller.getstoragedat('authtype');
+
     getreasons(null);
   }
 
@@ -101,10 +102,9 @@ class HistoryController extends GetxController {
         if (position.latitude != null && position.longitude != null) {
           LatLng currentLatLng = LatLng(position.latitude, position.longitude);
           destinations.add(currentLatLng);
-          var coordinatesLength =
-              selectedRide.value?.coordinates?.length ?? 0;
+          var coordinatesLength = selectedRide.value?.coordinates?.length ?? 0;
           if (coordinatesLength > 0) {
-            var lastIndex = coordinatesLength-1;
+            var lastIndex = coordinatesLength - 1;
             double? latitude = double.tryParse(
                 selectedRide.value?.coordinates?[lastIndex].latitude ?? '');
             double? longitude = double.tryParse(
@@ -127,7 +127,6 @@ class HistoryController extends GetxController {
 
             url = url +
                 "&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}";
-            
           }
           var response = await GetAndPost.fetcOtherhData(url, null, {});
           if (response['status'] == "OK") {
@@ -182,8 +181,7 @@ class HistoryController extends GetxController {
           selectedRide.value = Rides.fromMap(response['data']);
           polyline.value = Set<Polyline>.from(
               selectedRide.value!.polylinePoints as Iterable);
-
-          if (selectedRide.value?.userId == auth_id.value) {
+             if (selectedRide.value?.userId == auth_id.value) {
             ridedriver.value = true;
           }
         } else {
@@ -194,7 +192,7 @@ class HistoryController extends GetxController {
 
         refreshpage.value = false;
       } else {
-        print(message);
+        print("getRides function-------- $message");
         refreshpage.value = false;
         showToastMSG(errorcolor, message, context);
       }
@@ -214,7 +212,23 @@ class HistoryController extends GetxController {
   Future<void> getridecoordsandmarks(context) async {
     try {
       refreshpage.value = true;
+      var statuslocationAlways =
+          await handlepermissionreq(Permission.locationAlways, context);
 
+      if (statuslocationAlways.isDenied ||
+          statuslocationAlways.isPermanentlyDenied) {
+        statuslocationAlways =
+            await handlepermissionreq(Permission.locationAlways, context);
+      }
+
+      var statuslocationWhenInUse =
+          await handlepermissionreq(Permission.locationWhenInUse, context);
+
+      if (statuslocationWhenInUse.isDenied ||
+          statuslocationWhenInUse.isPermanentlyDenied) {
+        statuslocationWhenInUse =
+            await handlepermissionreq(Permission.locationWhenInUse, context);
+      }
       List<LatLng> polylineList = [];
 
       selectedRide.value?.polylinePoints?.forEach((element) {
@@ -812,6 +826,9 @@ class HistoryController extends GetxController {
     if (response != null) {
       String status = response['status'];
       String message = '';
+
+
+
       if (response['message'] != null) message = response['message'];
       if (status == "success") {
         selectedRide.value = Rides.fromMap(response['data']);
@@ -819,6 +836,12 @@ class HistoryController extends GetxController {
             selectedRide.value!.status == "ontheway") {
           ontheway.value = true;
         }
+        print("------ASDDSDAS----");
+print(selectedRide.value?.userId);
+print(auth_id.value);
+        if (selectedRide.value?.userId == auth_id.value) {
+            ridedriver.value = true;
+          }
 
         refreshpage.value = false;
       } else {

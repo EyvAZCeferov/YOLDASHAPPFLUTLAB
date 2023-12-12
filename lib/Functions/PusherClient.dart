@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
-import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+// import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import 'package:yoldashapp/Controllers/MessagesController.dart';
 
 import '../Controllers/HistoryController.dart';
 
 MessagesController messagecontroller = Get.put(MessagesController());
 HistoryController historycontroller = Get.put(HistoryController());
-PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
+// PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
 
 class LaravelEcho {
   static LaravelEcho? _singleton;
@@ -29,29 +29,29 @@ class LaravelEcho {
     try {
       print(
           "-------------------------------------------------PusherClient---------------------------------------");
-      await pusher.init(
-        apiKey: PusherConfig.key,
-        cluster: PusherConfig.cluster,
-        authParams: {
-          'headers': {
-            'Authorization': "Bearer $token",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          }
-        },
-        authEndpoint: PusherConfig.hostAuthEndPoint,
-        onConnectionStateChange: onConnectionStateChange,
-        onError: onError,
-        onSubscriptionSucceeded: onSubscriptionSucceeded,
-        onEvent: onEvent,
-        onSubscriptionError: onSubscriptionError,
-        onDecryptionFailure: onDecryptionFailure,
-        onMemberAdded: onMemberAdded,
-        onMemberRemoved: onMemberRemoved,
-      );
+      // await pusher.init(
+      //   apiKey: PusherConfig.key,
+      //   cluster: PusherConfig.cluster,
+      //   authParams: {
+      //     'headers': {
+      //       'Authorization': "Bearer $token",
+      //       "Content-Type": "application/json",
+      //       "Accept": "application/json",
+      //     }
+      //   },
+      //   authEndpoint: PusherConfig.hostAuthEndPoint,
+      //   onConnectionStateChange: onConnectionStateChange,
+      //   onError: onError,
+      //   onSubscriptionSucceeded: onSubscriptionSucceeded,
+      //   onEvent: onEvent,
+      //   onSubscriptionError: onSubscriptionError,
+      //   onDecryptionFailure: onDecryptionFailure,
+      //   onMemberAdded: onMemberAdded,
+      //   onMemberRemoved: onMemberRemoved,
+      // );
 
-      await pusher.subscribe(channelName: channel);
-      await pusher.connect();
+      // await pusher.subscribe(channelName: channel);
+      // await pusher.connect();
     } catch (e) {
       print(
           "-------------------Pusher Client ERROR -------------${e.toString()}");
@@ -103,15 +103,15 @@ class LaravelEcho {
         "------------------------------------onDecryptionFailure:-------------------------- $event reason: $reason");
   }
 
-  void onMemberAdded(String channelName, PusherMember member) {
-    print(
-        "-------------------------------onMemberAdded:----------------------- $channelName member: $member");
-  }
+  // void onMemberAdded(String channelName, PusherMember member) {
+  //   print(
+  //       "-------------------------------onMemberAdded:----------------------- $channelName member: $member");
+  // }
 
-  void onMemberRemoved(String channelName, PusherMember member) {
-    print(
-        "------------------------------onMemberRemoved:--------------------------- $channelName member: $member");
-  }
+  // void onMemberRemoved(String channelName, PusherMember member) {
+  //   print(
+  //       "------------------------------onMemberRemoved:--------------------------- $channelName member: $member");
+  // }
 
   void onConnectionStateChange(dynamic currentState, dynamic previousState) {
     print(
@@ -123,18 +123,18 @@ class LaravelEcho {
         "-----------------------------------onError:------------------------------ $message code: $code exception: $e");
   }
 
-  void disconnect() async {
-    await pusher.disconnect();
-  }
+  // void disconnect() async {
+  //   await pusher.disconnect();
+  // }
 
-  void pusherUnsubscribe(channelName) async {
-    await pusher.unsubscribe(channelName: channelName);
-  }
+  // void pusherUnsubscribe(channelName) async {
+  //   await pusher.unsubscribe(channelName: channelName);
+  // }
 
-  Future<String> getSocketId() async {
-    String socketId = await pusher.getSocketId();
-    return socketId;
-  }
+  // Future<String> getSocketId() async {
+  //   String socketId = await pusher.getSocketId();
+  //   return socketId;
+  // }
 }
 
 class PusherConfig {

@@ -9,20 +9,32 @@ import 'Functions/CacheManager.dart';
 import 'Theme/Routes.dart';
 import 'Theme/TranslationAdditionals.dart';
 
+bool initialized =
+    false; // Initialize a boolean to track if Firebase has been initialized
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: FirebaseOptions(
-    appId: '1:121697903403:android:f4a40a34c9118fb48f9b6e',
-    apiKey: 'AIzaSyDYvxG0cjlXGJ9LAXIowgE7kxnGucQ_BsU',
-    messagingSenderId: '121697903403',
-    projectId: 'yoldash-783a4',
-  ));
+  if (!initialized) {
+    await initializeFirebase();
+    initialized = true;
+  }
   await CacheManager.createSharedPref();
   NotificationsController notificationsController = NotificationsController();
-  notificationsController.init().then((_) {
+  await notificationsController.init().then((_) {
     runApp(Yoldash());
   });
+}
+
+Future<void> initializeFirebase() async {
+  await Firebase.initializeApp();
+  // await Firebase.initializeApp(
+  //   options: FirebaseOptions(
+  //     appId: '1:121697903403:android:f4a40a34c9118fb48f9b6e',
+  //     apiKey: 'AIzaSyDYvxG0cjlXGJ9LAXIowgE7kxnGucQ_BsU',
+  //     messagingSenderId: '121697903403',
+  //     projectId: 'yoldash-783a4',
+  //   ),
+  // );
 }
 
 class Yoldash extends StatelessWidget {
@@ -33,6 +45,7 @@ class Yoldash extends StatelessWidget {
   Yoldash() {
     // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
     _loadLanguage();
+    
   }
 
   _loadLanguage() async {
@@ -48,7 +61,7 @@ class Yoldash extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseMessageCall(context);
+    FirebaseMessageCall(null);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       firebaseMessagingBackgroundHandler(message);
     });

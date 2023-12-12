@@ -1,9 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:yoldashapp/Theme/ThemeService.dart';
 
 class NotificationsController {
   FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+
+  void onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
+    print(id);
+    print(title ?? 'No title');
+    print(body ?? 'No body');
+    print(payload ?? 'No payload');
+  }
 
   Future<void> init() async {
     try {
@@ -15,28 +22,32 @@ class NotificationsController {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
 
-      const DarwinInitializationSettings darwinInitializationSettings =
-          DarwinInitializationSettings(
+      final darwinInitializationSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestSoundPermission: true,
         requestProvisionalPermission: true,
         requestBadgePermission: true,
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification,
       );
 
-      const InitializationSettings initializationSettings =
-          InitializationSettings(
-              android: initializationSettingsAndroid,
-              iOS: darwinInitializationSettings);
-
-      await flutterLocalNotificationsPlugin?.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin?.initialize(
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: darwinInitializationSettings,
+        ),
+      );
     } catch (e) {
       print(
           "--------------------INit Function Error-------------------------${e.toString()}");
     }
   }
 
+  Future<void> initController() async {
+    await init();
+  }
+
   NotificationsController() {
-    init();
+    initController();
   }
 
   Future<void> showMessageNotify(

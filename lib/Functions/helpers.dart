@@ -22,6 +22,8 @@ import '../Controllers/HistoryController.dart';
 import '../Theme/ThemeService.dart';
 import '../models/message_groups.dart';
 
+const String sharedsecret="e0f7e2e2a5c24255aea96c9165443da1";
+
 void showToastMSG(bgcolor, text, context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     backgroundColor: bgcolor,
@@ -257,7 +259,7 @@ String convertToSlug(String text) {
   return text;
 }
 
-void FirebaseMessageCall(BuildContext context) {
+void FirebaseMessageCall(context) {
   try {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
@@ -281,6 +283,7 @@ final GoingController goingcontroller = Get.put(GoingController());
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     Map<String, dynamic> parsedJson = message.data;
+    print(parsedJson);
     if (parsedJson != null) {
       dynamic notificationData = parsedJson['notification_data'];
       dynamic parsedNotDat;

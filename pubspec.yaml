@@ -2,7 +2,7 @@ name: yoldashapp
 description: Azərbaycanı bizimlə gəzin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.2+31
+version: 1.1.2+32
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
@@ -61,6 +61,8 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  # image_path: "assets/images/yoldash_favicon_bg_transparent_no_alpha.png"
+  remove_alpha_ios: true
   image_path: "assets/images/yoldash_favicon_bg_green.png"
   min_sdk_android: 20
 

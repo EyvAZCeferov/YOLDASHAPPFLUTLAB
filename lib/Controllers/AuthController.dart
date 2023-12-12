@@ -300,7 +300,7 @@ class AuthController extends GetxController {
 
             CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
 
-            CacheManager.setvaluetoprefences('phone', data.phone);
+            CacheManager.setvaluetoprefences('phone', phonecontroller.value.text);
 
             CacheManager.setvaluetoprefences(
                 'authtype', data.statusActions?.first.type);
@@ -352,7 +352,7 @@ class AuthController extends GetxController {
           CacheManager.setvaluetoprefences('auth_id', data.id);
           CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
           CacheManager.setvaluetoprefences('email', data.email);
-          CacheManager.setvaluetoprefences('phone', data.phone);
+          CacheManager.setvaluetoprefences('phone', phonecontroller.value.text);
           CacheManager.setvaluetoprefences(
               'authtype', data.statusActions?.first.type);
           CacheManager.setvaluetoprefences('language', 'az');
@@ -360,9 +360,9 @@ class AuthController extends GetxController {
               'profilepicture', data.additionalinfo?.image ?? '');
           authType.value = data.statusActions?.first.type ?? 'rider';
           Get.toNamed(
-            'verificationcode',
-            arguments: {'phoneNumber': phonecontroller.value.text},
-          );
+              'verificationcode',
+              arguments: {'phoneNumber': phonecontroller.value.text},
+            );
           showToastMSG(primarycolor, message, context);
         } else {
           showToastMSG(errorcolor, message, context);

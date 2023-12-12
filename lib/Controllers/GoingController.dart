@@ -56,7 +56,6 @@ class GoingController extends GetxController {
       DateTime.now().add(Duration(days: 30)).obs;
   Rx<int> selectedplace = Rx<int>(0);
   RxList<UserLocations> userlocations = <UserLocations>[].obs;
-  final Completer<GoogleMapController> googlemapcontroller = Completer();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
   RxList<SearchingLocations> searchinglocations = <SearchingLocations>[].obs;
@@ -120,12 +119,22 @@ class GoingController extends GetxController {
 
   void getandsetcurrentpoisition(context) async {
     if (authtype.value == "driver") {
-      var statuslocation =
-          await handlepermissionreq(Permission.location, context);
+      var statuslocationAlways =
+          await handlepermissionreq(Permission.locationAlways, context);
 
-      if (statuslocation.isDenied) {
-        statuslocation =
-            await handlepermissionreq(Permission.location, context);
+      if (statuslocationAlways.isDenied ||
+          statuslocationAlways.isPermanentlyDenied) {
+        statuslocationAlways =
+            await handlepermissionreq(Permission.locationAlways, context);
+      }
+
+      var statuslocationWhenInUse =
+          await handlepermissionreq(Permission.locationWhenInUse, context);
+
+      if (statuslocationWhenInUse.isDenied ||
+          statuslocationWhenInUse.isPermanentlyDenied) {
+        statuslocationWhenInUse =
+            await handlepermissionreq(Permission.locationWhenInUse, context);
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -248,7 +257,7 @@ class GoingController extends GetxController {
 
   Future<BitmapDescriptor> addCustomIcon(String url, String typeName) async {
     final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200 && response!=null) {
+    if (response.statusCode == 200 && response != null) {
       BitmapDescriptor icon =
           await BitmapDescriptor.fromBytes(response.bodyBytes);
       return icon;
@@ -275,14 +284,24 @@ class GoingController extends GetxController {
   Future<void> getcurrentposition(context) async {
     try {
       refreshpage.value = true;
-      var statuslocation =
-          await handlepermissionreq(Permission.location, context);
+       var statuslocationAlways =
+          await handlepermissionreq(Permission.locationAlways, context);
 
-      if (statuslocation.isDenied) {
-        statuslocation =
-            await handlepermissionreq(Permission.location, context);
+      if (statuslocationAlways.isDenied ||
+          statuslocationAlways.isPermanentlyDenied) {
+        statuslocationAlways =
+            await handlepermissionreq(Permission.locationAlways, context);
       }
 
+      var statuslocationWhenInUse =
+          await handlepermissionreq(Permission.locationWhenInUse, context);
+
+      if (statuslocationWhenInUse.isDenied ||
+          statuslocationWhenInUse.isPermanentlyDenied) {
+        statuslocationWhenInUse =
+            await handlepermissionreq(Permission.locationWhenInUse, context);
+      }
+      
       if (currentrides.value.length == 0) {
         getcurrentrides(context);
       }
@@ -1767,7 +1786,6 @@ class GoingController extends GetxController {
                               ? Set<Marker>.from(markers)
                               : {},
                           onMapCreated: (GoogleMapController controller) {
-                            googlemapcontroller.complete(controller);
                             newgooglemapcontroller.value = controller;
                             getcurrentposition(context);
                           },

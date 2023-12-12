@@ -35,13 +35,13 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: true,
-      backgroundColor: bgcolorheader,
+      backgroundColor: bgcolorheader ?? whitecolor,
       bottomOpacity: 0,
       centerTitle: true,
       elevation: 0,
       leadingWidth: backbutton ? 45 : 0,
       toolbarHeight: 50,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
       toolbarOpacity: 1,
       actions: changeprof == true
           ? [

@@ -60,7 +60,7 @@ class MessagesShow extends StatelessWidget {
               elevation: 0,
               leadingWidth: 42,
               toolbarHeight: 50,
-              systemOverlayStyle: SystemUiOverlayStyle.light,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               toolbarOpacity: 1,
               actions: [
                 SizedBox(
@@ -82,8 +82,10 @@ class MessagesShow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                     ),
-                    child: Icon(FeatherIcons.phoneCall,
-                        color: whitecolor, size: normaltextSize),
+                    child: Center(
+                      child: Icon(FeatherIcons.phoneCall,
+                          color: whitecolor, size: normaltextSize),
+                    ),
                   ),
                 ),
                 SizedBox(width: 3),

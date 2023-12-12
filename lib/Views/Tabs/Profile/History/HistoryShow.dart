@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -26,7 +28,7 @@ class HistoryShow extends StatelessWidget {
   final AuthController _authController = Get.put(AuthController());
   final AutomobilsController _automobilsController =
       Get.put(AutomobilsController());
-      
+  final Completer<GoogleMapController> googlemapcontroller = Completer();
 
   List<Widget> addressWidgets = [];
 
@@ -103,10 +105,8 @@ class HistoryShow extends StatelessWidget {
                               ? Set<Circle>.from(_controller.circles)
                               : {},
                           onMapCreated: (GoogleMapController controller) {
-                            _controller.googlemapcontroller
-                                .complete(controller);
-                            _controller.newgooglemapcontroller.value =
-                                controller;
+                            googlemapcontroller.complete(controller);
+                            _controller.newgooglemapcontroller.value = controller;
                             _controller.getridecoordsandmarks(context);
                           },
                         )),
@@ -207,8 +207,8 @@ class HistoryShow extends StatelessWidget {
                        ,
                     Positioned.fill(
                         top: _controller.ontheway.value == true
-                            ? Get.width - 40
-                            : Get.width - 100,
+                            ? Get.width - 60
+                            : Get.width - 120,
                         bottom: 0,
                         left: 0,
                         right: 0,

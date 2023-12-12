@@ -9,6 +9,7 @@ import '../../Constants/Devider.dart';
 import '../../Constants/StaticText.dart';
 import '../../Constants/TextButton.dart';
 import '../../Controllers/AuthController.dart';
+import '../../Controllers/MainController.dart';
 import '../../Functions/CacheManager.dart';
 import '../../Theme/ThemeService.dart';
 
@@ -20,6 +21,8 @@ class VerificationCode extends StatefulWidget {
 class _VerificationCodeState extends State<VerificationCode> {
   final AuthController _controller = Get.put(AuthController());
   final TextEditingController pincontroller = TextEditingController();
+  final MainController _maincontroller = Get.put(MainController());
+
   var phoneNumber;
 
   @override
@@ -28,7 +31,7 @@ class _VerificationCodeState extends State<VerificationCode> {
     _setPhoneNumber();
   }
 
-  void _setPhoneNumber() async {
+  Future<void> _setPhoneNumber() async {
     Map<String, dynamic> arguments = Get.arguments;
     var phone = await CacheManager.getvaluefromsharedprefences("phone");
     setState(() => phoneNumber = arguments['phoneNumber'] ?? phone);

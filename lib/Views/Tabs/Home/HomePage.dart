@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
   late AuthController _authcontroller = Get.put(AuthController());
   late HistoryController _historycontroller = Get.put(HistoryController());
+  final Completer<GoogleMapController> googlemapcontroller = Completer();
 
   String? getrideofferprice(Rides ride, type) {
     if (type == "rider") {
@@ -246,10 +249,9 @@ class _HomePageState extends State<HomePage> {
                               circles: _controller.circles.isNotEmpty
                                   ? Set<Circle>.from(_controller.circles)
                                   : {},
+                                  
                               onMapCreated: (GoogleMapController controller) {
-                                if(_controller.googlemapcontroller!=null){
-                                _controller.googlemapcontroller?.complete(controller);
-                                }
+                                googlemapcontroller.complete(controller);
                                 _controller.newgooglemapcontroller.value =
                                     controller;
                                 _controller.getcurrentposition(context);

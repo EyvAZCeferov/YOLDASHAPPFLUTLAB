@@ -49,7 +49,7 @@ class MessagesController extends GetxController {
     target: LatLng(40.409264, 49.867092),
     zoom: 17.4746,
   );
-  WebSocketChannel? channel;
+  // WebSocketChannel? channel;
   Rx<int> countunreadmessages = 0.obs;
   // LaravelEcho? laraecho;
 
@@ -69,7 +69,23 @@ class MessagesController extends GetxController {
 
   void getcurrentposition(context) async {
     refreshpage.value = true;
-    await handlepermissionreq(Permission.location, context);
+    var statuslocationAlways =
+        await handlepermissionreq(Permission.locationAlways, context);
+
+    if (statuslocationAlways.isDenied ||
+        statuslocationAlways.isPermanentlyDenied) {
+      statuslocationAlways =
+          await handlepermissionreq(Permission.locationAlways, context);
+    }
+
+    var statuslocationWhenInUse =
+        await handlepermissionreq(Permission.locationWhenInUse, context);
+
+    if (statuslocationWhenInUse.isDenied ||
+        statuslocationWhenInUse.isPermanentlyDenied) {
+      statuslocationWhenInUse =
+          await handlepermissionreq(Permission.locationWhenInUse, context);
+    }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     currentposition.value = position;
@@ -409,7 +425,13 @@ class MessagesController extends GetxController {
         }
       } else {
         // _callingcontroller.typecalling.value = "audio";
-        launchUrlTOSITE("tel:$value");
+        if (Platform.isIOS) {
+          String phoneNumber = value.replaceAll('+', '');
+          launchUrlTOSITE("tel://$phoneNumber");
+        } else {
+          launchUrlTOSITE("tel:$value");
+        }
+
         // _callingcontroller.callcreate(context);
         // Get.toNamed('/callpage');
       }
