@@ -2,7 +2,7 @@ name: yoldashapp
 description: Azərbaycanı bizimlə gəzin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.2+32
+version: 1.1.2+33
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
