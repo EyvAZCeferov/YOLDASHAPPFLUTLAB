@@ -58,15 +58,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Access permission is required to take pictures using the camera.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I haz location always?</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
+	<string>The app must open your location to proceed the order.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We require microphone access to connect</string>
+	<string>This app requires access to your location while in use to proceed the order.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access permission is required to upload images from your gallery.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
