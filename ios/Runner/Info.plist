@@ -56,9 +56,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>The app must open your location to proceed the order.</string>
+	<string>This app requires access to your precise location data. We use your location to facilitate the process of ordering rides for both drivers and passengers. When creating a trip, the app collects your location to match you with nearby drivers. Additionally, during the trip, your location is continuously tracked to provide real-time updates on the driver's location and estimated time of arrival. This information ensures a smooth and efficient travel experience. Furthermore, our app enables users to communicate with each other within the app. Should users choose to share their location with the other party during this conversation, they have the option to do so explicitly within the chat feature. We prioritize user privacy and do not share location data without explicit consent. Rest assured that we highly value your privacy and have implemented robust security measures to safeguard your location information. Your data is encrypted and securely stored, and we do not disclose it to any third parties without your explicit consent.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires access to your location while in use to proceed the order.</string>
+	<string>This app requires access to your location while in use to enable the order process. We use your location to match you with nearby drivers when creating a ride and to continuously track the trip's progress for both drivers and passengers, ensuring a seamless experience. Additionally, our app features a chat function, allowing users to communicate. If users choose to share their location during conversations, they can do so explicitly within the app. We prioritize user privacy and do not share location data without explicit consent. Your privacy is of utmost importance to us. We have implemented stringent measures to secure and protect your location information. Your data is encrypted and stored securely, and we do not disclose it to any third parties without your explicit consent.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The app needs permission to upload images for the profile picture and during the chat.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

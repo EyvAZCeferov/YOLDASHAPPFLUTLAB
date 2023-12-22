@@ -28,7 +28,7 @@ class HistoryShow extends StatelessWidget {
   final AuthController _authController = Get.put(AuthController());
   final AutomobilsController _automobilsController =
       Get.put(AutomobilsController());
-  final Completer<GoogleMapController> googlemapcontroller = Completer();
+  final Completer<GoogleMapController> googlemapcontroller = Completer<GoogleMapController>();
 
   List<Widget> addressWidgets = [];
 

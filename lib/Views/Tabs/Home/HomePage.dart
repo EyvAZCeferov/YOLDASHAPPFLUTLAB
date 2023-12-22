@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   late GoingController _controller = Get.put(GoingController());
   late AuthController _authcontroller = Get.put(AuthController());
   late HistoryController _historycontroller = Get.put(HistoryController());
-  final Completer<GoogleMapController> googlemapcontroller = Completer();
+  final Completer<GoogleMapController> googlemapcontroller = Completer<GoogleMapController>();
 
   String? getrideofferprice(Rides ride, type) {
     if (type == "rider") {

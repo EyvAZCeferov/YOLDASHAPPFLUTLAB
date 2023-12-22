@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yoldashapp/Controllers/GoingController.dart';
 
+import '../Constants/ButtonElement.dart';
 import '../Functions/CacheManager.dart';
 import '../Functions/GetAndPost.dart';
 import '../Functions/helpers.dart';
@@ -42,7 +43,7 @@ class AuthController extends GetxController {
   Rx<String?> socialstatus = Rx<String>('');
   Rx<String?> submitting_document = Rx<String?>(null);
   Rx<String?> human_document = Rx<String?>(null);
-  
+
   AuthController() {
     init();
   }
@@ -144,7 +145,7 @@ class AuthController extends GetxController {
 
       if (type == "submitting_document") {
         submitting_document.value = response['data'];
-      }else if (type == "human_document") {
+      } else if (type == "human_document") {
         human_document.value = response['data'];
       }
     }
@@ -199,6 +200,96 @@ class AuthController extends GetxController {
     }
   }
 
+  void removeprofile(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 130,
+            color: Colors.white,
+            child: Column(
+              children: [
+                Devider(),
+                StaticText(
+                  color: secondarycolor,
+                  size: smalltextSize,
+                  text: "informationfordeletingaccount".tr,
+                  weight: FontWeight.w500,
+                  align: TextAlign.center,
+                ),
+                Devider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ButtonElement(
+                      text: "close".tr,
+                      width: 120,
+                      onPressed: () {
+                        Get.back();
+                      },
+                      bgColor: primarycolor,
+                      borderRadius: BorderRadius.circular(45),
+                      fontsize: normaltextSize,
+                      height: 45,
+                      textColor: whitecolor,
+                    ),
+                    SizedBox(
+                      width: 7,
+                    ),
+                    ButtonElement(
+                      text: "remove".tr,
+                      width: 120,
+                      onPressed: () => removedata(context),
+                      bgColor: errorcolor,
+                      borderRadius: BorderRadius.circular(80),
+                      fontsize: normaltextSize,
+                      height: 45,
+                      textColor: whitecolor,
+                    ),
+                  ],
+                ),
+                Devider()
+              ],
+            ),
+          );
+        });
+  }
+
+  void removedata(context) async{
+    Get.back();
+    var language =
+        await CacheManager.getvaluefromsharedprefences("language") ?? 'az';
+    var body = {
+      'language': language,
+    };
+    var response =
+        await GetAndPost.postData("auth/removeprofile", body, context);
+    if (response != null) {
+      logout(context);
+      String status = response['status'];
+      String message = response['message'];
+      if (status == "success") {
+        CacheManager.removevaluefromprefences('name_surname');
+        CacheManager.removevaluefromprefences('email');
+        CacheManager.removevaluefromprefences('phone');
+        CacheManager.removevaluefromprefences('profilepicture');
+        CacheManager.removevaluefromprefences('auth_id');
+        CacheManager.removevaluefromprefences('token');
+        CacheManager.setvaluetoprefences('auth_type', 'rider');
+        CacheManager.setvaluetoprefences('authtype', 'rider');
+
+        showToastMSG(primarycolor, message, context);
+      } else {
+        showToastMSG(errorcolor, message, context);
+      }
+      refreshpage.value = false;
+    } else {
+      refreshpage.value = false;
+      showToastMSG(errorcolor, "errordatanotfound".tr, context);
+    }
+  }
+
   void changeprofpage(context) async {
     refreshpage.value = true;
 
@@ -217,7 +308,6 @@ class AuthController extends GetxController {
           response['message'] != '' &&
           response['message'] != ' ') message = response['message'];
       if (status == "success") {
-        
         getalldataoncache(context);
         goingcontroller.initcontrolller();
         goingcontroller.getcurrentrides(context);
@@ -257,9 +347,9 @@ class AuthController extends GetxController {
           'name_surname': namesurnamecontroller.value.text,
           'birthday': birthdaycontroller.value,
           'type': authType.value,
-          'socialstatus':socialstatus.value??'',
-          'submitting_document':submitting_document.value??'',
-          'human_document':human_document.value??'',
+          'socialstatus': socialstatus.value ?? '',
+          'submitting_document': submitting_document.value ?? '',
+          'human_document': human_document.value ?? '',
           'language': 'az',
         };
 
@@ -300,7 +390,8 @@ class AuthController extends GetxController {
 
             CacheManager.setvaluetoprefences('name_surname', data.nameSurname);
 
-            CacheManager.setvaluetoprefences('phone', phonecontroller.value.text);
+            CacheManager.setvaluetoprefences(
+                'phone', phonecontroller.value.text);
 
             CacheManager.setvaluetoprefences(
                 'authtype', data.statusActions?.first.type);
@@ -360,9 +451,9 @@ class AuthController extends GetxController {
               'profilepicture', data.additionalinfo?.image ?? '');
           authType.value = data.statusActions?.first.type ?? 'rider';
           Get.toNamed(
-              'verificationcode',
-              arguments: {'phoneNumber': phonecontroller.value.text},
-            );
+            'verificationcode',
+            arguments: {'phoneNumber': phonecontroller.value.text},
+          );
           showToastMSG(primarycolor, message, context);
         } else {
           showToastMSG(errorcolor, message, context);

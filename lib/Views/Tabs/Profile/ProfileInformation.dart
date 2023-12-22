@@ -16,11 +16,10 @@ import '../../../Theme/ThemeService.dart';
 class ProfileInformation extends StatelessWidget {
   final AuthController _controller = Get.find<AuthController>();
 
-  
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-  _controller.getalldataoncache(context);
+    _controller.getalldataoncache(context);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: bodycolor,
@@ -51,10 +50,10 @@ class ProfileInformation extends StatelessWidget {
                             children: [
                               CachedNetworkImage(
                                 imageUrl: getimageurl(
-                                  "user",
-                                  'users',
-                                  _controller
-                                      .userdatas.value?.additionalinfo?.image),
+                                    "user",
+                                    'users',
+                                    _controller.userdatas.value?.additionalinfo
+                                        ?.image),
                                 placeholder: (context, url) =>
                                     CircularProgressIndicator(),
                                 errorWidget: (context, url, error) =>
@@ -72,6 +71,7 @@ class ProfileInformation extends StatelessWidget {
                                   child: Container(
                                     width: 40,
                                     height: 40,
+                                    alignment:Alignment.center,
                                     decoration: BoxDecoration(
                                         color: secondarycolor,
                                         borderRadius:
@@ -80,7 +80,7 @@ class ProfileInformation extends StatelessWidget {
                                       icon: FeatherIcons.camera,
                                       onPressed: () =>
                                           _controller.pickImage(context),
-                                      color: whitecolor,
+                                      color: primarycolor,
                                       size: buttontextSize,
                                     ),
                                   )),
@@ -136,17 +136,33 @@ class ProfileInformation extends StatelessWidget {
                       ])),
         ),
         bottomNavigationBar: Container(
-          height: 60,
-          margin: EdgeInsets.only(bottom: 15),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ButtonElement(
-                text: "updateprofile".tr,
-                height: 50,
-                width: width - 100,
-                borderRadius: BorderRadius.circular(45),
-                onPressed: () => _controller.updateprofiledata(context)),
-          ),
-        ));
+            height: 150,
+            margin: EdgeInsets.only(bottom: 15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ButtonElement(
+                      text: "updateprofile".tr,
+                      height: 50,
+                      width: width - 100,
+                      borderRadius: BorderRadius.circular(45),
+                      onPressed: () => _controller.updateprofiledata(context)),
+                ),
+                SizedBox(height:5),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ButtonElement(
+                      text: "removeprofile".tr,
+                      height: 50,
+                      width: width - 100,
+                      borderRadius: BorderRadius.circular(45),
+                      bgColor:errorcolor,
+                      onPressed: () => _controller.removeprofile(context)),
+                ),
+              ],
+            )));
   }
 }

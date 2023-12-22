@@ -39,7 +39,7 @@ class MessagesController extends GetxController {
   Rx<int?> auth_id = Rx<int?>(null);
   Rx<String?> authtype = Rx<String?>(null);
   Rx<String?> authtoken = Rx<String?>(null);
-  final Completer<GoogleMapController> googlemapcontroller = Completer();
+  final Completer<GoogleMapController> googlemapcontroller = Completer<GoogleMapController>();
   Rx<GoogleMapController?> newgooglemapcontroller =
       Rx<GoogleMapController?>(null);
   RxSet<Marker?> markers = RxSet<Marker?>({});

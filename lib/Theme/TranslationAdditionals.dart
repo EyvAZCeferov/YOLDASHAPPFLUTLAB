@@ -41,6 +41,7 @@ class TranslationAdditionals extends Translations {
           "add_bank_account": "Bank hesabı əlavə et",
           "editprofile": "Profilə düzəliş et",
           "updateprofile": "Profili yeniləyin",
+          "removeprofile":"Profili silin",
           "cardsinformation": "Kart məlumatları",
           "nohasdata": "Məlumat tapılmadı",
           "add": "Əlavə et",
@@ -172,6 +173,7 @@ class TranslationAdditionals extends Translations {
           "proqramexit":"Applikasiyadan çıxmaq üçün 2 dəfə geri düyməsinə toxunun.",
           "status_accepted":"Sürücü sorğunuzu qəbul etdi.",
           "status_arrivedoncustomer":"Yolunuz uğurlu olsun.",
+          "informationfordeletingaccount":"Məlumat silinməsinə əminsiniz? Geri qaytarılmır!!!",
         },
         'ru_RU': {
           'login': 'Входить',
@@ -211,6 +213,7 @@ class TranslationAdditionals extends Translations {
           "add_bank_account": "Добавить банковский счет",
           "editprofile": "Редактировать профиль",
           "updateprofile": "Обновить профиль",
+          "removeprofile":"Удалить профиль",
           "cardsinformation": "Информация о карте",
           "nohasdata": "Информация не найдена",
           "add": "добавить в",
@@ -343,6 +346,7 @@ class TranslationAdditionals extends Translations {
           "proqramexit":"Дважды нажмите кнопку «Назад», чтобы выйти из приложения.",
           "status_accepted":"Водитель принял ваш запрос.",
           "status_arrivedoncustomer":"Удачи в вашем путешествии.",
+          "informationfordeletingaccount":"Вы уверены, что хотите удалить данные? Без возвратов!!!",
         },
         'en_EN': {
           'login': 'Login',
@@ -382,6 +386,7 @@ class TranslationAdditionals extends Translations {
           "add_bank_account": "Add bank account",
           "editprofile": "Edit profile",
           "updateprofile": "Update profile",
+          "removeprofile":"Remove profile",
           "cardsinformation": "Card information",
           "nohasdata": "No information found",
           "add": "Add",
@@ -514,6 +519,7 @@ class TranslationAdditionals extends Translations {
           "programexit":"Tap the back button twice to exit the application.",
           "status_accepted":"The driver has accepted your request.",
           "status_arrivedoncustomer":"Have a blessed journey.",
+          "informationfordeletingaccount":"Are you sure to delete data? No refunds!!!",
         },
         'tr_TR': {
           'login': 'Giriş yapın',
@@ -553,6 +559,7 @@ class TranslationAdditionals extends Translations {
           "add_bank_account": "Bank hesabı ilave et",
           "editprofile": "Profili Düzenle",
           "updateprofile": "Profili yenileyin",
+          "removeprofile":"Profili silin",
           "cardsinformation": "Kart bilgisi",
           "nohasdata": "Hiçbir bilgi bulunamadı",
           "add": "İlavə et",
@@ -684,6 +691,7 @@ class TranslationAdditionals extends Translations {
           "programexit":"Uygulamadan çıkmak için geri düğmesine iki kez dokunun.",
           "status_accepted":"Sürücü isteğinizi kabul etti.",
           "status_arrivedoncustomer":"Kutlu yolculuklar.",
+          "informationfordeletingaccount":"Verileri sildiğinizden emin misiniz? İade yok!!!",
         },
       };
 }
