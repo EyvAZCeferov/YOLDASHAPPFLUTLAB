@@ -263,8 +263,10 @@ class AuthController extends GetxController {
     var body = {
       'language': language,
     };
+    print(body);
     var response =
         await GetAndPost.postData("auth/removeprofile", body, context);
+        print(response);
     if (response != null) {
       logout(context);
       String status = response['status'];
