@@ -55,6 +55,8 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Our application collects your personal data (your name, email address, phone number, gender and location information) and uses this information only to improve service delivery, process your requests and provide you with a better experience. We care about user privacy and do not share this information with third parties.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app requires access to your precise location data. We use your location to facilitate the process of ordering rides for both drivers and passengers. When creating a trip, the app collects your location to match you with nearby drivers. Additionally, during the trip, your location is continuously tracked to provide real-time updates on the driver's location and estimated time of arrival. This information ensures a smooth and efficient travel experience. Furthermore, our app enables users to communicate with each other within the app. Should users choose to share their location with the other party during this conversation, they have the option to do so explicitly within the chat feature. We prioritize user privacy and do not share location data without explicit consent. Rest assured that we highly value your privacy and have implemented robust security measures to safeguard your location information. Your data is encrypted and securely stored, and we do not disclose it to any third parties without your explicit consent.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

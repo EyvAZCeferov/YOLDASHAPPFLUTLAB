@@ -8,6 +8,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "app_tracking_transparency",
+      "rootUri": "file:///Users/macbook/.pub-cache/hosted/pub.dev/app_tracking_transparency-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/macbook/.pub-cache/hosted/pub.dev/archive-3.4.9",
       "packageUri": "lib/",
@@ -908,7 +914,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2023-12-22T20:19:03.673187Z",
+  "generated": "2023-12-27T06:15:09.857660Z",
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }

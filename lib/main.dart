@@ -8,9 +8,9 @@ import 'Controllers/MainController.dart';
 import 'Functions/CacheManager.dart';
 import 'Theme/Routes.dart';
 import 'Theme/TranslationAdditionals.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
-bool initialized =
-    false; // Initialize a boolean to track if Firebase has been initialized
+bool initialized =false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +18,8 @@ void main() async {
     await initializeFirebase();
     initialized = true;
   }
+  final status = await AppTrackingTransparency.requestTrackingAuthorization();
+
   await CacheManager.createSharedPref();
   NotificationsController notificationsController = NotificationsController();
   await notificationsController.init().then((_) {

@@ -1,4 +1,6 @@
 PODS:
+  - app_tracking_transparency (0.0.1):
+    - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -96,6 +98,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -127,6 +130,8 @@ SPEC REPOS:
     - ReachabilitySwift
 
 EXTERNAL SOURCES:
+  app_tracking_transparency:
+    :path: ".symlinks/plugins/app_tracking_transparency/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   firebase_core:
@@ -157,6 +162,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  app_tracking_transparency: 5b1745ef9ade815f7455cb6a0848349589afb7c5
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   Firebase: 25899099b77d255a636e3579c3d9dce10ec150d5
   firebase_core: 68027ba03585e3efe1608e35d3ab2777a64eabe9
