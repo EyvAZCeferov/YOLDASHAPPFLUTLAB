@@ -41,6 +41,7 @@ class _LoginState extends State<Login> {
               () => _controller.refreshpage.value == true
                   ? LoaderScreen()
                   : SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                       child: Container(
                         child: Center(
                           child: Column(

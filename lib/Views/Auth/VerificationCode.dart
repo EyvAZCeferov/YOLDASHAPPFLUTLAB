@@ -64,6 +64,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                   color: whitecolor),
           ),
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

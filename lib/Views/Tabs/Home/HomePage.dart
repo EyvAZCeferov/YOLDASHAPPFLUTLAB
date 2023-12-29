@@ -690,6 +690,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                       ])
                     : SingleChildScrollView(
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         controller: ScrollController(),
                         physics: ScrollPhysics(),
                         scrollDirection: Axis.vertical,

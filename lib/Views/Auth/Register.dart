@@ -33,6 +33,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Container(
             color: bodycolor,
             child:DoubleBackToCloseApp(

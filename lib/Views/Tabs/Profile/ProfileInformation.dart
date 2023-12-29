@@ -34,6 +34,7 @@ class ProfileInformation extends StatelessWidget {
           () => _controller.refreshpage.value == true
               ? LoaderScreen()
               : SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: ScrollController(),
                   physics: ScrollPhysics(),
                   scrollDirection: Axis.vertical,

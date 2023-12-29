@@ -1,9 +1,7 @@
-import 'package:dash_flags/dash_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:line_icons/line_icon.dart';
 import 'package:yoldashapp/Controllers/ContactusController.dart';
 import 'package:yoldashapp/Functions/helpers.dart';
 import 'package:yoldashapp/models/settings.dart';
@@ -335,6 +333,7 @@ ContactUs(){
         () => _controller.refreshpage.value == true
             ? LoaderScreen()
             : SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               controller: ScrollController(),
               physics: const ScrollPhysics(),
               scrollDirection: Axis.vertical,

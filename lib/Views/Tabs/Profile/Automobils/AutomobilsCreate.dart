@@ -30,6 +30,7 @@ class AutomobilsCreate extends StatelessWidget {
       ),
       body: Obx(
         () => SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: SizedBox(
             height: Get.height * 1.9,
             child: Column(
